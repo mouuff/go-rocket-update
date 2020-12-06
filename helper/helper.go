@@ -3,7 +3,6 @@ package helper
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"io"
 	"os"
 )
@@ -64,7 +63,7 @@ func CompareFileChecksum(fileA, fileB string) (bool, error) {
 		return false, err
 	}
 	if fileBChecksum != fileAChecksum {
-		return false, fmt.Errorf("fileBChecksum: %s != fileAChecksum: %s", fileB, fileA)
+		return false, nil
 	}
 	return true, nil
 }
