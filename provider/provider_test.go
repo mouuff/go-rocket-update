@@ -20,10 +20,6 @@ func testProvider(p provider.Provider) error {
 	log.Print(tmpDir)
 	//defer os.RemoveAll(tmpDir)
 
-	if err := p.Open(); err != nil {
-		return err
-	}
-	defer p.Close()
 	err = p.Walk(func(filePath string, info os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", filePath, err)
@@ -39,7 +35,6 @@ func testProvider(p provider.Provider) error {
 				return err
 			}
 		}
-
 		return nil
 	})
 	if err != nil {
@@ -50,6 +45,11 @@ func testProvider(p provider.Provider) error {
 
 func TestProviderLocal(t *testing.T) {
 	p := provider.NewProviderLocal(path.Join("testdata", "Allum1"))
+	if err := p.Open(); err != nil {
+		return err
+	}
+	defer p.Close()
+
 	err := testProvider(p)
 	if err != nil {
 		t.Error(err)
