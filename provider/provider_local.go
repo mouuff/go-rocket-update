@@ -2,6 +2,8 @@ package provider
 
 import (
 	"path/filepath"
+
+	"github.com/mouuff/easy-update/helper"
 )
 
 type ProviderLocal struct {
@@ -21,13 +23,17 @@ func (c *ProviderLocal) Close() error {
 }
 
 func (c *ProviderLocal) GetVersion() (string, error) {
-	return "", nil
+	return "1.0", nil
 }
 
 func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
 	return filepath.Walk(c.path, walkFn)
 }
 
-func (c *ProviderLocal) Retrieve(srcPath string, destPath string) error {
-	return filepath.Rel(c.path, srcPath)
+func (c *ProviderLocal) Retrieve(src string, dest string) error {
+	fullPath, err := filepath.Rel(c.path, src)
+	if err != nil {
+		return err
+	}
+	return helper.CopyFile(fullPath, dest)
 }
