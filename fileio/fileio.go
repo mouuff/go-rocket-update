@@ -29,6 +29,7 @@ func CopyFile(src string, dest string) error {
 	return err
 }
 
+// ChecksumFile calculate the sha256 checksum of a file
 func ChecksumFile(src string) (string, error) {
 	f, err := os.Open(src)
 	if err != nil {

@@ -77,5 +77,24 @@ func TestChecksum(t *testing.T) {
 	if err == nil {
 		t.Error(fmt.Errorf("verifyChecksumFile returned not nil on a bad checksum"))
 	}
+}
 
+func TestCompareFileChecksum(t *testing.T) {
+	fileA := path.Join("testdata", "TempleOS.ISO")
+	fileB := path.Join("testdata", "small.exe")
+	equals, err := fileio.CompareFileChecksum(fileA, fileA)
+	if err != nil {
+		t.Error(err)
+	}
+	if equals == false {
+		t.Error("Should be equal")
+	}
+
+	equals, err = fileio.CompareFileChecksum(fileA, fileB)
+	if err != nil {
+		t.Error(err)
+	}
+	if equals == true {
+		t.Error("Should be unequal")
+	}
 }
