@@ -9,11 +9,12 @@ import (
 )
 
 type ProviderLocal struct {
-	path string
+	path    string
+	version string
 }
 
 func NewProviderLocal(path string) Provider {
-	return &ProviderLocal{path: path}
+	return &ProviderLocal{path: path, version: "1.0"}
 }
 
 func (c *ProviderLocal) Open() error {
@@ -28,7 +29,7 @@ func (c *ProviderLocal) Close() error {
 }
 
 func (c *ProviderLocal) GetVersion() (string, error) {
-	return "1.0", nil
+	return c.version, nil
 }
 
 func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
