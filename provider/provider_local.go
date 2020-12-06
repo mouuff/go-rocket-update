@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"os"
 	"path/filepath"
 
 	"github.com/mouuff/easy-update/helper"
@@ -27,7 +28,13 @@ func (c *ProviderLocal) GetVersion() (string, error) {
 }
 
 func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
-	return filepath.Walk(c.path, walkFn)
+	return filepath.Walk(c.path, func(filePath string, info os.FileInfo, err error) error {
+		relpath, err := filepath.Rel(c.path, filePath)
+		if err != nil {
+			return err
+		}
+		return walkFn(relpath, info, err)
+	})
 }
 
 func (c *ProviderLocal) Retrieve(src string, dest string) error {
