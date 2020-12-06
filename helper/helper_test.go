@@ -23,18 +23,13 @@ func copyAndChecksumFile(src string) error {
 		return err
 	}
 
-	srcChecksum, err := helper.ChecksumFile(src)
+	equals, err := helper.CompareFileChecksum(src, dest)
 	if err != nil {
 		return err
 	}
-	destChecksum, err := helper.ChecksumFile(dest)
-	if err != nil {
-		return err
-	}
-	if destChecksum != srcChecksum {
+	if equals == false {
 		return fmt.Errorf("destChecksum: %s != srcChecksum: %s", dest, src)
 	}
-
 	return nil
 }
 

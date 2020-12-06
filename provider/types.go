@@ -10,7 +10,6 @@ type Provider interface {
 	Open() error
 	Close() error
 	GetVersion() (string, error)
-
 	Walk(walkFn filepath.WalkFunc) error
 	Retrieve(srcPath string, destPath string) error
 }

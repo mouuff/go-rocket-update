@@ -3,6 +3,7 @@ package helper
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"os"
 )
@@ -42,4 +43,28 @@ func ChecksumFile(src string) (string, error) {
 	}
 
 	return hex.EncodeToString(hash.Sum(nil)), nil
+}
+
+// FileExists checks if the file exists
+func FileExists(src string) bool {
+	if _, err := os.Stat(src); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+// CompareFileChecksum compares two files checksums
+func CompareFileChecksum(fileA, fileB string) (bool, error) {
+	fileAChecksum, err := ChecksumFile(fileA)
+	if err != nil {
+		return false, err
+	}
+	fileBChecksum, err := ChecksumFile(fileB)
+	if err != nil {
+		return false, err
+	}
+	if fileBChecksum != fileAChecksum {
+		return false, fmt.Errorf("fileBChecksum: %s != fileAChecksum: %s", fileB, fileA)
+	}
+	return true, nil
 }

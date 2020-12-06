@@ -32,12 +32,12 @@ func (c *ProviderLocal) GetVersion() (string, error) {
 }
 
 func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
-	return filepath.Walk(c.path, func(filePath string, info os.FileInfo, err error) error {
+	return filepath.Walk(c.path, func(filePath string, info os.FileInfo, walkErr error) error {
 		relpath, err := filepath.Rel(c.path, filePath)
 		if err != nil {
 			return err
 		}
-		return walkFn(relpath, info, err)
+		return walkFn(relpath, info, walkErr)
 	})
 }
 
