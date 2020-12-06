@@ -1,4 +1,4 @@
-package helper_test
+package fileio_test
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/mouuff/easy-update/helper"
+	"github.com/mouuff/easy-update/fileio"
 )
 
 func copyAndChecksumFile(src string) error {
@@ -18,12 +18,12 @@ func copyAndChecksumFile(src string) error {
 	defer os.RemoveAll(dir)
 
 	dest := path.Join(dir, "dest.txt")
-	err = helper.CopyFile(src, dest)
+	err = fileio.CopyFile(src, dest)
 	if err != nil {
 		return err
 	}
 
-	equals, err := helper.CompareFileChecksum(src, dest)
+	equals, err := fileio.CompareFileChecksum(src, dest)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func TestCopyFile(t *testing.T) {
 }
 
 func verifyChecksumFile(src, expectedChecksum string) error {
-	checksum, err := helper.ChecksumFile(src)
+	checksum, err := fileio.ChecksumFile(src)
 	if err != nil {
 		return err
 	}

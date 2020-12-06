@@ -1,4 +1,4 @@
-package helper
+package fileio
 
 import (
 	"crypto/sha256"

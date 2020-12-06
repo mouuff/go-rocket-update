@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/mouuff/easy-update/helper"
+	"github.com/mouuff/easy-update/fileio"
 	provider "github.com/mouuff/easy-update/provider"
 )
 
@@ -46,7 +46,7 @@ func testProvider(p provider.Provider) error {
 			return err
 		}
 		destPath := path.Join(tmpDir, filePath)
-		if !helper.FileExists(destPath) {
+		if !fileio.FileExists(destPath) {
 			return fmt.Errorf("File %s should exists", destPath)
 		}
 		return nil
@@ -80,7 +80,7 @@ func TestProviderLocal(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	equals, err := helper.CompareFileChecksum(destPath, path.Join("testdata", "Allum1", "subfolder", "testfile.txt"))
+	equals, err := fileio.CompareFileChecksum(destPath, path.Join("testdata", "Allum1", "subfolder", "testfile.txt"))
 	if err != nil {
 		t.Error(err)
 	}

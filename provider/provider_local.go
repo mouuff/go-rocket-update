@@ -5,7 +5,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/mouuff/easy-update/helper"
+	"github.com/mouuff/easy-update/fileio"
 )
 
 type ProviderLocal struct {
@@ -43,5 +43,5 @@ func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
 
 func (c *ProviderLocal) Retrieve(src string, dest string) error {
 	fullPath := path.Join(c.path, src)
-	return helper.CopyFile(fullPath, dest)
+	return fileio.CopyFile(fullPath, dest)
 }
