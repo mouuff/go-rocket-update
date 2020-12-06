@@ -2,6 +2,7 @@ package provider
 
 import (
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/mouuff/easy-update/helper"
@@ -16,6 +17,9 @@ func NewProviderLocal(path string) Provider {
 }
 
 func (c *ProviderLocal) Open() error {
+	if _, err := os.Stat(c.path); os.IsNotExist(err) {
+		return ErrProviderUnavaiable
+	}
 	return nil
 }
 
@@ -38,9 +42,6 @@ func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
 }
 
 func (c *ProviderLocal) Retrieve(src string, dest string) error {
-	fullPath, err := filepath.Rel(c.path, src)
-	if err != nil {
-		return err
-	}
+	fullPath := path.Join(c.path, src)
 	return helper.CopyFile(fullPath, dest)
 }

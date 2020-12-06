@@ -18,7 +18,7 @@ func testProvider(p provider.Provider) error {
 		return err
 	}
 	log.Print(tmpDir)
-	//defer os.RemoveAll(dir)
+	//defer os.RemoveAll(tmpDir)
 
 	if err := p.Open(); err != nil {
 		return err
@@ -30,14 +30,14 @@ func testProvider(p provider.Provider) error {
 			return err
 		}
 		destPath := path.Join(tmpDir, filePath)
-		fmt.Printf("dest: %s\n", destPath)
 		if info.IsDir() {
 			os.MkdirAll(destPath, os.ModePerm)
 		} else {
 			os.MkdirAll(filepath.Dir(destPath), os.ModePerm)
-			fmt.Printf("visited file or dir: %q\n", filePath)
 			err = p.Retrieve(filePath, destPath)
-			fmt.Print(err)
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -45,7 +45,6 @@ func testProvider(p provider.Provider) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
