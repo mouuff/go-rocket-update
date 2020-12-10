@@ -2,7 +2,11 @@ package updater
 
 import "github.com/mouuff/easy-update/provider"
 
-type Updater interface {
-	AddProvider(provider.Provider)
+type Runnable interface {
 	Run() error
+}
+
+type Updater interface {
+	Runnable
+	SetProvider(provider.Provider)
 }
