@@ -1,73 +1,44 @@
 package updater
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"runtime"
-
-	"github.com/kardianos/osext"
 	"github.com/mouuff/easy-update/provider"
 )
 
-func GetPlatformName() string {
-	return runtime.GOOS + "-" + runtime.GOARCH
-}
-
-func GetExecutable() (string, error) {
-	execPath, err := osext.Executable()
-	if err != nil {
-		return "", err
-	}
-	return execPath, nil
-}
-
-// ReplaceExecutableWith replaces the current executable with the one located at src
-func ReplaceExecutableWith(src string) error {
-	executable, err := GetExecutable()
-	if err != nil {
-		return err
-	}
-	tmpDir, err := ioutil.TempDir("", "updater")
-	if err != nil {
-		return err
-	}
-	// Here we move the current executable to a tmp dir, we do that because
-	// on windows we must move the running executable to rewrite it
-	renamedExecutable := filepath.Join(tmpDir, filepath.Base(executable))
-	fmt.Println(renamedExecutable)
-	fmt.Println(renamedExecutable)
-	err = os.Rename(executable, renamedExecutable)
-	if err != nil {
-		return err
-	}
-
-	content, err := ioutil.ReadFile(src)
-	if err != nil {
-		os.Rename(renamedExecutable, executable)
-		return err
-	}
-
-	err = ioutil.WriteFile(executable, content, 0755)
-	if err != nil {
-		os.Rename(renamedExecutable, executable)
-		return err
-	}
-	return nil
-}
-
 type Updater struct {
 	provider provider.Provider
+	version  string
 }
 
-func NewUpdater(p provider.Provider) *Updater {
+func NewUpdater(p provider.Provider, version string) *Updater {
 	return &Updater{
 		provider: p,
+		version:  version,
 	}
+}
+
+func (u *Updater) CanUpdate() (bool, error) {
+	lastestVersion, err := u.provider.GetLatestVersion()
+	if err != nil {
+		return false, err
+	}
+	if u.version != lastestVersion {
+		return true, nil
+	}
+	return false, nil
 }
 
 func (u *Updater) Run() error {
+	if err := u.provider.Open(); err != nil {
+		return err
+	}
+	defer u.provider.Close()
+	canUpdate, err := u.CanUpdate()
+	if err != nil {
+		return err
+	}
+	if !canUpdate {
+		return nil
+	}
 
 	return nil
 }
