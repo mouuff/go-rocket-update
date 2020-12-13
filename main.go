@@ -1,6 +1,12 @@
 package main
 
-func main() {
+import (
+	"fmt"
 
-	select {} // wait forever
+	"github.com/mouuff/easy-update/updater"
+)
+
+func main() {
+	fmt.Println(updater.GetPlatformName())
+	fmt.Println(updater.GetExecutable())
 }
