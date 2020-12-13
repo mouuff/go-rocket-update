@@ -27,7 +27,7 @@ func (c *ProviderLocal) Close() error {
 	return nil
 }
 
-func (c *ProviderLocal) GetVersion() (string, error) {
+func (c *ProviderLocal) GetLatestVersion() (string, error) {
 	return c.version, nil
 }
 
