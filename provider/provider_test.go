@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"testing"
 
@@ -24,7 +23,7 @@ func testProvider(p provider.Provider) error {
 			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", filePath, err)
 			return err
 		}
-		destPath := path.Join(tmpDir, filePath)
+		destPath := filepath.Join(tmpDir, filePath)
 		if info.IsDir() {
 			os.MkdirAll(destPath, os.ModePerm)
 		} else {
@@ -45,7 +44,7 @@ func testProvider(p provider.Provider) error {
 			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", filePath, err)
 			return err
 		}
-		destPath := path.Join(tmpDir, filePath)
+		destPath := filepath.Join(tmpDir, filePath)
 		if !fileio.FileExists(destPath) {
 			return fmt.Errorf("File %s should exists", destPath)
 		}
@@ -58,7 +57,7 @@ func testProvider(p provider.Provider) error {
 }
 
 func TestProviderLocal(t *testing.T) {
-	p := provider.NewProviderLocal(path.Join("testdata", "Allum1"))
+	p := provider.NewProviderLocal(filepath.Join("testdata", "Allum1"))
 	if err := p.Open(); err != nil {
 		t.Error(err)
 	}
@@ -75,12 +74,12 @@ func TestProviderLocal(t *testing.T) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	destPath := path.Join(tmpDir, "test.txt")
-	err = p.Retrieve(path.Join("subfolder", "testfile.txt"), destPath)
+	destPath := filepath.Join(tmpDir, "test.txt")
+	err = p.Retrieve(filepath.Join("subfolder", "testfile.txt"), destPath)
 	if err != nil {
 		t.Error(err)
 	}
-	equals, err := fileio.CompareFileChecksum(destPath, path.Join("testdata", "Allum1", "subfolder", "testfile.txt"))
+	equals, err := fileio.CompareFileChecksum(destPath, filepath.Join("testdata", "Allum1", "subfolder", "testfile.txt"))
 	if err != nil {
 		t.Error(err)
 	}

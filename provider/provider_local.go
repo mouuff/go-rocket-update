@@ -2,7 +2,6 @@ package provider
 
 import (
 	"os"
-	"path"
 	"path/filepath"
 
 	"github.com/mouuff/easy-update/fileio"
@@ -43,6 +42,6 @@ func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
 }
 
 func (c *ProviderLocal) Retrieve(src string, dest string) error {
-	fullPath := path.Join(c.path, src)
+	fullPath := filepath.Join(c.path, src)
 	return fileio.CopyFile(fullPath, dest)
 }

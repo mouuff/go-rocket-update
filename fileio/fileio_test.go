@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 	"testing"
 
 	"github.com/mouuff/easy-update/fileio"
@@ -17,7 +17,7 @@ func copyAndChecksumFile(src string) error {
 	}
 	defer os.RemoveAll(dir)
 
-	dest := path.Join(dir, "dest.txt")
+	dest := filepath.Join(dir, "dest.txt")
 	err = fileio.CopyFile(src, dest)
 	if err != nil {
 		return err
@@ -34,15 +34,15 @@ func copyAndChecksumFile(src string) error {
 }
 
 func TestCopyFile(t *testing.T) {
-	err := copyAndChecksumFile(path.Join("testdata", "small.exe"))
+	err := copyAndChecksumFile(filepath.Join("testdata", "small.exe"))
 	if err != nil {
 		t.Error(err)
 	}
-	err = copyAndChecksumFile(path.Join("testdata", "TempleOS.ISO"))
+	err = copyAndChecksumFile(filepath.Join("testdata", "TempleOS.ISO"))
 	if err != nil {
 		t.Error(err)
 	}
-	err = copyAndChecksumFile(path.Join("testdata", "empty.txt"))
+	err = copyAndChecksumFile(filepath.Join("testdata", "empty.txt"))
 	if err != nil {
 		t.Error(err)
 	}
@@ -60,19 +60,19 @@ func verifyChecksumFile(src, expectedChecksum string) error {
 }
 
 func TestChecksum(t *testing.T) {
-	err := verifyChecksumFile(path.Join("testdata", "empty.txt"),
+	err := verifyChecksumFile(filepath.Join("testdata", "empty.txt"),
 		"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
 	if err != nil {
 		t.Error(err)
 	}
-	err = verifyChecksumFile(path.Join("testdata", "TempleOS.ISO"),
+	err = verifyChecksumFile(filepath.Join("testdata", "TempleOS.ISO"),
 		"5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26")
 	if err != nil {
 		t.Error(err)
 	}
 
 	// Test wrong checksum:
-	err = verifyChecksumFile(path.Join("testdata", "TempleOS.ISO"),
+	err = verifyChecksumFile(filepath.Join("testdata", "TempleOS.ISO"),
 		"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
 	if err == nil {
 		t.Error(fmt.Errorf("verifyChecksumFile returned not nil on a bad checksum"))
@@ -80,8 +80,8 @@ func TestChecksum(t *testing.T) {
 }
 
 func TestCompareFileChecksum(t *testing.T) {
-	fileA := path.Join("testdata", "TempleOS.ISO")
-	fileB := path.Join("testdata", "small.exe")
+	fileA := filepath.Join("testdata", "TempleOS.ISO")
+	fileB := filepath.Join("testdata", "small.exe")
 	equals, err := fileio.CompareFileChecksum(fileA, fileA)
 	if err != nil {
 		t.Error(err)
