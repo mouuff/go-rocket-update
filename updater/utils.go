@@ -10,10 +10,13 @@ import (
 	"github.com/kardianos/osext"
 )
 
+// GetPlatformName gets an unique name for the current platform
+// This is used to determine which binary should be used for the update
 func GetPlatformName() string {
 	return runtime.GOOS + "-" + runtime.GOARCH
 }
 
+// GetExecutable get the path to the current executable
 func GetExecutable() (string, error) {
 	execPath, err := osext.Executable()
 	if err != nil {
