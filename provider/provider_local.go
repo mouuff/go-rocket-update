@@ -8,26 +8,30 @@ import (
 	"github.com/mouuff/easy-update/fileio"
 )
 
-type ProviderLocal struct {
+type providerLocal struct {
 	path string
 }
 
+// NewProviderLocal creates a new provider for local files
 func NewProviderLocal(path string) Provider {
-	return &ProviderLocal{path: path}
+	return &providerLocal{path: path}
 }
 
-func (c *ProviderLocal) Open() error {
+// Open opens the provider
+func (c *providerLocal) Open() error {
 	if _, err := os.Stat(c.path); os.IsNotExist(err) {
 		return ErrProviderUnavaiable
 	}
 	return nil
 }
 
-func (c *ProviderLocal) Close() error {
+// Close closes the provider
+func (c *providerLocal) Close() error {
 	return nil
 }
 
-func (c *ProviderLocal) GetLatestVersion() (string, error) {
+// GetLatestVersion gets the lastest version
+func (c *providerLocal) GetLatestVersion() (string, error) {
 	content, err := ioutil.ReadFile(filepath.Join(c.path, "VERSION"))
 	if err != nil {
 		return "", err
@@ -35,7 +39,8 @@ func (c *ProviderLocal) GetLatestVersion() (string, error) {
 	return string(content), nil
 }
 
-func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
+// Walk walks all the files provided
+func (c *providerLocal) Walk(walkFn filepath.WalkFunc) error {
 	return filepath.Walk(c.path, func(filePath string, info os.FileInfo, walkErr error) error {
 		relpath, err := filepath.Rel(c.path, filePath)
 		if err != nil {
@@ -45,7 +50,8 @@ func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
 	})
 }
 
-func (c *ProviderLocal) Retrieve(src string, dest string) error {
+// Retrieve file relative to "provider" to destination
+func (c *providerLocal) Retrieve(src string, dest string) error {
 	fullPath := filepath.Join(c.path, src)
 	return fileio.CopyFile(fullPath, dest)
 }

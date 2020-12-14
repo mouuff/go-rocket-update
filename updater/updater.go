@@ -10,16 +10,19 @@ import (
 	"github.com/mouuff/easy-update/provider"
 )
 
+// Updater struct
 type Updater struct {
 	Provider   provider.Provider
 	BinaryName string
 	Version    string
 }
 
+// getBinaryName gets the name used to find the right binary
 func (u *Updater) getBinaryName() string {
 	return u.BinaryName + "-" + GetPlatformName()
 }
 
+// findBinaryProviderPath finds the right binary using the provider
 func (u *Updater) findBinaryProviderPath() (string, error) {
 	binaryPath := ""
 	err := u.Provider.Walk(func(filePath string, info os.FileInfo, err error) error {
@@ -38,6 +41,7 @@ func (u *Updater) findBinaryProviderPath() (string, error) {
 	return binaryPath, nil
 }
 
+// CanUpdate checks if the updater found a new version
 func (u *Updater) CanUpdate() (bool, error) {
 	lastestVersion, err := u.Provider.GetLatestVersion()
 	if err != nil {
@@ -49,6 +53,8 @@ func (u *Updater) CanUpdate() (bool, error) {
 	return false, nil
 }
 
+// Run runs the updater
+// It will update the current application if an update is found
 func (u *Updater) Run() error {
 	if err := u.Provider.Open(); err != nil {
 		return err
