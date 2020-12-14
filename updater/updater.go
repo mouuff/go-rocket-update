@@ -1,19 +1,49 @@
 package updater
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/mouuff/easy-update/provider"
 )
 
 type Updater struct {
-	provider provider.Provider
-	version  string
+	provider   provider.Provider
+	binaryName string
+	version    string
 }
 
-func NewUpdater(p provider.Provider, version string) *Updater {
+func NewUpdater(p provider.Provider, binaryName, version string) *Updater {
 	return &Updater{
-		provider: p,
-		version:  version,
+		provider:   p,
+		binaryName: binaryName,
+		version:    version,
 	}
+}
+
+func (u *Updater) getBinaryName() string {
+	return u.binaryName + "-" + GetPlatformName()
+}
+
+func (u *Updater) findBinaryProviderPath() (string, error) {
+	binaryPath := ""
+	err := u.provider.Walk(func(filePath string, info os.FileInfo, err error) error {
+		if err != nil {
+			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", filePath, err)
+			return err
+		}
+		if strings.Contains(filePath, u.getBinaryName()) {
+			binaryPath = filePath
+		}
+		return nil
+	})
+	if err != nil {
+		return binaryPath, err
+	}
+	return binaryPath, nil
 }
 
 func (u *Updater) CanUpdate() (bool, error) {
@@ -38,6 +68,27 @@ func (u *Updater) Run() error {
 	}
 	if !canUpdate {
 		return nil
+	}
+	binaryProviderPath, err := u.findBinaryProviderPath()
+	if err != nil {
+		return err
+	}
+	tmpDir, err := ioutil.TempDir("", "updater") //TODO replace appname
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmpDir)
+
+	binaryPath := filepath.Join(tmpDir, filepath.Base(binaryProviderPath))
+
+	err = u.provider.Retrieve(binaryProviderPath, binaryPath)
+	if err != nil {
+		return err
+	}
+
+	err = ReplaceExecutableWith(binaryPath)
+	if err != nil {
+		return err
 	}
 
 	return nil

@@ -1,7 +1,6 @@
 package updater
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -38,8 +37,6 @@ func ReplaceExecutableWith(src string) error {
 	// Here we move the current executable to a tmp dir, we do that because
 	// on windows we must move the running executable to rewrite it
 	renamedExecutable := filepath.Join(tmpDir, filepath.Base(executable))
-	fmt.Println(renamedExecutable)
-	fmt.Println(renamedExecutable)
 	err = os.Rename(executable, renamedExecutable)
 	if err != nil {
 		return err
