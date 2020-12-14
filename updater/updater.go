@@ -78,18 +78,14 @@ func (u *Updater) Run() error {
 		return err
 	}
 	defer os.RemoveAll(tmpDir)
-
 	binaryPath := filepath.Join(tmpDir, filepath.Base(binaryProviderPath))
-
 	err = u.provider.Retrieve(binaryProviderPath, binaryPath)
 	if err != nil {
 		return err
 	}
-
 	err = ReplaceExecutableWith(binaryPath)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
