@@ -12,7 +12,7 @@ func main() {
 
 	fmt.Println(updater.GetPlatformName())
 
-	version := "0.0"
+	version := "1.0"
 
 	u := updater.NewUpdater(
 		provider.NewProviderLocal("testdata"),

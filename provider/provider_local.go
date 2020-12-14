@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -8,12 +9,11 @@ import (
 )
 
 type ProviderLocal struct {
-	path    string
-	version string
+	path string
 }
 
 func NewProviderLocal(path string) Provider {
-	return &ProviderLocal{path: path, version: "1.0"}
+	return &ProviderLocal{path: path}
 }
 
 func (c *ProviderLocal) Open() error {
@@ -28,7 +28,11 @@ func (c *ProviderLocal) Close() error {
 }
 
 func (c *ProviderLocal) GetLatestVersion() (string, error) {
-	return c.version, nil
+	content, err := ioutil.ReadFile(filepath.Join(c.path, "VERSION"))
+	if err != nil {
+		return "", err
+	}
+	return string(content), nil
 }
 
 func (c *ProviderLocal) Walk(walkFn filepath.WalkFunc) error {
