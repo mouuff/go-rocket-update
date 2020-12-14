@@ -11,26 +11,18 @@ import (
 )
 
 type Updater struct {
-	provider   provider.Provider
-	binaryName string
-	version    string
-}
-
-func NewUpdater(p provider.Provider, binaryName, version string) *Updater {
-	return &Updater{
-		provider:   p,
-		binaryName: binaryName,
-		version:    version,
-	}
+	Provider   provider.Provider
+	BinaryName string
+	Version    string
 }
 
 func (u *Updater) getBinaryName() string {
-	return u.binaryName + "-" + GetPlatformName()
+	return u.BinaryName + "-" + GetPlatformName()
 }
 
 func (u *Updater) findBinaryProviderPath() (string, error) {
 	binaryPath := ""
-	err := u.provider.Walk(func(filePath string, info os.FileInfo, err error) error {
+	err := u.Provider.Walk(func(filePath string, info os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", filePath, err)
 			return err
@@ -47,21 +39,21 @@ func (u *Updater) findBinaryProviderPath() (string, error) {
 }
 
 func (u *Updater) CanUpdate() (bool, error) {
-	lastestVersion, err := u.provider.GetLatestVersion()
+	lastestVersion, err := u.Provider.GetLatestVersion()
 	if err != nil {
 		return false, err
 	}
-	if u.version != lastestVersion {
+	if u.Version != lastestVersion {
 		return true, nil
 	}
 	return false, nil
 }
 
 func (u *Updater) Run() error {
-	if err := u.provider.Open(); err != nil {
+	if err := u.Provider.Open(); err != nil {
 		return err
 	}
-	defer u.provider.Close()
+	defer u.Provider.Close()
 	canUpdate, err := u.CanUpdate()
 	if err != nil {
 		return err
@@ -79,7 +71,7 @@ func (u *Updater) Run() error {
 	}
 	defer os.RemoveAll(tmpDir)
 	binaryPath := filepath.Join(tmpDir, filepath.Base(binaryProviderPath))
-	err = u.provider.Retrieve(binaryProviderPath, binaryPath)
+	err = u.Provider.Retrieve(binaryProviderPath, binaryPath)
 	if err != nil {
 		return err
 	}

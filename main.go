@@ -12,14 +12,12 @@ func main() {
 
 	fmt.Println(updater.GetPlatformName())
 
-	version := "1.0"
-
-	u := updater.NewUpdater(
-		provider.NewProviderLocal("testdata"),
-		"main",
-		version,
-	)
-	log.Println(version)
+	u := &updater.Updater{
+		Provider:   provider.NewProviderLocal("testdata"),
+		BinaryName: "main",
+		Version:    "1.0",
+	}
+	log.Println(u.Version)
 	err := u.Run()
 	if err != nil {
 		log.Fatal(err)
