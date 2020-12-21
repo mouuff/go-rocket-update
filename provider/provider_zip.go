@@ -44,7 +44,7 @@ func (c *providerZip) GetLatestVersion() (string, error) {
 }
 
 // Walk walks all the files provided
-func (c *providerZip) Walk(walkFn filepath.WalkFunc) error {
+func (c *providerZip) Walk(walkFn WalkFunc) error {
 
 	for _, f := range c.reader.File {
 		fmt.Println(f.Name)

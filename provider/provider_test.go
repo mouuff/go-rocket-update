@@ -18,13 +18,9 @@ func testProvider(p provider.Provider) error {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	err = p.Walk(func(filePath string, info os.FileInfo, err error) error {
-		if err != nil {
-			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", filePath, err)
-			return err
-		}
+	err = p.Walk(func(filePath string, isDir bool) error {
 		destPath := filepath.Join(tmpDir, filePath)
-		if info.IsDir() {
+		if isDir {
 			os.MkdirAll(destPath, os.ModePerm)
 		} else {
 			os.MkdirAll(filepath.Dir(destPath), os.ModePerm)
@@ -39,11 +35,7 @@ func testProvider(p provider.Provider) error {
 		return err
 	}
 
-	err = p.Walk(func(filePath string, info os.FileInfo, err error) error {
-		if err != nil {
-			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", filePath, err)
-			return err
-		}
+	err = p.Walk(func(filePath string, isDir bool) error {
 		destPath := filepath.Join(tmpDir, filePath)
 		if !fileio.FileExists(destPath) {
 			return fmt.Errorf("File %s should exists", destPath)

@@ -40,13 +40,16 @@ func (c *providerLocal) GetLatestVersion() (string, error) {
 }
 
 // Walk walks all the files provided
-func (c *providerLocal) Walk(walkFn filepath.WalkFunc) error {
+func (c *providerLocal) Walk(walkFn WalkFunc) error {
 	return filepath.Walk(c.path, func(filePath string, info os.FileInfo, walkErr error) error {
-		relpath, err := filepath.Rel(c.path, filePath)
-		if err != nil {
-			return err
+		if walkErr == nil {
+			relpath, err := filepath.Rel(c.path, filePath)
+			if err != nil {
+				return err
+			}
+			return walkFn(relpath, info.IsDir())
 		}
-		return walkFn(relpath, info, walkErr)
+		return nil
 	})
 }
 
