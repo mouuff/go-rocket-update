@@ -2,12 +2,19 @@ package provider
 
 import (
 	"errors"
+	"os"
 )
+
+type FileInfo struct {
+	Path  string
+	IsDir bool
+	Mode  os.FileMode
+}
 
 // WalkFunc is the type of the function called for each file or directory
 // visited by Walk.
 // path is relative
-type WalkFunc func(path string, isDir bool) error
+type WalkFunc func(info *FileInfo) error
 
 // Provider describes an interface for providing files
 type Provider interface {

@@ -17,13 +17,15 @@ func ProviderTestWalkAndRetrieve(p provider.Provider) error {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	err = p.Walk(func(filePath string, isDir bool) error {
-		destPath := filepath.Join(tmpDir, filePath)
-		if isDir {
+	filesCount := 0
+	err = p.Walk(func(info *provider.FileInfo) error {
+		destPath := filepath.Join(tmpDir, info.Path)
+		if info.IsDir {
 			os.MkdirAll(destPath, os.ModePerm)
 		} else {
+			filesCount += 1
 			os.MkdirAll(filepath.Dir(destPath), os.ModePerm)
-			err = p.Retrieve(filePath, destPath)
+			err = p.Retrieve(info.Path, destPath)
 			if err != nil {
 				return err
 			}
@@ -33,9 +35,12 @@ func ProviderTestWalkAndRetrieve(p provider.Provider) error {
 	if err != nil {
 		return err
 	}
+	if filesCount <= 0 {
+		return fmt.Errorf("filesCount <= 0")
+	}
 
-	err = p.Walk(func(filePath string, isDir bool) error {
-		destPath := filepath.Join(tmpDir, filePath)
+	err = p.Walk(func(info *provider.FileInfo) error {
+		destPath := filepath.Join(tmpDir, info.Path)
 		if !fileio.FileExists(destPath) {
 			return fmt.Errorf("File %s should exists", destPath)
 		}
