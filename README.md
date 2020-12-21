@@ -1,2 +1,2 @@
-# golaunch
-Launcher and updater made in golang
+# go-rocket-update
+Easy to use and modular self-updater for golang applications
