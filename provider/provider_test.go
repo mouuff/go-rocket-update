@@ -86,5 +86,19 @@ func TestProviderLocal(t *testing.T) {
 	if equals == false {
 		t.Error("Files should be equals")
 	}
-
 }
+
+/*
+func TestProviderZip(t *testing.T) {
+	p := provider.NewProviderZip(filepath.Join("testdata", "Allum1.zip"))
+	if err := p.Open(); err != nil {
+		t.Error(err)
+	}
+	defer p.Close()
+
+	err := testProvider(p)
+	if err != nil {
+		t.Error(err)
+	}
+}
+*/
