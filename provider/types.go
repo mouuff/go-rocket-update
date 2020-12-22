@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// A FileInfo describes a file given by a provider
 type FileInfo struct {
 	Path string
 	Mode os.FileMode
@@ -15,7 +16,7 @@ type FileInfo struct {
 // path is relative
 type WalkFunc func(info *FileInfo) error
 
-// Provider describes an interface for providing files
+// A Provider describes an interface for providing files
 type Provider interface {
 	Open() error
 	Close() error
