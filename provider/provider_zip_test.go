@@ -13,10 +13,9 @@ func TestProviderZip(t *testing.T) {
 		t.Error(err)
 	}
 	defer p.Close()
-	/*
-		err := Provider(p)
-		if err != nil {
-			t.Error(err)
-		}
-	*/
+
+	err := ProviderTestWalkAndRetrieve(p)
+	if err != nil {
+		t.Error(err)
+	}
 }

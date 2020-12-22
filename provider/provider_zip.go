@@ -2,10 +2,8 @@ package provider
 
 import (
 	"archive/zip"
+	"io"
 	"os"
-	"path/filepath"
-
-	"github.com/mouuff/easy-update/fileio"
 )
 
 type providerZip struct {
@@ -53,8 +51,43 @@ func (c *providerZip) Walk(walkFn WalkFunc) error {
 	return nil
 }
 
+// findFileByPath finds a file in the currend zip by the path
+// returns nil if file does not exists
+func (c *providerZip) findFileByPath(path string) *zip.File {
+	for _, f := range c.reader.File {
+		if f.Name == path {
+			return f
+		}
+	}
+	return nil
+}
+
 // Retrieve file relative to "provider" to destination
 func (c *providerZip) Retrieve(src string, dest string) error {
-	fullPath := filepath.Join(c.path, src)
-	return fileio.CopyFile(fullPath, dest)
+
+	zipFile := c.findFileByPath(src)
+	if zipFile == nil {
+		return ErrFileNotFound
+	}
+
+	inputFile, err := zipFile.Open()
+	if err != nil {
+		return err
+	}
+
+	outputFile, err := os.OpenFile(
+		dest,
+		os.O_WRONLY|os.O_CREATE|os.O_TRUNC,
+		zipFile.Mode(),
+	)
+	if err != nil {
+		return err
+	}
+	defer outputFile.Close()
+
+	_, err = io.Copy(outputFile, inputFile)
+	if err != nil {
+		return err
+	}
+	return nil
 }
