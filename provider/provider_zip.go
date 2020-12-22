@@ -2,7 +2,6 @@ package provider
 
 import (
 	"archive/zip"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -35,7 +34,7 @@ func (c *providerZip) Open() error {
 
 // Close closes the provider
 func (c *providerZip) Close() error {
-	return nil
+	return c.reader.Close()
 }
 
 // GetLatestVersion gets the lastest version
@@ -45,9 +44,11 @@ func (c *providerZip) GetLatestVersion() (string, error) {
 
 // Walk walks all the files provided
 func (c *providerZip) Walk(walkFn WalkFunc) error {
-
 	for _, f := range c.reader.File {
-		fmt.Println(f.Name)
+		walkFn(&FileInfo{
+			Path: f.Name,
+			Mode: f.Mode(),
+		})
 	}
 	return nil
 }
