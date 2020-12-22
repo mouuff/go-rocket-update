@@ -6,9 +6,8 @@ import (
 )
 
 type FileInfo struct {
-	Path  string
-	IsDir bool
-	Mode  os.FileMode
+	Path string
+	Mode os.FileMode
 }
 
 // WalkFunc is the type of the function called for each file or directory

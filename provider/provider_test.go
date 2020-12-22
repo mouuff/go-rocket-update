@@ -20,7 +20,7 @@ func ProviderTestWalkAndRetrieve(p provider.Provider) error {
 	filesCount := 0
 	err = p.Walk(func(info *provider.FileInfo) error {
 		destPath := filepath.Join(tmpDir, info.Path)
-		if info.IsDir {
+		if info.Mode.IsDir() {
 			os.MkdirAll(destPath, os.ModePerm)
 		} else {
 			filesCount += 1

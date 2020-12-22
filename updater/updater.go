@@ -27,7 +27,7 @@ func (u *Updater) findBinaryProviderPath() (string, error) {
 	binaryPath := ""
 	fmt.Println(u.getBinaryName())
 	err := u.Provider.Walk(func(info *provider.FileInfo) error {
-		if !info.IsDir && strings.Contains(info.Path, u.getBinaryName()) {
+		if !info.Mode.IsDir() && strings.Contains(info.Path, u.getBinaryName()) {
 			binaryPath = info.Path
 		}
 		return nil

@@ -48,9 +48,8 @@ func (c *providerLocal) Walk(walkFn WalkFunc) error {
 				return err
 			}
 			return walkFn(&FileInfo{
-				Path:  relpath,
-				IsDir: info.IsDir(),
-				Mode:  info.Mode(),
+				Path: relpath,
+				Mode: info.Mode(),
 			})
 		}
 		return nil
