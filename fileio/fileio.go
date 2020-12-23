@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -67,4 +68,9 @@ func CompareFileChecksum(fileA, fileB string) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+// TempDir creates a new temporary directory
+func TempDir() (string, error) {
+	return ioutil.TempDir("", "rocket-updater")
 }

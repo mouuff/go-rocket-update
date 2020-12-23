@@ -7,6 +7,7 @@ import (
 	"runtime"
 
 	"github.com/kardianos/osext"
+	"github.com/mouuff/easy-update/fileio"
 )
 
 // GetPlatformName gets an unique name for the current platform
@@ -30,7 +31,7 @@ func ReplaceExecutableWith(src string) error {
 	if err != nil {
 		return err
 	}
-	tmpDir, err := ioutil.TempDir("", "updater")
+	tmpDir, err := fileio.TempDir()
 	if err != nil {
 		return err
 	}

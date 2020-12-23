@@ -2,7 +2,6 @@ package fileio_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -11,7 +10,7 @@ import (
 )
 
 func copyAndChecksumFile(src string) error {
-	dir, err := ioutil.TempDir("", "copyAndChecksumFile")
+	dir, err := fileio.TempDir()
 	if err != nil {
 		return err
 	}

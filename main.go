@@ -10,12 +10,6 @@ import (
 
 func main() {
 
-	p := &provider.Github{
-		RepositoryURL: "https://github.com/QuailTeam/cpp_indie_studio",
-		ZipName:       "indie.zip",
-	}
-	fmt.Println(p.Open())
-
 	fmt.Println(updater.GetPlatformName())
 
 	u := &updater.Updater{

@@ -5,11 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/mouuff/easy-update/fileio"
 )
 
 // Github provider finds a zip file in the repository's releases to provide files
@@ -114,7 +115,7 @@ func (c *Github) Open() (err error) {
 	}
 	defer resp.Body.Close()
 
-	c.tmpDir, err = ioutil.TempDir("", "Github")
+	c.tmpDir, err = fileio.TempDir()
 	if err != nil {
 		return
 	}

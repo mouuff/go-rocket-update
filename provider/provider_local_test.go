@@ -1,7 +1,6 @@
 package provider_test
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -22,7 +21,7 @@ func TestProviderLocal(t *testing.T) {
 		t.Error(err)
 	}
 
-	tmpDir, err := ioutil.TempDir("", "TestProviderLocal")
+	tmpDir, err := fileio.TempDir()
 	if err != nil {
 		t.Error(err)
 	}

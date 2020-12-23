@@ -2,11 +2,11 @@ package updater
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/mouuff/easy-update/fileio"
 	"github.com/mouuff/easy-update/provider"
 )
 
@@ -68,7 +68,7 @@ func (u *Updater) Run() error {
 	if err != nil {
 		return err
 	}
-	tmpDir, err := ioutil.TempDir("", "updater") //TODO replace appname
+	tmpDir, err := fileio.TempDir()
 	if err != nil {
 		return err
 	}

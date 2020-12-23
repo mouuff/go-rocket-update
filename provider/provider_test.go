@@ -2,7 +2,6 @@ package provider_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -11,7 +10,7 @@ import (
 )
 
 func ProviderTestWalkAndRetrieve(p provider.Provider) error {
-	tmpDir, err := ioutil.TempDir("", "testProvider")
+	tmpDir, err := fileio.TempDir()
 	if err != nil {
 		return err
 	}
