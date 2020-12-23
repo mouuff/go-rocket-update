@@ -1,12 +1,10 @@
 package provider
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"log"
 	"net/http"
-	"os"
 	"regexp"
 )
 
@@ -14,6 +12,23 @@ type providerGithub struct {
 	repoURL     string
 	zipName     string
 	zipProvider *providerZip
+}
+
+type GithubCommit struct {
+	Sha string `json:"sha"`
+	URL string `json:"url"`
+}
+
+type GithubTag struct {
+	Name       string       `json:"name"`
+	ZipballURL string       `json:"zipball_url"`
+	TarballURL string       `json:"tarball_url"`
+	Commit     GithubCommit `json:"commit"`
+	NodeID     string       `json:"node_id"`
+}
+
+type GithubTags struct {
+	Tag []GithubTag
 }
 
 type repositoryInfo struct {
@@ -80,10 +95,12 @@ func (c *providerGithub) getTags() (string, error) {
 		return "", err
 	}
 	defer response.Body.Close()
-	_, err = io.Copy(os.Stdout, response.Body)
+	var tags []GithubTag
+	err = json.NewDecoder(response.Body).Decode(&tags)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
+	fmt.Println(tags)
 	return "", nil
 }
 
