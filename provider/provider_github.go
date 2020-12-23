@@ -16,8 +16,8 @@ type providerGithub struct {
 	repoURL     string
 	zipName     string
 	tmpDir      string
-	zipProvider *providerZip // provider used to unzip the downloaded zip
-	zipPath     string       // path to the downloaded zip (should be in tmpDir)
+	zipProvider Provider // provider used to unzip the downloaded zip
+	zipPath     string   // path to the downloaded zip (should be in tmpDir)
 }
 
 // githubTag struct used to unmarshal response from github
@@ -111,7 +111,7 @@ func (c *providerGithub) getTags() ([]githubTag, error) {
 
 // Open opens the provider
 func (c *providerGithub) Open() error {
-	zipURL, err := c.getZipURL("")
+	zipURL, err := c.getZipURL("") // get zip url for lastest version
 	if err != nil {
 		return err
 	}
@@ -127,16 +127,17 @@ func (c *providerGithub) Open() error {
 	}
 
 	c.zipPath = filepath.Join(c.tmpDir, c.zipName)
-	out, err := os.Create(c.zipPath)
+	zipFile, err := os.Create(c.zipPath)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
-	_, err = io.Copy(out, resp.Body)
+	_, err = io.Copy(zipFile, resp.Body)
+	zipFile.Close()
 	if err != nil {
 		return err
 	}
-	return err
+	c.zipProvider = NewProviderZip(c.zipPath)
+	return c.zipProvider.Open()
 }
 
 // Close closes the provider
