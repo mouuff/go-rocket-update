@@ -32,17 +32,13 @@ func NewProviderGithub(repoURL, zipName string) Provider {
 // getRepositoryInfo parses the github repository URL
 func (c *providerGithub) repositoryInfo() (*repositoryInfo, error) {
 	re := regexp.MustCompile(`github\.com/(.*?)/(.*?)$`)
-	submatches := re.FindAllStringSubmatch(c.repoURL, -1)
+	submatches := re.FindAllStringSubmatch(c.repoURL, 1)
 	if len(submatches) < 1 {
 		return nil, errors.New("Invalid github URL:" + c.repoURL)
 	}
-	matches := submatches[0]
-	if len(matches) != 3 {
-		return nil, errors.New("Invalid github URL:" + c.repoURL)
-	}
 	return &repositoryInfo{
-		RepositoryOwner: matches[1],
-		RepositoryName:  matches[2],
+		RepositoryOwner: submatches[0][1],
+		RepositoryName:  submatches[0][2],
 	}, nil
 }
 
