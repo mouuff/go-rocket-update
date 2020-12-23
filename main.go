@@ -10,6 +10,9 @@ import (
 
 func main() {
 
+	p := provider.NewProviderGithub("https://github.com/QuailTeam/cpp_indie_studio", "indie.zip")
+	fmt.Println(p.Open())
+
 	fmt.Println(updater.GetPlatformName())
 
 	u := &updater.Updater{
