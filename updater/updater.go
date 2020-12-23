@@ -19,7 +19,7 @@ type Updater struct {
 
 // getBinaryName gets the name used to find the right binary
 func (u *Updater) getBinaryName() string {
-	return u.BinaryName + "-" + GetPlatformName()
+	return u.BinaryName + "_" + GetPlatformName()
 }
 
 // findBinaryProviderPath finds the right binary using the provider

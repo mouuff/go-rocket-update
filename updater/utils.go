@@ -13,7 +13,7 @@ import (
 // GetPlatformName gets an unique name for the current platform
 // This is used to determine which binary should be used for the update
 func GetPlatformName() string {
-	return runtime.GOOS + "-" + runtime.GOARCH
+	return runtime.GOOS + "_" + runtime.GOARCH
 }
 
 // GetExecutable get the path to the current executable
