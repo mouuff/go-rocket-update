@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/mouuff/easy-update/fileio"
-	provider "github.com/mouuff/easy-update/provider"
+	"github.com/mouuff/go-rocket-update/fileio"
+	provider "github.com/mouuff/go-rocket-update/provider"
 )
 
 func TestProviderLocal(t *testing.T) {

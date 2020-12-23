@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/mouuff/easy-update/fileio"
+	"github.com/mouuff/go-rocket-update/fileio"
 )
 
 // Github provider finds a zip file in the repository's releases to provide files

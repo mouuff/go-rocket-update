@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mouuff/easy-update/fileio"
+	"github.com/mouuff/go-rocket-update/fileio"
 )
 
 // A Local provider use a local directory to provide files

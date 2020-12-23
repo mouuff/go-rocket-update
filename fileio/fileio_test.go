@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/mouuff/easy-update/fileio"
+	"github.com/mouuff/go-rocket-update/fileio"
 )
 
 func copyAndChecksumFile(src string) error {

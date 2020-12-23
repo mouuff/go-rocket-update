@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mouuff/easy-update/fileio"
-	"github.com/mouuff/easy-update/provider"
+	"github.com/mouuff/go-rocket-update/fileio"
+	"github.com/mouuff/go-rocket-update/provider"
 )
 
 // Updater struct

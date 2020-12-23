@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mouuff/easy-update/fileio"
-	provider "github.com/mouuff/easy-update/provider"
+	"github.com/mouuff/go-rocket-update/fileio"
+	provider "github.com/mouuff/go-rocket-update/provider"
 )
 
 func ProviderTestWalkAndRetrieve(p provider.Provider) error {

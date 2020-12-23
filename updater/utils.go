@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	"github.com/kardianos/osext"
-	"github.com/mouuff/easy-update/fileio"
+	"github.com/mouuff/go-rocket-update/fileio"
 )
 
 // GetPlatformName gets an unique name for the current platform

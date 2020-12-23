@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	provider "github.com/mouuff/easy-update/provider"
+	provider "github.com/mouuff/go-rocket-update/provider"
 )
 
 func TestProviderZip(t *testing.T) {
