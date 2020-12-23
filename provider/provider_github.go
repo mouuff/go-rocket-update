@@ -14,23 +14,14 @@ type providerGithub struct {
 	zipProvider *providerZip
 }
 
-type GithubCommit struct {
-	Sha string `json:"sha"`
-	URL string `json:"url"`
+// githubTag struct used to unmarshal response from github
+// https://api.github.com/repos/ownerName/projectName/tags
+type githubTag struct {
+	Name string `json:"name"`
 }
 
-type GithubTag struct {
-	Name       string       `json:"name"`
-	ZipballURL string       `json:"zipball_url"`
-	TarballURL string       `json:"tarball_url"`
-	Commit     GithubCommit `json:"commit"`
-	NodeID     string       `json:"node_id"`
-}
-
-type GithubTags struct {
-	Tag []GithubTag
-}
-
+// repositoryInfo is used to get the name of the project and the owner name
+// from this fields we are able to get other links (such as the release and tags link)
 type repositoryInfo struct {
 	RepositoryOwner string
 	RepositoryName  string
@@ -84,24 +75,22 @@ func (c *providerGithub) zipURL(tag string) (string, error) {
 }
 
 // getTags gets tags of the repository
-func (c *providerGithub) getTags() (string, error) {
+func (c *providerGithub) getTags() ([]githubTag, error) {
+	var tags []githubTag
 	tagsURL, err := c.tagsURL()
 	if err != nil {
-		return "", err
+		return tags, err
 	}
-	fmt.Println(tagsURL)
 	response, err := http.Get(tagsURL)
 	if err != nil {
-		return "", err
+		return tags, err
 	}
 	defer response.Body.Close()
-	var tags []GithubTag
 	err = json.NewDecoder(response.Body).Decode(&tags)
 	if err != nil {
-		return "", err
+		return tags, err
 	}
-	fmt.Println(tags)
-	return "", nil
+	return tags, nil
 }
 
 // Open opens the provider
@@ -117,7 +106,14 @@ func (c *providerGithub) Close() error {
 
 // GetLatestVersion gets the lastest version
 func (c *providerGithub) GetLatestVersion() (string, error) {
-	return "1.0", nil
+	tags, err := c.getTags()
+	if err != nil {
+		return "", err
+	}
+	if len(tags) < 1 {
+		return "", errors.New("This github project has no tags")
+	}
+	return tags[0].Name, nil
 }
 
 // Walk walks all the files provided
