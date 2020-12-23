@@ -85,50 +85,49 @@ func (c *Github) getZipURL(tag string) (string, error) {
 }
 
 // getTags gets tags of the repository
-func (c *Github) getTags() ([]githubTag, error) {
-	var tags []githubTag
+func (c *Github) getTags() (tags []githubTag, err error) {
 	tagsURL, err := c.getTagsURL()
 	if err != nil {
-		return tags, err
+		return
 	}
 	resp, err := http.Get(tagsURL)
 	if err != nil {
-		return tags, err
+		return
 	}
 	defer resp.Body.Close()
 	err = json.NewDecoder(resp.Body).Decode(&tags)
 	if err != nil {
-		return tags, err
+		return
 	}
-	return tags, nil
+	return
 }
 
 // Open opens the provider
-func (c *Github) Open() error {
+func (c *Github) Open() (err error) {
 	zipURL, err := c.getZipURL("") // get zip url for lastest version
 	if err != nil {
-		return err
+		return
 	}
 	resp, err := http.Get(zipURL)
 	if err != nil {
-		return err
+		return
 	}
 	defer resp.Body.Close()
 
 	c.tmpDir, err = ioutil.TempDir("", "Github")
 	if err != nil {
-		return err
+		return
 	}
 
 	c.zipPath = filepath.Join(c.tmpDir, c.ZipName)
 	zipFile, err := os.Create(c.zipPath)
 	if err != nil {
-		return err
+		return
 	}
 	_, err = io.Copy(zipFile, resp.Body)
 	zipFile.Close()
 	if err != nil {
-		return err
+		return
 	}
 	c.zipProvider = &Zip{Path: c.zipPath}
 	return c.zipProvider.Open()
