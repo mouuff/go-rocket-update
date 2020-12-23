@@ -4,14 +4,20 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 	"regexp"
 )
 
 type providerGithub struct {
 	repoURL     string
 	zipName     string
-	zipProvider *providerZip
+	tmpDir      string
+	zipProvider *providerZip // provider used to unzip the downloaded zip
+	zipPath     string       // path to the downloaded zip (should be in tmpDir)
 }
 
 // githubTag struct used to unmarshal response from github
@@ -61,7 +67,17 @@ func (c *providerGithub) getTagsURL() (string, error) {
 }
 
 // getZipURL get the zip URL for the github repository
+// If no tag is provided then the latest version is selected
 func (c *providerGithub) getZipURL(tag string) (string, error) {
+	if len(tag) == 0 {
+		// Get lastest version if no tag is provided
+		var err error
+		tag, err = c.GetLatestVersion()
+		if err != nil {
+			return "", err
+		}
+	}
+
 	info, err := c.repositoryInfo()
 	if err != nil {
 		return "", err
@@ -81,12 +97,12 @@ func (c *providerGithub) getTags() ([]githubTag, error) {
 	if err != nil {
 		return tags, err
 	}
-	response, err := http.Get(tagsURL)
+	resp, err := http.Get(tagsURL)
 	if err != nil {
 		return tags, err
 	}
-	defer response.Body.Close()
-	err = json.NewDecoder(response.Body).Decode(&tags)
+	defer resp.Body.Close()
+	err = json.NewDecoder(resp.Body).Decode(&tags)
 	if err != nil {
 		return tags, err
 	}
@@ -95,12 +111,46 @@ func (c *providerGithub) getTags() ([]githubTag, error) {
 
 // Open opens the provider
 func (c *providerGithub) Open() error {
-	_, err := c.getTags()
+	zipURL, err := c.getZipURL("")
+	if err != nil {
+		return err
+	}
+	resp, err := http.Get(zipURL)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	c.tmpDir, err = ioutil.TempDir("", "providerGithub")
+	if err != nil {
+		return err
+	}
+
+	c.zipPath = filepath.Join(c.tmpDir, c.zipName)
+	out, err := os.Create(c.zipPath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return err
+	}
 	return err
 }
 
 // Close closes the provider
 func (c *providerGithub) Close() error {
+	if c.zipProvider != nil {
+		c.zipProvider.Close()
+		c.zipProvider = nil
+	}
+
+	if len(c.tmpDir) > 0 {
+		os.RemoveAll(c.tmpDir)
+		c.tmpDir = ""
+		c.zipPath = ""
+	}
 	return nil
 }
 
@@ -118,10 +168,10 @@ func (c *providerGithub) GetLatestVersion() (string, error) {
 
 // Walk walks all the files provided
 func (c *providerGithub) Walk(walkFn WalkFunc) error {
-	return nil
+	return c.zipProvider.Walk(walkFn)
 }
 
 // Retrieve file relative to "provider" to destination
 func (c *providerGithub) Retrieve(src string, dest string) error {
-	return nil
+	return c.zipProvider.Retrieve(src, dest)
 }
