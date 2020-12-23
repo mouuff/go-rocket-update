@@ -48,8 +48,8 @@ func (c *providerGithub) repositoryInfo() (*repositoryInfo, error) {
 	}, nil
 }
 
-// tagsURL get the tags URL for the github repository
-func (c *providerGithub) tagsURL() (string, error) {
+// getTagsURL get the tags URL for the github repository
+func (c *providerGithub) getTagsURL() (string, error) {
 	info, err := c.repositoryInfo()
 	if err != nil {
 		return "", err
@@ -60,8 +60,8 @@ func (c *providerGithub) tagsURL() (string, error) {
 	), nil
 }
 
-// zipURL get the zip URL
-func (c *providerGithub) zipURL(tag string) (string, error) {
+// getZipURL get the zip URL for the github repository
+func (c *providerGithub) getZipURL(tag string) (string, error) {
 	info, err := c.repositoryInfo()
 	if err != nil {
 		return "", err
@@ -77,7 +77,7 @@ func (c *providerGithub) zipURL(tag string) (string, error) {
 // getTags gets tags of the repository
 func (c *providerGithub) getTags() ([]githubTag, error) {
 	var tags []githubTag
-	tagsURL, err := c.tagsURL()
+	tagsURL, err := c.getTagsURL()
 	if err != nil {
 		return tags, err
 	}
