@@ -72,7 +72,7 @@ func (c *providerGithub) zipURL(tag string) (string, error) {
 	), nil
 }
 
-// zipURL get the zip URL
+// getTags gets tags of the repository
 func (c *providerGithub) getTags() (string, error) {
 	tagsURL, err := c.tagsURL()
 	if err != nil {
