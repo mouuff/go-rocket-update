@@ -10,13 +10,16 @@ import (
 
 func main() {
 
-	p := provider.NewProviderGithub("https://github.com/QuailTeam/cpp_indie_studio", "indie.zip")
+	p := &provider.Github{
+		RepositoryURL: "https://github.com/QuailTeam/cpp_indie_studio",
+		ZipName:       "indie.zip",
+	}
 	fmt.Println(p.Open())
 
 	fmt.Println(updater.GetPlatformName())
 
 	u := &updater.Updater{
-		Provider:   provider.NewProviderLocal("testdata"),
+		Provider:   &provider.Local{Path: "testdata"},
 		BinaryName: "main",
 		Version:    "1.0",
 	}

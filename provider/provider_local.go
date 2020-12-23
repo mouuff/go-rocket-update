@@ -8,31 +8,28 @@ import (
 	"github.com/mouuff/easy-update/fileio"
 )
 
-type providerLocal struct {
-	path string
-}
-
-// NewProviderLocal creates a new provider for local files
-func NewProviderLocal(path string) Provider {
-	return &providerLocal{path: path}
+// A Local provider use a local directory to provide files
+// This provider is mainly here for mocking and testing
+type Local struct {
+	Path string // Path of the folder
 }
 
 // Open opens the provider
-func (c *providerLocal) Open() error {
-	if _, err := os.Stat(c.path); os.IsNotExist(err) {
+func (c *Local) Open() error {
+	if _, err := os.Stat(c.Path); os.IsNotExist(err) {
 		return ErrProviderUnavaiable
 	}
 	return nil
 }
 
 // Close closes the provider
-func (c *providerLocal) Close() error {
+func (c *Local) Close() error {
 	return nil
 }
 
 // GetLatestVersion gets the lastest version
-func (c *providerLocal) GetLatestVersion() (string, error) {
-	content, err := ioutil.ReadFile(filepath.Join(c.path, "VERSION"))
+func (c *Local) GetLatestVersion() (string, error) {
+	content, err := ioutil.ReadFile(filepath.Join(c.Path, "VERSION"))
 	if err != nil {
 		return "", err
 	}
@@ -40,10 +37,10 @@ func (c *providerLocal) GetLatestVersion() (string, error) {
 }
 
 // Walk walks all the files provided
-func (c *providerLocal) Walk(walkFn WalkFunc) error {
-	return filepath.Walk(c.path, func(filePath string, info os.FileInfo, walkErr error) error {
+func (c *Local) Walk(walkFn WalkFunc) error {
+	return filepath.Walk(c.Path, func(filePath string, info os.FileInfo, walkErr error) error {
 		if walkErr == nil {
-			relpath, err := filepath.Rel(c.path, filePath)
+			relpath, err := filepath.Rel(c.Path, filePath)
 			if err != nil {
 				return err
 			}
@@ -57,7 +54,7 @@ func (c *providerLocal) Walk(walkFn WalkFunc) error {
 }
 
 // Retrieve file relative to "provider" to destination
-func (c *providerLocal) Retrieve(src string, dest string) error {
-	fullPath := filepath.Join(c.path, src)
+func (c *Local) Retrieve(src string, dest string) error {
+	fullPath := filepath.Join(c.Path, src)
 	return fileio.CopyFile(fullPath, dest)
 }

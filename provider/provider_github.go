@@ -12,12 +12,14 @@ import (
 	"regexp"
 )
 
-type providerGithub struct {
-	repoURL     string
-	zipName     string
-	tmpDir      string
-	zipProvider Provider // provider used to unzip the downloaded zip
-	zipPath     string   // path to the downloaded zip (should be in tmpDir)
+// Github provider finds a zip file in the repository's releases to provide files
+type Github struct {
+	RepositoryURL string // Repository URL, example github.com/mouuff/go-rocket-update
+	ZipName       string // Zip name (the zip you upload for a release on github), example: binaries.zip
+
+	tmpDir      string // temporary directory this is used internally
+	zipProvider *Zip   // provider used to unzip the downloaded zip
+	zipPath     string // path to the downloaded zip (should be in tmpDir)
 }
 
 // githubTag struct used to unmarshal response from github
@@ -33,20 +35,12 @@ type repositoryInfo struct {
 	RepositoryName  string
 }
 
-// NewProviderGithub creates a new provider for local files
-func NewProviderGithub(repoURL, zipName string) Provider {
-	return &providerGithub{
-		repoURL: repoURL,
-		zipName: zipName,
-	}
-}
-
 // getRepositoryInfo parses the github repository URL
-func (c *providerGithub) repositoryInfo() (*repositoryInfo, error) {
+func (c *Github) repositoryInfo() (*repositoryInfo, error) {
 	re := regexp.MustCompile(`github\.com/(.*?)/(.*?)$`)
-	submatches := re.FindAllStringSubmatch(c.repoURL, 1)
+	submatches := re.FindAllStringSubmatch(c.RepositoryURL, 1)
 	if len(submatches) < 1 {
-		return nil, errors.New("Invalid github URL:" + c.repoURL)
+		return nil, errors.New("Invalid github URL:" + c.RepositoryURL)
 	}
 	return &repositoryInfo{
 		RepositoryOwner: submatches[0][1],
@@ -55,7 +49,7 @@ func (c *providerGithub) repositoryInfo() (*repositoryInfo, error) {
 }
 
 // getTagsURL get the tags URL for the github repository
-func (c *providerGithub) getTagsURL() (string, error) {
+func (c *Github) getTagsURL() (string, error) {
 	info, err := c.repositoryInfo()
 	if err != nil {
 		return "", err
@@ -68,7 +62,7 @@ func (c *providerGithub) getTagsURL() (string, error) {
 
 // getZipURL get the zip URL for the github repository
 // If no tag is provided then the latest version is selected
-func (c *providerGithub) getZipURL(tag string) (string, error) {
+func (c *Github) getZipURL(tag string) (string, error) {
 	if len(tag) == 0 {
 		// Get lastest version if no tag is provided
 		var err error
@@ -86,12 +80,12 @@ func (c *providerGithub) getZipURL(tag string) (string, error) {
 		info.RepositoryOwner,
 		info.RepositoryName,
 		tag,
-		c.zipName,
+		c.ZipName,
 	), nil
 }
 
 // getTags gets tags of the repository
-func (c *providerGithub) getTags() ([]githubTag, error) {
+func (c *Github) getTags() ([]githubTag, error) {
 	var tags []githubTag
 	tagsURL, err := c.getTagsURL()
 	if err != nil {
@@ -110,7 +104,7 @@ func (c *providerGithub) getTags() ([]githubTag, error) {
 }
 
 // Open opens the provider
-func (c *providerGithub) Open() error {
+func (c *Github) Open() error {
 	zipURL, err := c.getZipURL("") // get zip url for lastest version
 	if err != nil {
 		return err
@@ -121,12 +115,12 @@ func (c *providerGithub) Open() error {
 	}
 	defer resp.Body.Close()
 
-	c.tmpDir, err = ioutil.TempDir("", "providerGithub")
+	c.tmpDir, err = ioutil.TempDir("", "Github")
 	if err != nil {
 		return err
 	}
 
-	c.zipPath = filepath.Join(c.tmpDir, c.zipName)
+	c.zipPath = filepath.Join(c.tmpDir, c.ZipName)
 	zipFile, err := os.Create(c.zipPath)
 	if err != nil {
 		return err
@@ -136,12 +130,12 @@ func (c *providerGithub) Open() error {
 	if err != nil {
 		return err
 	}
-	c.zipProvider = NewProviderZip(c.zipPath)
+	c.zipProvider = &Zip{Path: c.zipPath}
 	return c.zipProvider.Open()
 }
 
 // Close closes the provider
-func (c *providerGithub) Close() error {
+func (c *Github) Close() error {
 	if c.zipProvider != nil {
 		c.zipProvider.Close()
 		c.zipProvider = nil
@@ -156,7 +150,7 @@ func (c *providerGithub) Close() error {
 }
 
 // GetLatestVersion gets the lastest version
-func (c *providerGithub) GetLatestVersion() (string, error) {
+func (c *Github) GetLatestVersion() (string, error) {
 	tags, err := c.getTags()
 	if err != nil {
 		return "", err
@@ -168,11 +162,11 @@ func (c *providerGithub) GetLatestVersion() (string, error) {
 }
 
 // Walk walks all the files provided
-func (c *providerGithub) Walk(walkFn WalkFunc) error {
+func (c *Github) Walk(walkFn WalkFunc) error {
 	return c.zipProvider.Walk(walkFn)
 }
 
 // Retrieve file relative to "provider" to destination
-func (c *providerGithub) Retrieve(src string, dest string) error {
+func (c *Github) Retrieve(src string, dest string) error {
 	return c.zipProvider.Retrieve(src, dest)
 }

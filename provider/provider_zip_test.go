@@ -8,7 +8,7 @@ import (
 )
 
 func TestProviderZip(t *testing.T) {
-	p := provider.NewProviderZip(filepath.Join("testdata", "Allum1.zip"))
+	p := &provider.Zip{Path: filepath.Join("testdata", "Allum1.zip")}
 	if err := p.Open(); err != nil {
 		t.Error(err)
 	}

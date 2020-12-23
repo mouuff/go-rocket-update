@@ -11,7 +11,7 @@ import (
 )
 
 func TestProviderLocal(t *testing.T) {
-	p := provider.NewProviderLocal(filepath.Join("testdata", "Allum1"))
+	p := &provider.Local{Path: filepath.Join("testdata", "Allum1")}
 	if err := p.Open(); err != nil {
 		t.Error(err)
 	}
