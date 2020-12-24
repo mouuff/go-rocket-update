@@ -9,7 +9,7 @@ import (
 	provider "github.com/mouuff/go-rocket-update/provider"
 )
 
-func ProviderTestWalkAndRetrieve(p provider.Provider) error {
+func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	tmpDir, err := fileio.TempDir()
 	if err != nil {
 		return err

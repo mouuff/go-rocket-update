@@ -16,13 +16,19 @@ type FileInfo struct {
 // path is relative
 type WalkFunc func(info *FileInfo) error
 
-// A Provider describes an interface for providing files
-type Provider interface {
-	Open() error
-	Close() error
+// AccessProvider describes the access methods of a Provider
+// This methods shouldn't change the state of the provider
+type AccessProvider interface {
 	GetLatestVersion() (string, error)
 	Walk(walkFn WalkFunc) error
 	Retrieve(srcPath string, destPath string) error
+}
+
+// A Provider describes an interface for providing files
+type Provider interface {
+	AccessProvider
+	Open() error
+	Close() error
 }
 
 var (
