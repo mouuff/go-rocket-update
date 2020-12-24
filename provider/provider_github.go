@@ -130,10 +130,7 @@ func (c *Github) Open() (err error) {
 	if err != nil {
 		return
 	}
-	c.zipProvider, err = NewZipProvider(c.zipPath)
-	if err != nil {
-		return
-	}
+	c.zipProvider = &Zip{Path: c.zipPath}
 	return c.zipProvider.Open()
 }
 

@@ -8,30 +8,30 @@ import (
 
 // Zip provider
 type Zip struct {
-	Reader *zip.ReadCloser // reader for the current zip file
-}
-
-// NewZipProvider creates a new zip provider from a zip file
-func NewZipProvider(Path string) (c *Zip, err error) {
-	c = &Zip{}
-	c.Reader, err = zip.OpenReader(Path)
-	if err != nil {
-		return nil, err
-	}
-	return c, nil
+	Path   string          // Path of the zip file
+	reader *zip.ReadCloser // reader for the current zip file
 }
 
 // Open opens the provider
 func (c *Zip) Open() error {
+	_, err := os.Stat(c.Path)
+	if os.IsNotExist(err) {
+		return ErrProviderUnavaiable
+	}
+	c.reader, err = zip.OpenReader(c.Path)
+	if err != nil {
+		c.reader = nil
+		return err
+	}
 	return nil
 }
 
 // Close closes the provider
 func (c *Zip) Close() error {
-	if c.Reader == nil {
+	if c.reader == nil {
 		return nil
 	}
-	return c.Reader.Close()
+	return c.reader.Close()
 }
 
 // GetLatestVersion gets the lastest version
@@ -41,7 +41,7 @@ func (c *Zip) GetLatestVersion() (string, error) {
 
 // Walk walks all the files provided
 func (c *Zip) Walk(walkFn WalkFunc) error {
-	for _, f := range c.Reader.File {
+	for _, f := range c.reader.File {
 		walkFn(&FileInfo{
 			Path: f.Name,
 			Mode: f.Mode(),
@@ -53,7 +53,7 @@ func (c *Zip) Walk(walkFn WalkFunc) error {
 // findFileByPath finds a file in the currend zip by the path
 // returns nil if file does not exists
 func (c *Zip) findFileByPath(path string) *zip.File {
-	for _, f := range c.Reader.File {
+	for _, f := range c.reader.File {
 		if f.Name == path {
 			return f
 		}
