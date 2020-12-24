@@ -17,8 +17,8 @@ func main() {
 			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
 			ZipName:       "binaries.zip",
 		},
-		BinaryName: "rocket",
-		Version:    "1.1",
+		BinaryName: "go-rocket-update-example",
+		Version:    "v0.1",
 	}
 	log.Println(u.Version)
 	err := u.Run()
