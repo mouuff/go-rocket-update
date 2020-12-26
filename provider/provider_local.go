@@ -9,7 +9,7 @@ import (
 )
 
 // A Local provider use a local directory to provide files
-// This provider is mainly here for mocking and testing
+// This provider is mainly here for mocking and testing but it could be used on a shared network folder
 type Local struct {
 	Path string // Path of the folder
 }
