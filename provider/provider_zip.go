@@ -34,7 +34,7 @@ func (c *Zip) Close() error {
 	return c.reader.Close()
 }
 
-// GetLatestVersion gets the lastest version
+// GetLatestVersion gets the latest version
 func (c *Zip) GetLatestVersion() (string, error) {
 	return "1.0", nil
 }

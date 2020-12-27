@@ -19,7 +19,7 @@ type WalkFunc func(info *FileInfo) error
 // AccessProvider describes the access methods of a Provider
 // This methods shouldn't change the state of the provider
 type AccessProvider interface {
-	GetLatestVersion() (string, error)
+	GetLatestVersion() (string, error) // Get the latest version (Should be accessible even if Open() was not called)
 	Walk(walkFn WalkFunc) error
 	Retrieve(srcPath string, destPath string) error
 }

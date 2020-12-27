@@ -4,17 +4,10 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/kardianos/osext"
 	"github.com/mouuff/go-rocket-update/fileio"
 )
-
-// GetPlatformName gets an unique name for the current platform
-// This is used to determine which binary should be used for the update
-func GetPlatformName() string {
-	return runtime.GOOS + "_" + runtime.GOARCH
-}
 
 // GetExecutable get the path to the current executable
 func GetExecutable() (string, error) {

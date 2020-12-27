@@ -1,9 +1,10 @@
 package updater
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/mouuff/go-rocket-update/fileio"
@@ -19,15 +20,14 @@ type Updater struct {
 
 // getBinaryName gets the name used to find the right binary
 func (u *Updater) getBinaryName() string {
-	return u.BinaryName + "_" + GetPlatformName()
+	return u.BinaryName + "_" + runtime.GOOS + "_" + runtime.GOARCH
 }
 
 // findBinaryProviderPath finds the right binary using the provider
 func (u *Updater) findBinaryProviderPath() (string, error) {
 	binaryPath := ""
-	fmt.Println(u.getBinaryName())
 	err := u.Provider.Walk(func(info *provider.FileInfo) error {
-		if !info.Mode.IsDir() && strings.Contains(info.Path, u.getBinaryName()) {
+		if info.Mode.IsRegular() && strings.Contains(filepath.Base(info.Path), u.getBinaryName()) {
 			binaryPath = info.Path
 		}
 		return nil
@@ -40,11 +40,12 @@ func (u *Updater) findBinaryProviderPath() (string, error) {
 
 // CanUpdate checks if the updater found a new version
 func (u *Updater) CanUpdate() (bool, error) {
-	lastestVersion, err := u.Provider.GetLatestVersion()
+	latestVersion, err := u.Provider.GetLatestVersion()
 	if err != nil {
 		return false, err
 	}
-	if u.Version != lastestVersion {
+	if u.Version != latestVersion {
+		log.Printf("Found update: %s", latestVersion)
 		return true, nil
 	}
 	return false, nil
@@ -53,17 +54,16 @@ func (u *Updater) CanUpdate() (bool, error) {
 // Run runs the updater
 // It will update the current application if an update is found
 func (u *Updater) Run() error {
+	canUpdate, err := u.CanUpdate()
+	if err != nil || !canUpdate {
+		return err
+	}
+	log.Printf("Updating...")
 	if err := u.Provider.Open(); err != nil {
 		return err
 	}
 	defer u.Provider.Close()
-	canUpdate, err := u.CanUpdate()
-	if err != nil {
-		return err
-	}
-	if !canUpdate {
-		return nil
-	}
+
 	binaryProviderPath, err := u.findBinaryProviderPath()
 	if err != nil {
 		return err

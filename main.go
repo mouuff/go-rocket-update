@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/mouuff/go-rocket-update/provider"
@@ -9,9 +8,6 @@ import (
 )
 
 func main() {
-
-	fmt.Println(updater.GetPlatformName())
-
 	u := &updater.Updater{
 		Provider: &provider.Github{
 			RepositoryURL: "github.com/mouuff/go-rocket-update-example",

@@ -27,7 +27,7 @@ func (c *Local) Close() error {
 	return nil
 }
 
-// GetLatestVersion gets the lastest version
+// GetLatestVersion gets the latest version
 func (c *Local) GetLatestVersion() (string, error) {
 	content, err := ioutil.ReadFile(filepath.Join(c.Path, "VERSION"))
 	if err != nil {

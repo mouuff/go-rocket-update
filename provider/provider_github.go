@@ -65,7 +65,7 @@ func (c *Github) getTagsURL() (string, error) {
 // If no tag is provided then the latest version is selected
 func (c *Github) getZipURL(tag string) (string, error) {
 	if len(tag) == 0 {
-		// Get lastest version if no tag is provided
+		// Get latest version if no tag is provided
 		var err error
 		tag, err = c.GetLatestVersion()
 		if err != nil {
@@ -105,7 +105,7 @@ func (c *Github) getTags() (tags []githubTag, err error) {
 
 // Open opens the provider
 func (c *Github) Open() (err error) {
-	zipURL, err := c.getZipURL("") // get zip url for lastest version
+	zipURL, err := c.getZipURL("") // get zip url for latest version
 	if err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (c *Github) Close() error {
 	return nil
 }
 
-// GetLatestVersion gets the lastest version
+// GetLatestVersion gets the latest version
 func (c *Github) GetLatestVersion() (string, error) {
 	tags, err := c.getTags()
 	if err != nil {
