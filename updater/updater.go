@@ -51,36 +51,40 @@ func (u *Updater) CanUpdate() (bool, error) {
 	return false, nil
 }
 
+// updateExecutable updates the current executable with the new one
+func (u *Updater) updateExecutable() (err error) {
+	tmpDir, err := fileio.TempDir()
+	if err != nil {
+		return
+	}
+	defer os.RemoveAll(tmpDir)
+	binaryProviderPath, err := u.findBinaryProviderPath()
+	if err != nil {
+		return
+	}
+	binaryTmpPath := filepath.Join(tmpDir, filepath.Base(binaryProviderPath))
+	err = u.Provider.Retrieve(binaryProviderPath, binaryTmpPath)
+	if err != nil {
+		return
+	}
+	err = ReplaceExecutableWith(binaryTmpPath)
+	return
+}
+
 // Run runs the updater
 // It will update the current application if an update is found
-func (u *Updater) Run() error {
+func (u *Updater) Run() (err error) {
 	canUpdate, err := u.CanUpdate()
 	if err != nil || !canUpdate {
-		return err
+		return
 	}
 	log.Printf("Updating...")
-	if err := u.Provider.Open(); err != nil {
-		return err
+	if err = u.Provider.Open(); err != nil {
+		return
 	}
 	defer u.Provider.Close()
 
-	binaryProviderPath, err := u.findBinaryProviderPath()
-	if err != nil {
-		return err
-	}
-	tmpDir, err := fileio.TempDir()
-	if err != nil {
-		return err
-	}
-	defer os.RemoveAll(tmpDir)
-	binaryPath := filepath.Join(tmpDir, filepath.Base(binaryProviderPath))
-	err = u.Provider.Retrieve(binaryProviderPath, binaryPath)
-	if err != nil {
-		return err
-	}
-	err = ReplaceExecutableWith(binaryPath)
-	if err != nil {
-		return err
-	}
-	return nil
+	err = u.updateExecutable()
+	log.Printf("Updated!")
+	return
 }
