@@ -1,24 +1,21 @@
 package main
 
 import (
-	"log"
-
-	"github.com/mouuff/go-rocket-update/provider"
-	"github.com/mouuff/go-rocket-update/updater"
+	"flag"
 )
 
 func main() {
-	u := &updater.Updater{
-		Provider: &provider.Github{
-			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
-			ZipName:       "binaries.zip",
-		},
-		BinaryName: "go-rocket-update-example",
-		Version:    "v0.0",
-	}
-	log.Println(u.Version)
-	err := u.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
+	//keygenCommand := flag.NewFlagSet("keygen", flag.ExitOnError)
+	signCommand := flag.NewFlagSet("sign", flag.ExitOnError)
+
+	privateKeyPtr := signCommand.String("privateKey", "", "Private key used to sign files (Required)")
+	folderPtr := signCommand.String("folder", "", "Folder to sign (Required)")
+
+	/*
+			if len(os.Args) < 2 {
+		        fmt.Println("keyGen or sign command is required")
+		        os.Exit(1)
+			}
+	*/
+
 }
