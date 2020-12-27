@@ -48,7 +48,7 @@ func TestCopyFile(t *testing.T) {
 }
 
 func verifyChecksumFile(src, expectedChecksum string) error {
-	checksum, err := fileio.ChecksumFile(src)
+	checksum, err := fileio.ChecksumFileHex(src)
 	if err != nil {
 		return err
 	}

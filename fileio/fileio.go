@@ -1,6 +1,9 @@
 package fileio
 
 import (
+	"crypto"
+	"crypto/rand"
+	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/hex"
 	"io"
@@ -31,7 +34,7 @@ func CopyFile(src string, dest string) error {
 }
 
 // ChecksumFile calculate the sha256 checksum of a file
-func ChecksumFile(src string) (string, error) {
+func ChecksumFile(src string) ([]byte, error) {
 	f, err := os.Open(src)
 	if err != nil {
 		return "", err
@@ -43,7 +46,16 @@ func ChecksumFile(src string) (string, error) {
 		return "", err
 	}
 
-	return hex.EncodeToString(hash.Sum(nil)), nil
+	return hash.Sum(nil), nil
+}
+
+// ChecksumFileHex calculate the sha256 checksum of a file returns hex value
+func ChecksumFileHex(src string) (string, error) {
+	b, err := ChecksumFile(src)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(b), nil
 }
 
 // FileExists checks if the file exists
@@ -56,11 +68,11 @@ func FileExists(src string) bool {
 
 // CompareFileChecksum compares two files checksums
 func CompareFileChecksum(fileA, fileB string) (bool, error) {
-	fileAChecksum, err := ChecksumFile(fileA)
+	fileAChecksum, err := ChecksumFileHex(fileA)
 	if err != nil {
 		return false, err
 	}
-	fileBChecksum, err := ChecksumFile(fileB)
+	fileBChecksum, err := ChecksumFileHex(fileB)
 	if err != nil {
 		return false, err
 	}
@@ -73,4 +85,24 @@ func CompareFileChecksum(fileA, fileB string) (bool, error) {
 // TempDir creates a new temporary directory
 func TempDir() (string, error) {
 	return ioutil.TempDir("", "rocket-updater")
+}
+
+// SignFile signs a file using the given private key
+// returns the signature as hex
+func SignFile(priv *rsa.PrivateKey, path string) (string, error) {
+	hash, err := ChecksumFile(path)
+	if err != nil {
+		return "", err
+	}
+	signature, err := rsa.SignPKCS1v15(rand.Reader, priv, crypto.SHA256, hash)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(signature), nil
+
+}
+
+// VerifyFile verifies the signature of a file
+func VerifyFile(priv *rsa.PublicKey, path string) (string, error) {
+
 }
