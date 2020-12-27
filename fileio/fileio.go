@@ -1,9 +1,6 @@
 package fileio
 
 import (
-	"crypto"
-	"crypto/rand"
-	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/hex"
 	"io"
@@ -37,19 +34,19 @@ func CopyFile(src string, dest string) error {
 func ChecksumFile(src string) ([]byte, error) {
 	f, err := os.Open(src)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 	defer f.Close()
 
 	hash := sha256.New()
 	if _, err := io.Copy(hash, f); err != nil {
-		return "", err
+		return []byte{}, err
 	}
 
 	return hash.Sum(nil), nil
 }
 
-// ChecksumFileHex calculate the sha256 checksum of a file returns hex value
+// ChecksumFileHex is the same as ChecksumFile but returns hex string instead
 func ChecksumFileHex(src string) (string, error) {
 	b, err := ChecksumFile(src)
 	if err != nil {
@@ -85,24 +82,4 @@ func CompareFileChecksum(fileA, fileB string) (bool, error) {
 // TempDir creates a new temporary directory
 func TempDir() (string, error) {
 	return ioutil.TempDir("", "rocket-updater")
-}
-
-// SignFile signs a file using the given private key
-// returns the signature as hex
-func SignFile(priv *rsa.PrivateKey, path string) (string, error) {
-	hash, err := ChecksumFile(path)
-	if err != nil {
-		return "", err
-	}
-	signature, err := rsa.SignPKCS1v15(rand.Reader, priv, crypto.SHA256, hash)
-	if err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(signature), nil
-
-}
-
-// VerifyFile verifies the signature of a file
-func VerifyFile(priv *rsa.PublicKey, path string) (string, error) {
-
 }
