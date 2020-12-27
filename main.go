@@ -1,21 +1,37 @@
 package main
 
 import (
-	"flag"
+	"errors"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/mouuff/go-rocket-update/command"
 )
 
+func runCommands(args []string) error {
+	if len(args) < 1 {
+		return errors.New("You must pass a sub-command")
+	}
+
+	cmds := []command.Command{
+		command.NewSignPackage(),
+	}
+
+	subcommand := args[0]
+
+	for _, cmd := range cmds {
+		if cmd.Name() == subcommand {
+			cmd.Init(args[1:])
+			return cmd.Run()
+		}
+	}
+
+	return fmt.Errorf("Unknown subcommand: %s", subcommand)
+}
+
 func main() {
-	//keygenCommand := flag.NewFlagSet("keygen", flag.ExitOnError)
-	signCommand := flag.NewFlagSet("sign", flag.ExitOnError)
-
-	privateKeyPtr := signCommand.String("privateKey", "", "Private key used to sign files (Required)")
-	folderPtr := signCommand.String("folder", "", "Folder to sign (Required)")
-
-	/*
-			if len(os.Args) < 2 {
-		        fmt.Println("keyGen or sign command is required")
-		        os.Exit(1)
-			}
-	*/
-
+	if err := runCommands(os.Args[1:]); err != nil {
+		log.Fatal(err)
+	}
 }
