@@ -22,7 +22,7 @@ func copyAndChecksumFile(src string) error {
 		return err
 	}
 
-	equals, err := fileio.CompareFileChecksum(src, dest)
+	equals, err := fileio.CompareFiles(src, dest)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func TestCopyFile(t *testing.T) {
 }
 
 func verifyChecksumFile(src, expectedChecksum string) error {
-	checksum, err := fileio.ChecksumFileHex(src)
+	checksum, err := fileio.ChecksumFile(src)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func TestChecksum(t *testing.T) {
 func TestCompareFileChecksum(t *testing.T) {
 	fileA := filepath.Join("testdata", "TempleOS.ISO")
 	fileB := filepath.Join("testdata", "small.exe")
-	equals, err := fileio.CompareFileChecksum(fileA, fileA)
+	equals, err := fileio.CompareFiles(fileA, fileA)
 	if err != nil {
 		t.Error(err)
 	}
@@ -89,7 +89,7 @@ func TestCompareFileChecksum(t *testing.T) {
 		t.Error("Should be equal")
 	}
 
-	equals, err = fileio.CompareFileChecksum(fileA, fileB)
+	equals, err = fileio.CompareFiles(fileA, fileB)
 	if err != nil {
 		t.Error(err)
 	}

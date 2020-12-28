@@ -30,31 +30,6 @@ func CopyFile(src string, dest string) error {
 	return err
 }
 
-// ChecksumFile calculate the sha256 checksum of a file
-func ChecksumFile(src string) ([]byte, error) {
-	f, err := os.Open(src)
-	if err != nil {
-		return []byte{}, err
-	}
-	defer f.Close()
-
-	hash := sha256.New()
-	if _, err := io.Copy(hash, f); err != nil {
-		return []byte{}, err
-	}
-
-	return hash.Sum(nil), nil
-}
-
-// ChecksumFileHex is the same as ChecksumFile but returns hex string instead
-func ChecksumFileHex(src string) (string, error) {
-	b, err := ChecksumFile(src)
-	if err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(b), nil
-}
-
 // FileExists checks if the file exists
 func FileExists(src string) bool {
 	if _, err := os.Stat(src); os.IsNotExist(err) {
@@ -63,13 +38,30 @@ func FileExists(src string) bool {
 	return true
 }
 
-// CompareFileChecksum compares two files checksums
-func CompareFileChecksum(fileA, fileB string) (bool, error) {
-	fileAChecksum, err := ChecksumFileHex(fileA)
+// ChecksumFile calculate the checksum of a file
+// This is used only internally to compare files
+func ChecksumFile(src string) (string, error) {
+	f, err := os.Open(src)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	hash := sha256.New()
+	if _, err := io.Copy(hash, f); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(hash.Sum(nil)), nil
+}
+
+// CompareFiles compares two files
+// returns True if files are the same
+func CompareFiles(fileA, fileB string) (bool, error) {
+	fileAChecksum, err := ChecksumFile(fileA)
 	if err != nil {
 		return false, err
 	}
-	fileBChecksum, err := ChecksumFileHex(fileB)
+	fileBChecksum, err := ChecksumFile(fileB)
 	if err != nil {
 		return false, err
 	}
