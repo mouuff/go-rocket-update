@@ -10,13 +10,22 @@ import (
 )
 
 func runCommands(args []string) error {
-	if len(args) < 1 {
-		return errors.New("You must pass a sub-command")
-	}
 
 	cmds := []command.Command{
 		&command.Sign{},
 		&command.Keygen{},
+	}
+
+	if len(args) < 1 {
+		cmdNames := ""
+		for i, cmd := range cmds {
+			if i > 0 {
+				cmdNames += ", "
+			}
+			cmdNames += cmd.Name()
+		}
+		return errors.New("You must pass a sub-command (" + cmdNames + ")")
+
 	}
 
 	subcommand := args[0]
