@@ -2,7 +2,7 @@ package command
 
 import (
 	"flag"
-	"fmt"
+	"io/ioutil"
 
 	"github.com/mouuff/go-rocket-update/crypto"
 )
@@ -31,8 +31,20 @@ func (cmd *Keygen) Run() error {
 		return err
 	}
 
-	fmt.Println("rsa: ", crypto.ExportPrivateKey(priv), "!")
-	fmt.Println("name: ", cmd.keyName, "!")
+	privPem := crypto.ExportPrivateKeyAsPem(priv)
+	err = ioutil.WriteFile(cmd.keyName, privPem, 0600)
+	if err != nil {
+		return err
+	}
+
+	pubPem, err := crypto.ExportPublicKeyAsPem(&priv.PublicKey)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(cmd.keyName+".pub", pubPem, 0644)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

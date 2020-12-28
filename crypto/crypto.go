@@ -13,8 +13,8 @@ import (
 )
 
 // ChecksumFileSHA256 calculate the sha256 checksum of a file
-func ChecksumFileSHA256(src string) ([]byte, error) {
-	f, err := os.Open(src)
+func ChecksumFileSHA256(path string) ([]byte, error) {
+	f, err := os.Open(path)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -60,8 +60,8 @@ func VerifyFileSignature(pub *rsa.PublicKey, signature []byte, path string) erro
 	return nil
 }
 
-// ExportPrivateKey exports the private key to pem string
-func ExportPrivateKey(privkey *rsa.PrivateKey) string {
+// ExportPrivateKeyAsPem exports the private key to Pem
+func ExportPrivateKeyAsPem(privkey *rsa.PrivateKey) []byte {
 	privkeyBytes := x509.MarshalPKCS1PrivateKey(privkey)
 	privkeyPem := pem.EncodeToMemory(
 		&pem.Block{
@@ -69,12 +69,12 @@ func ExportPrivateKey(privkey *rsa.PrivateKey) string {
 			Bytes: privkeyBytes,
 		},
 	)
-	return string(privkeyPem)
+	return privkeyPem
 }
 
-// ParsePrivateKey parses the private key from pem string
-func ParsePrivateKey(privPEM string) (*rsa.PrivateKey, error) {
-	block, _ := pem.Decode([]byte(privPEM))
+// ParsePemPrivateKey parses the pem private key
+func ParsePemPrivateKey(privPEM []byte) (*rsa.PrivateKey, error) {
+	block, _ := pem.Decode(privPEM)
 	if block == nil {
 		return nil, errors.New("failed to parse PEM block containing the key")
 	}
@@ -87,11 +87,11 @@ func ParsePrivateKey(privPEM string) (*rsa.PrivateKey, error) {
 	return priv, nil
 }
 
-// ExportPublicKey exports the public key as Pem string
-func ExportPublicKey(pubkey *rsa.PublicKey) (string, error) {
+// ExportPublicKeyAsPem exports the public key as Pem
+func ExportPublicKeyAsPem(pubkey *rsa.PublicKey) ([]byte, error) {
 	pubkeyBytes, err := x509.MarshalPKIXPublicKey(pubkey)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	pubkeyPem := pem.EncodeToMemory(
 		&pem.Block{
@@ -99,13 +99,12 @@ func ExportPublicKey(pubkey *rsa.PublicKey) (string, error) {
 			Bytes: pubkeyBytes,
 		},
 	)
-
-	return string(pubkeyPem), nil
+	return pubkeyPem, nil
 }
 
-// ParsePublicKey parse the public key as Pem string
-func ParsePublicKey(pubPEM string) (*rsa.PublicKey, error) {
-	block, _ := pem.Decode([]byte(pubPEM))
+// ParsePemPublicKey parse the pem public key
+func ParsePemPublicKey(pubPEM []byte) (*rsa.PublicKey, error) {
+	block, _ := pem.Decode(pubPEM)
 	if block == nil {
 		return nil, errors.New("failed to parse PEM block containing the key")
 	}
