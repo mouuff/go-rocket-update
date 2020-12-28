@@ -17,7 +17,7 @@ func (cmd *Sign) Name() string {
 }
 
 func (cmd *Sign) Init(args []string) error {
-	cmd.flagSet = flag.NewFlagSet(cmd.Name(), flag.ContinueOnError)
+	cmd.flagSet = flag.NewFlagSet(cmd.Name(), flag.ExitOnError)
 
 	cmd.flagSet.StringVar(&cmd.path, "path", "", "path to the package (required)")
 	cmd.flagSet.StringVar(&cmd.key, "key", "", "path to the private key (required)")

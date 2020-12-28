@@ -11,37 +11,37 @@ func TestSignAndVerifyFile(t *testing.T) {
 	fileA := filepath.Join("testdata", "small.txt")
 	fileB := filepath.Join("testdata", "bin.txt")
 
-	privA, err := crypto.RandomPrivateKey()
+	privA, err := crypto.GeneratePrivateKey()
 	if err != nil {
 		t.Error(err)
 	}
-	privB, err := crypto.RandomPrivateKey()
-	if err != nil {
-		t.Error(err)
-	}
-
-	signatureA, err := crypto.GetSignature(privA, fileA)
-	if err != nil {
-		t.Error(err)
-	}
-	signatureB, err := crypto.GetSignature(privA, fileB)
+	privB, err := crypto.GeneratePrivateKey()
 	if err != nil {
 		t.Error(err)
 	}
 
-	err = crypto.VerifySignature(&privA.PublicKey, signatureA, fileA)
+	signatureA, err := crypto.GetFileSignature(privA, fileA)
 	if err != nil {
 		t.Error(err)
 	}
-	err = crypto.VerifySignature(&privB.PublicKey, signatureA, fileA)
+	signatureB, err := crypto.GetFileSignature(privA, fileB)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = crypto.VerifyFileSignature(&privA.PublicKey, signatureA, fileA)
+	if err != nil {
+		t.Error(err)
+	}
+	err = crypto.VerifyFileSignature(&privB.PublicKey, signatureA, fileA)
 	if err == nil {
 		t.Error("fileA should not verify with privB")
 	}
-	err = crypto.VerifySignature(&privB.PublicKey, signatureB, fileA)
+	err = crypto.VerifyFileSignature(&privB.PublicKey, signatureB, fileA)
 	if err == nil {
 		t.Error("fileA should not verify with signatureB")
 	}
-	err = crypto.VerifySignature(&privA.PublicKey, signatureB, fileB)
+	err = crypto.VerifyFileSignature(&privA.PublicKey, signatureB, fileB)
 	if err != nil {
 		t.Error(err)
 	}
