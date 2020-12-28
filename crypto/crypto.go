@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
-	"encoding/hex"
 	"io"
 	"os"
 )
@@ -33,29 +32,25 @@ func RandomPrivateKey() (*rsa.PrivateKey, error) {
 
 // GetSignature signs a file using the given private key
 // returns the signature in a hex string
-func GetSignature(priv *rsa.PrivateKey, path string) (string, error) {
+func GetSignature(priv *rsa.PrivateKey, path string) ([]byte, error) {
 	hash, err := ChecksumFileSHA256(path)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	signature, err := rsa.SignPKCS1v15(rand.Reader, priv, crypto.SHA256, hash)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return hex.EncodeToString(signature), nil
+	return signature, nil
 }
 
 // VerifySignature verifies the signature of a file
-func VerifySignature(pub *rsa.PublicKey, signature string, path string) error {
+func VerifySignature(pub *rsa.PublicKey, signature []byte, path string) error {
 	hash, err := ChecksumFileSHA256(path)
 	if err != nil {
 		return err
 	}
-	rawSignature, err := hex.DecodeString(signature)
-	if err != nil {
-		return err
-	}
-	err = rsa.VerifyPKCS1v15(pub, crypto.SHA256, hash, rawSignature)
+	err = rsa.VerifyPKCS1v15(pub, crypto.SHA256, hash, signature)
 	if err != nil {
 		return err
 	}
