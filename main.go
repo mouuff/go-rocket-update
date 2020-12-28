@@ -15,7 +15,7 @@ func runCommands(args []string) error {
 	}
 
 	cmds := []command.Command{
-		&command.SignPackage{},
+		&command.Sign{},
 	}
 
 	subcommand := args[0]

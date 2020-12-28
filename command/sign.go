@@ -5,18 +5,18 @@ import (
 	"fmt"
 )
 
-type SignPackage struct {
+type Sign struct {
 	flagSet *flag.FlagSet
 
 	path string
 	key  string
 }
 
-func (cmd *SignPackage) Name() string {
+func (cmd *Sign) Name() string {
 	return "sign"
 }
 
-func (cmd *SignPackage) Init(args []string) error {
+func (cmd *Sign) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet(cmd.Name(), flag.ContinueOnError)
 
 	cmd.flagSet.StringVar(&cmd.path, "path", "", "path to the package (required)")
@@ -25,7 +25,7 @@ func (cmd *SignPackage) Init(args []string) error {
 	return cmd.flagSet.Parse(args)
 }
 
-func (cmd *SignPackage) Run() error {
+func (cmd *Sign) Run() error {
 	fmt.Println("path: ", cmd.path, "!")
 	fmt.Println("key: ", cmd.key, "!")
 
