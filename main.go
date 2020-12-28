@@ -15,14 +15,17 @@ func runCommands(args []string) error {
 	}
 
 	cmds := []command.Command{
-		command.NewSignPackage(),
+		&command.SignPackage{},
 	}
 
 	subcommand := args[0]
 
 	for _, cmd := range cmds {
 		if cmd.Name() == subcommand {
-			cmd.Init(args[1:])
+			err := cmd.Init(args[1:])
+			if err != nil {
+				return err
+			}
 			return cmd.Run()
 		}
 	}
