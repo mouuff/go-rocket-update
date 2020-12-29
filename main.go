@@ -14,6 +14,7 @@ func runCommands(args []string) error {
 	cmds := []command.Command{
 		&command.Sign{},
 		&command.Keygen{},
+		&command.Verify{},
 	}
 
 	if len(args) < 1 {

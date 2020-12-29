@@ -71,6 +71,35 @@ func GetFolderSignature(priv *rsa.PrivateKey, root string) (*FolderSignature, er
 	return fs, err
 }
 
+// VerifyFolderSignature verifies all the files signatures of a folder
+// returns list of unverified files
+func VerifyFolderSignature(pub *rsa.PublicKey, folderSignature *FolderSignature, root string) ([]string, error) {
+	unverifiedFiles := []string{}
+	err := filepath.Walk(root, func(filePath string, info os.FileInfo, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if info.Mode().IsRegular() {
+			relpath, err := filepath.Rel(root, filePath)
+			if err != nil {
+				return err
+			}
+			signature, err := folderSignature.GetSignature(relpath)
+			if err != nil {
+				unverifiedFiles = append(unverifiedFiles, relpath)
+				return nil
+			}
+			err = VerifyFileSignature(pub, signature, filePath)
+			if err != nil {
+				unverifiedFiles = append(unverifiedFiles, relpath)
+				return nil
+			}
+		}
+		return nil
+	})
+	return unverifiedFiles, err
+}
+
 // VerifyFileSignature verifies the signature of a file
 func VerifyFileSignature(pub *rsa.PublicKey, signature []byte, path string) error {
 	hash, err := ChecksumFileSHA256(path)
