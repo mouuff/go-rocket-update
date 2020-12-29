@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"io/ioutil"
+	"log"
 	"path/filepath"
 
 	"github.com/mouuff/go-rocket-update/crypto"
@@ -31,6 +32,7 @@ func (cmd *Sign) Init(args []string) error {
 
 func (cmd *Sign) Run() error {
 
+	log.Println("Reading private key...")
 	privkeyBytes, err := ioutil.ReadFile(cmd.key)
 	if err != nil {
 		return err
@@ -39,6 +41,7 @@ func (cmd *Sign) Run() error {
 	if err != nil {
 		return err
 	}
+	log.Println("Computing signatures...")
 	signatures, err := crypto.GetFolderSignature(privkey, cmd.path)
 	if err != nil {
 		return err
@@ -48,9 +51,12 @@ func (cmd *Sign) Run() error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(filepath.Join(cmd.path, "signatures.json"), signaturesJSON, 0644)
+	signaturesPath := filepath.Join(cmd.path, "signatures.json")
+	log.Println("Writing " + signaturesPath + " ...")
+	err = ioutil.WriteFile(signaturesPath, signaturesJSON, 0644)
 	if err != nil {
 		return err
 	}
+	log.Println("Signed succesfully! Don't forget to keep your private key in a safe place!")
 	return nil
 }
