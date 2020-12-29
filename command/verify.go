@@ -2,11 +2,13 @@ package command
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"path/filepath"
+	"strings"
 
 	"github.com/mouuff/go-rocket-update/crypto"
 )
@@ -48,16 +50,20 @@ func (cmd *Verify) Run() error {
 	if err != nil {
 		return err
 	}
-	signatures := &crypto.FolderSignature{}
+	signatures := &crypto.Signatures{}
 	err = json.Unmarshal(signaturesJSON, signatures)
 	if err != nil {
 		return err
 	}
 
-	unverifiedFiles, err := crypto.VerifyFolderSignature(pubkey, signatures, cmd.path)
+	unverifiedFiles, err := signatures.VerifyFolder(pubkey, cmd.path)
 	if err != nil {
 		return err
 	}
-	fmt.Println(unverifiedFiles)
-	return nil
+	if len(unverifiedFiles) <= 1 {
+		// <= 1 because it is normal to have one unverified file because signatures.json isnt verified
+		fmt.Println("All files verified!")
+		return nil
+	}
+	return errors.New("Some files could not be verified:\n" + strings.Join(unverifiedFiles, "\n"))
 }

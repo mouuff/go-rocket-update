@@ -10,7 +10,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"path/filepath"
 )
 
 // ChecksumFileSHA256 calculate the sha256 checksum of a file
@@ -46,58 +45,6 @@ func GetFileSignature(priv *rsa.PrivateKey, path string) ([]byte, error) {
 		return nil, err
 	}
 	return signature, nil
-}
-
-// GetFolderSignature gets the signature for all the files within a folder
-func GetFolderSignature(priv *rsa.PrivateKey, root string) (*FolderSignature, error) {
-	fs := NewFolderSignature()
-	err := filepath.Walk(root, func(filePath string, info os.FileInfo, walkErr error) error {
-		if walkErr != nil {
-			return walkErr
-		}
-		if info.Mode().IsRegular() {
-			signature, err := GetFileSignature(priv, filePath)
-			if err != nil {
-				return err
-			}
-			relpath, err := filepath.Rel(root, filePath)
-			if err != nil {
-				return err
-			}
-			fs.AddSignature(relpath, signature)
-		}
-		return nil
-	})
-	return fs, err
-}
-
-// VerifyFolderSignature verifies all the files signatures of a folder
-// returns list of unverified files
-func VerifyFolderSignature(pub *rsa.PublicKey, folderSignature *FolderSignature, root string) ([]string, error) {
-	unverifiedFiles := []string{}
-	err := filepath.Walk(root, func(filePath string, info os.FileInfo, walkErr error) error {
-		if walkErr != nil {
-			return walkErr
-		}
-		if info.Mode().IsRegular() {
-			relpath, err := filepath.Rel(root, filePath)
-			if err != nil {
-				return err
-			}
-			signature, err := folderSignature.GetSignature(relpath)
-			if err != nil {
-				unverifiedFiles = append(unverifiedFiles, relpath)
-				return nil
-			}
-			err = VerifyFileSignature(pub, signature, filePath)
-			if err != nil {
-				unverifiedFiles = append(unverifiedFiles, relpath)
-				return nil
-			}
-		}
-		return nil
-	})
-	return unverifiedFiles, err
 }
 
 // VerifyFileSignature verifies the signature of a file

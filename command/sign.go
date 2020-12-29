@@ -42,7 +42,7 @@ func (cmd *Sign) Run() error {
 		return err
 	}
 	log.Println("Computing signatures...")
-	signatures, err := crypto.GetFolderSignature(privkey, cmd.path)
+	signatures, err := crypto.GetFolderSignatures(privkey, cmd.path)
 	if err != nil {
 		return err
 	}
