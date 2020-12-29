@@ -1,9 +1,10 @@
 package command
 
 import (
+	"encoding/json"
 	"flag"
-	"fmt"
 	"io/ioutil"
+	"path/filepath"
 
 	"github.com/mouuff/go-rocket-update/crypto"
 )
@@ -42,9 +43,14 @@ func (cmd *Sign) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("path: ", cmd.path, "!")
-	fmt.Println("key: ", cmd.key, "!")
-	fmt.Println(signatures)
 
+	signaturesJSON, err := json.Marshal(signatures)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(filepath.Join(cmd.path, "signatures.json"), signaturesJSON, 0644)
+	if err != nil {
+		return err
+	}
 	return nil
 }

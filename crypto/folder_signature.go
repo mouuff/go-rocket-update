@@ -1,5 +1,9 @@
 package crypto
 
+import (
+	"errors"
+)
+
 // FolderSignature stores all the signatures of the files within a folder
 type FolderSignature struct {
 	Version    string
@@ -20,6 +24,10 @@ func (fs *FolderSignature) AddSignature(relpath string, signature []byte) {
 	fs.Signatures[relpath] = signature
 }
 
+// GetSignature gets a signature of a file given a relative path
 func (fs *FolderSignature) GetSignature(relpath string) ([]byte, error) {
-	return fs.Signatures[relpath], nil
+	if val, ok := fs.Signatures[relpath]; ok {
+		return val, nil
+	}
+	return nil, errors.New("Signature for file not found")
 }
