@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/mouuff/go-rocket-update/fileio"
 	provider "github.com/mouuff/go-rocket-update/provider"
@@ -22,6 +23,9 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 		if info.Mode.IsDir() {
 			os.MkdirAll(destPath, os.ModePerm)
 		} else {
+			if strings.Contains(info.Path, "signatures.json") {
+				return nil
+			}
 			filesCount += 1
 			os.MkdirAll(filepath.Dir(destPath), os.ModePerm)
 			err = p.Retrieve(info.Path, destPath)
@@ -40,7 +44,7 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 
 	err = p.Walk(func(info *provider.FileInfo) error {
 		destPath := filepath.Join(tmpDir, info.Path)
-		if !fileio.FileExists(destPath) {
+		if !fileio.FileExists(destPath) && !strings.Contains(info.Path, "signatures.json") {
 			return fmt.Errorf("File %s should exists", destPath)
 		}
 		return nil
