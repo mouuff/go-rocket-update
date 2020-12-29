@@ -1,4 +1,4 @@
-package rocketupdate
+package main
 
 import (
 	"encoding/json"
