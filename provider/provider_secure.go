@@ -17,7 +17,7 @@ type Secure struct {
 	signatures *crypto.Signatures
 }
 
-// Open opens the provider
+// Open the provider
 func (c *Secure) Open() error {
 	err := c.Provider.Open()
 	if err != nil {
@@ -42,7 +42,7 @@ func (c *Secure) Open() error {
 	return nil
 }
 
-// Close closes the provider
+// Close the provider
 func (c *Secure) Close() error {
 	return c.Provider.Close()
 }
@@ -52,7 +52,7 @@ func (c *Secure) GetLatestVersion() (string, error) {
 	return c.Provider.GetLatestVersion()
 }
 
-// Walk walks all the files provided
+// Walk all the files provided
 func (c *Secure) Walk(walkFn WalkFunc) error {
 	return c.Provider.Walk(walkFn)
 }
