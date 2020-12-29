@@ -109,3 +109,11 @@ func (s *Signatures) Get(relpath string) ([]byte, error) {
 	}
 	return nil, errors.New("Signature for file not found")
 }
+
+// Remove removes a signature of a file given a relative path
+func (s *Signatures) Remove(relpath string) {
+	_, ok := s.SignaturesMap[filepath.ToSlash(relpath)]
+	if ok {
+		delete(s.SignaturesMap, filepath.ToSlash(relpath))
+	}
+}
