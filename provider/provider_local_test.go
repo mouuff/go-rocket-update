@@ -32,7 +32,7 @@ func TestProviderLocal(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	equals, err := fileio.CompareFileChecksum(destPath, filepath.Join("testdata", "Allum1", "subfolder", "testfile.txt"))
+	equals, err := fileio.CompareFiles(destPath, filepath.Join("testdata", "Allum1", "subfolder", "testfile.txt"))
 	if err != nil {
 		t.Error(err)
 	}

@@ -30,7 +30,16 @@ func CopyFile(src string, dest string) error {
 	return err
 }
 
-// ChecksumFile calculate the sha256 checksum of a file
+// FileExists checks if the file exists
+func FileExists(src string) bool {
+	if _, err := os.Stat(src); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+// ChecksumFile calculate the checksum of a file
+// This is used only internally to compare files
 func ChecksumFile(src string) (string, error) {
 	f, err := os.Open(src)
 	if err != nil {
@@ -42,20 +51,12 @@ func ChecksumFile(src string) (string, error) {
 	if _, err := io.Copy(hash, f); err != nil {
 		return "", err
 	}
-
 	return hex.EncodeToString(hash.Sum(nil)), nil
 }
 
-// FileExists checks if the file exists
-func FileExists(src string) bool {
-	if _, err := os.Stat(src); os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
-
-// CompareFileChecksum compares two files checksums
-func CompareFileChecksum(fileA, fileB string) (bool, error) {
+// CompareFiles compares two files
+// returns True if files are the same
+func CompareFiles(fileA, fileB string) (bool, error) {
 	fileAChecksum, err := ChecksumFile(fileA)
 	if err != nil {
 		return false, err
