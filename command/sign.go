@@ -3,6 +3,9 @@ package command
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
+
+	"github.com/mouuff/go-rocket-update/crypto"
 )
 
 type Sign struct {
@@ -26,8 +29,22 @@ func (cmd *Sign) Init(args []string) error {
 }
 
 func (cmd *Sign) Run() error {
+
+	privkeyBytes, err := ioutil.ReadFile(cmd.key)
+	if err != nil {
+		return err
+	}
+	privkey, err := crypto.ParsePemPrivateKey(privkeyBytes)
+	if err != nil {
+		return err
+	}
+	signatures, err := crypto.GetFolderSignature(privkey, cmd.path)
+	if err != nil {
+		return err
+	}
 	fmt.Println("path: ", cmd.path, "!")
 	fmt.Println("key: ", cmd.key, "!")
+	fmt.Println(signatures)
 
 	return nil
 }

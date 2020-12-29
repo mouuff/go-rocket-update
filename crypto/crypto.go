@@ -10,6 +10,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 // ChecksumFileSHA256 calculate the sha256 checksum of a file
@@ -45,6 +46,29 @@ func GetFileSignature(priv *rsa.PrivateKey, path string) ([]byte, error) {
 		return nil, err
 	}
 	return signature, nil
+}
+
+// GetFolderSignature gets the signature for all the files within a folder
+func GetFolderSignature(priv *rsa.PrivateKey, root string) (map[string][]byte, error) {
+	signatures := map[string][]byte{}
+	err := filepath.Walk(root, func(filePath string, info os.FileInfo, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if info.Mode().IsRegular() {
+			signature, err := GetFileSignature(priv, filePath)
+			if err != nil {
+				return err
+			}
+			relpath, err := filepath.Rel(root, filePath)
+			if err != nil {
+				return err
+			}
+			signatures[relpath] = signature
+		}
+		return nil
+	})
+	return signatures, err
 }
 
 // VerifyFileSignature verifies the signature of a file
