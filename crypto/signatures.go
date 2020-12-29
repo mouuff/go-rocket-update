@@ -2,7 +2,9 @@ package crypto
 
 import (
 	"crypto/rsa"
+	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -37,6 +39,20 @@ func GetFolderSignatures(priv *rsa.PrivateKey, root string) (*Signatures, error)
 		return nil
 	})
 	return s, err
+}
+
+// LoadSignaturesFromJSON loads signatures from a JSON file
+func LoadSignaturesFromJSON(path string) (signatures *Signatures, err error) {
+	signaturesJSON, err := ioutil.ReadFile(path)
+	if err != nil {
+		return
+	}
+	signatures = &Signatures{}
+	err = json.Unmarshal(signaturesJSON, signatures)
+	if err != nil {
+		return
+	}
+	return
 }
 
 // VerifyFolder verifies all the files signatures of a folder

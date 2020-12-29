@@ -2,21 +2,44 @@ package provider
 
 import (
 	"crypto/rsa"
+	"os"
+	"path/filepath"
 
 	"github.com/mouuff/go-rocket-update/crypto"
+	"github.com/mouuff/go-rocket-update/fileio"
 )
 
 // Secure provider defines a provider which verifies the signature of files when
 // Retrieve() is called
 type Secure struct {
 	Provider   Provider
-	PublicKey  rsa.PublicKey
-	signatures crypto.Signatures
+	PublicKey  *rsa.PublicKey
+	signatures *crypto.Signatures
 }
 
 // Open opens the provider
 func (c *Secure) Open() error {
-	return c.Provider.Open()
+	err := c.Provider.Open()
+	if err != nil {
+		return err
+	}
+	tmpDir, err := fileio.TempDir()
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmpDir)
+	tmpFile := filepath.Join(tmpDir, "signatures.json")
+	err = c.Provider.Retrieve("signatures.json", tmpFile) // TODO clean up hardcode
+	if err != nil {
+		// TODO defines error
+		return err
+	}
+	c.signatures, err = crypto.LoadSignaturesFromJSON(tmpFile)
+	if err != nil {
+		// TODO defines error
+		return err
+	}
+	return nil
 }
 
 // Close closes the provider
@@ -38,6 +61,11 @@ func (c *Secure) Walk(walkFn WalkFunc) error {
 func (c *Secure) Retrieve(src string, dest string) error {
 	err := c.Provider.Retrieve(src, dest)
 	if err != nil {
+		return err
+	}
+	err = c.signatures.Verify(c.PublicKey, src, dest)
+	if err != nil {
+		os.Remove(dest)
 		return err
 	}
 	return nil

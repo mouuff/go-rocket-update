@@ -1,7 +1,6 @@
 package command
 
 import (
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -34,7 +33,6 @@ func (cmd *Verify) Init(args []string) error {
 }
 
 func (cmd *Verify) Run() error {
-
 	log.Println("Reading public key...")
 	pubkeyBytes, err := ioutil.ReadFile(cmd.pubkey)
 	if err != nil {
@@ -46,16 +44,11 @@ func (cmd *Verify) Run() error {
 	}
 	signaturesPath := filepath.Join(cmd.path, "signatures.json")
 	log.Println("Reading " + signaturesPath + " ...")
-	signaturesJSON, err := ioutil.ReadFile(signaturesPath)
-	if err != nil {
-		return err
-	}
-	signatures := &crypto.Signatures{}
-	err = json.Unmarshal(signaturesJSON, signatures)
-	if err != nil {
-		return err
-	}
 
+	signatures, err := crypto.LoadSignaturesFromJSON(signaturesPath)
+	if err != nil {
+		return err
+	}
 	unverifiedFiles, err := signatures.VerifyFolder(pubkey, cmd.path)
 	if err != nil {
 		return err
