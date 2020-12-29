@@ -49,8 +49,8 @@ func GetFileSignature(priv *rsa.PrivateKey, path string) ([]byte, error) {
 }
 
 // GetFolderSignature gets the signature for all the files within a folder
-func GetFolderSignature(priv *rsa.PrivateKey, root string) (map[string][]byte, error) {
-	signatures := map[string][]byte{}
+func GetFolderSignature(priv *rsa.PrivateKey, root string) (*FolderSignature, error) {
+	fs := NewFolderSignature()
 	err := filepath.Walk(root, func(filePath string, info os.FileInfo, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
@@ -64,11 +64,11 @@ func GetFolderSignature(priv *rsa.PrivateKey, root string) (map[string][]byte, e
 			if err != nil {
 				return err
 			}
-			signatures[relpath] = signature
+			fs.AddSignature(relpath, signature)
 		}
 		return nil
 	})
-	return signatures, err
+	return fs, err
 }
 
 // VerifyFileSignature verifies the signature of a file
