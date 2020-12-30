@@ -120,5 +120,5 @@ func ParsePemPublicKey(pubPEM []byte) (*rsa.PublicKey, error) {
 	default:
 		break
 	}
-	return nil, errors.New("Key type is not RSA")
+	return nil, errors.New("Key type is not rsa.PublicKey")
 }
