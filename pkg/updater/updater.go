@@ -67,7 +67,7 @@ func (u *Updater) updateExecutable() (err error) {
 	if err != nil {
 		return
 	}
-	err = ReplaceExecutableWith(binaryTmpPath)
+	err = fileio.ReplaceExecutableWith(binaryTmpPath)
 	return
 }
 
