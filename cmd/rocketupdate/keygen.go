@@ -10,6 +10,8 @@ import (
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
 
+// Keygen describes the keygen subcommand
+// this command is used to generate a private and a public key
 type Keygen struct {
 	flagSet *flag.FlagSet
 

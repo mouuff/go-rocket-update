@@ -10,6 +10,8 @@ import (
 	"github.com/mouuff/go-rocket-update/internal/crypto"
 )
 
+// Sign describes the sign subcommand
+// this command is used to sign a folder
 type Sign struct {
 	flagSet *flag.FlagSet
 

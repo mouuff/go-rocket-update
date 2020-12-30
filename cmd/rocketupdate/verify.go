@@ -12,6 +12,8 @@ import (
 	"github.com/mouuff/go-rocket-update/internal/crypto"
 )
 
+// Verify describes the verify subcommand
+// this command is used to verify if all files are signed within a folder
 type Verify struct {
 	flagSet *flag.FlagSet
 

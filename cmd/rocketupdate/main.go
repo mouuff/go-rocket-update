@@ -7,15 +7,16 @@ import (
 	"os"
 )
 
-type Command interface {
+// SubCommand defines the interface to implement new subcommands
+type SubCommand interface {
 	Init([]string) error
 	Run() error
 	Name() string
 }
 
-func runCommands(args []string) error {
+func runSubCommands(args []string) error {
 
-	cmds := []Command{
+	cmds := []SubCommand{
 		&Sign{},
 		&Keygen{},
 		&Verify{},
@@ -49,7 +50,7 @@ func runCommands(args []string) error {
 }
 
 func main() {
-	if err := runCommands(os.Args[1:]); err != nil {
+	if err := runSubCommands(os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
 }
