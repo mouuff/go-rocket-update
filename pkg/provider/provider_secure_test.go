@@ -29,8 +29,8 @@ SZ5Uz050oR/PoLaSx3xdjFMCAwEAAQ==
 		t.Error(err)
 	}
 	p := &provider.Secure{
-		Provider:  &provider.Local{Path: filepath.Join("testdata", "Allum1Signed")},
-		PublicKey: pub,
+		BackendProvider: &provider.Local{Path: filepath.Join("testdata", "Allum1Signed")},
+		PublicKey:       pub,
 	}
 	if err := p.Open(); err != nil {
 		t.Error(err)

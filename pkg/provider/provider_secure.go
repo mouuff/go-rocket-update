@@ -13,14 +13,14 @@ import (
 // Secure provider defines a provider which verifies the signature of files when
 // Retrieve() is called
 type Secure struct {
-	Provider   Provider
-	PublicKey  *rsa.PublicKey
-	signatures *crypto.Signatures
+	BackendProvider Provider
+	PublicKey       *rsa.PublicKey
+	signatures      *crypto.Signatures
 }
 
 // Open the provider
 func (c *Secure) Open() error {
-	err := c.Provider.Open()
+	err := c.BackendProvider.Open()
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (c *Secure) Open() error {
 	}
 	defer os.RemoveAll(tmpDir)
 	tmpFile := filepath.Join(tmpDir, constant.SignatureRelPath)
-	err = c.Provider.Retrieve(constant.SignatureRelPath, tmpFile)
+	err = c.BackendProvider.Retrieve(constant.SignatureRelPath, tmpFile)
 	if err != nil {
 		// TODO defines error
 		return err
@@ -45,22 +45,22 @@ func (c *Secure) Open() error {
 
 // Close the provider
 func (c *Secure) Close() error {
-	return c.Provider.Close()
+	return c.BackendProvider.Close()
 }
 
 // GetLatestVersion gets the latest version
 func (c *Secure) GetLatestVersion() (string, error) {
-	return c.Provider.GetLatestVersion()
+	return c.BackendProvider.GetLatestVersion()
 }
 
 // Walk all the files provided
 func (c *Secure) Walk(walkFn WalkFunc) error {
-	return c.Provider.Walk(walkFn)
+	return c.BackendProvider.Walk(walkFn)
 }
 
 // Retrieve file and verifies the signature
 func (c *Secure) Retrieve(src string, dest string) error {
-	err := c.Provider.Retrieve(src, dest)
+	err := c.BackendProvider.Retrieve(src, dest)
 	if err != nil {
 		return err
 	}
