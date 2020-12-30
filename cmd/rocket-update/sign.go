@@ -7,8 +7,8 @@ import (
 	"log"
 	"path/filepath"
 
+	"github.com/mouuff/go-rocket-update/internal/constant"
 	"github.com/mouuff/go-rocket-update/internal/crypto"
-	"github.com/mouuff/go-rocket-update/pkg/constant"
 )
 
 // Sign describes the sign subcommand

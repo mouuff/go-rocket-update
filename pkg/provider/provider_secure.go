@@ -5,9 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/mouuff/go-rocket-update/internal/constant"
 	"github.com/mouuff/go-rocket-update/internal/crypto"
 	"github.com/mouuff/go-rocket-update/internal/fileio"
-	"github.com/mouuff/go-rocket-update/pkg/constant"
 )
 
 // Secure provider defines a provider which verifies the signature of files when

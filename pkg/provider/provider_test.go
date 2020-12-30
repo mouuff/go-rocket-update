@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/mouuff/go-rocket-update/internal/constant"
 	"github.com/mouuff/go-rocket-update/internal/fileio"
-	"github.com/mouuff/go-rocket-update/pkg/constant"
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 )
 

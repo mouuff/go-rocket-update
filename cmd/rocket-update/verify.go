@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/mouuff/go-rocket-update/internal/constant"
 	"github.com/mouuff/go-rocket-update/internal/crypto"
-	"github.com/mouuff/go-rocket-update/pkg/constant"
 )
 
 // Verify describes the verify subcommand
