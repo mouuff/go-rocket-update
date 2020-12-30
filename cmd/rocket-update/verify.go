@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/mouuff/go-rocket-update/internal/crypto"
+	"github.com/mouuff/go-rocket-update/pkg/constant"
 )
 
 // Verify describes the verify subcommand
@@ -44,7 +45,7 @@ func (cmd *Verify) Run() error {
 	if err != nil {
 		return err
 	}
-	signaturesPath := filepath.Join(cmd.path, "signatures.json")
+	signaturesPath := filepath.Join(cmd.path, constant.SignatureRelPath)
 	log.Println("Reading " + signaturesPath + " ...")
 
 	signatures, err := crypto.LoadSignaturesFromJSON(signaturesPath)
@@ -56,7 +57,7 @@ func (cmd *Verify) Run() error {
 		return err
 	}
 	if len(unverifiedFiles) <= 1 {
-		// <= 1 because it is normal to have one unverified file because signatures.json isnt verified
+		// <= 1 because it is normal to have one unverified file because signatures file isnt verified
 		fmt.Println("All files verified!")
 		return nil
 	}

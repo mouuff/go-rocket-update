@@ -103,7 +103,6 @@ func ReplaceExecutableWith(src string) error {
 	if err != nil {
 		return err
 	}
-
 	// Here we move the current executable to a tmp dir, we do that because
 	// on windows we must move the running executable to rewrite it
 	renamedExecutable := filepath.Join(tmpDir, filepath.Base(executable))
@@ -111,7 +110,6 @@ func ReplaceExecutableWith(src string) error {
 	if err != nil {
 		return err
 	}
-
 	err = ioutil.WriteFile(executable, content, 0755)
 	if err != nil {
 		// rollback modifications

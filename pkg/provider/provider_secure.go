@@ -7,6 +7,7 @@ import (
 
 	"github.com/mouuff/go-rocket-update/internal/crypto"
 	"github.com/mouuff/go-rocket-update/internal/fileio"
+	"github.com/mouuff/go-rocket-update/pkg/constant"
 )
 
 // Secure provider defines a provider which verifies the signature of files when
@@ -28,8 +29,8 @@ func (c *Secure) Open() error {
 		return err
 	}
 	defer os.RemoveAll(tmpDir)
-	tmpFile := filepath.Join(tmpDir, "signatures.json")
-	err = c.Provider.Retrieve("signatures.json", tmpFile) // TODO clean up hardcode
+	tmpFile := filepath.Join(tmpDir, constant.SignatureRelPath)
+	err = c.Provider.Retrieve(constant.SignatureRelPath, tmpFile)
 	if err != nil {
 		// TODO defines error
 		return err

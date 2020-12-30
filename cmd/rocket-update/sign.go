@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/mouuff/go-rocket-update/internal/crypto"
+	"github.com/mouuff/go-rocket-update/pkg/constant"
 )
 
 // Sign describes the sign subcommand
@@ -53,7 +54,7 @@ func (cmd *Sign) Run() error {
 	if err != nil {
 		return err
 	}
-	signaturesPath := filepath.Join(cmd.path, "signatures.json")
+	signaturesPath := filepath.Join(cmd.path, constant.SignatureRelPath)
 	log.Println("Writing " + signaturesPath + " ...")
 	err = ioutil.WriteFile(signaturesPath, signaturesJSON, 0644)
 	if err != nil {

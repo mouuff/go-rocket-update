@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/mouuff/go-rocket-update/internal/fileio"
+	"github.com/mouuff/go-rocket-update/pkg/constant"
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 )
 
@@ -23,7 +24,7 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 		if info.Mode.IsDir() {
 			os.MkdirAll(destPath, os.ModePerm)
 		} else {
-			if strings.Contains(info.Path, "signatures.json") {
+			if strings.Contains(info.Path, constant.SignatureRelPath) {
 				return nil
 			}
 			filesCount += 1
@@ -44,7 +45,7 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 
 	err = p.Walk(func(info *provider.FileInfo) error {
 		destPath := filepath.Join(tmpDir, info.Path)
-		if !fileio.FileExists(destPath) && !strings.Contains(info.Path, "signatures.json") {
+		if !fileio.FileExists(destPath) && !strings.Contains(info.Path, constant.SignatureRelPath) {
 			return fmt.Errorf("File %s should exists", destPath)
 		}
 		return nil
