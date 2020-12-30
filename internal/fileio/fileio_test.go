@@ -33,7 +33,7 @@ func copyAndChecksumFile(src string) error {
 }
 
 func TestCopyFile(t *testing.T) {
-	err := copyAndChecksumFile(filepath.Join("testdata", "small.exe"))
+	err := copyAndChecksumFile(filepath.Join("testdata", "smallexe"))
 	if err != nil {
 		t.Error(err)
 	}
@@ -80,7 +80,7 @@ func TestChecksum(t *testing.T) {
 
 func TestCompareFileChecksum(t *testing.T) {
 	fileA := filepath.Join("testdata", "TempleOS.ISO")
-	fileB := filepath.Join("testdata", "small.exe")
+	fileB := filepath.Join("testdata", "smallexe")
 	equals, err := fileio.CompareFiles(fileA, fileA)
 	if err != nil {
 		t.Error(err)
