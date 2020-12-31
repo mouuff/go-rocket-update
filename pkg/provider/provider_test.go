@@ -1,6 +1,7 @@
 package provider_test
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -52,6 +53,19 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	})
 	if err != nil {
 		return err
+	}
+
+	// Test to make sure the walk stops when walkFunc returns an error
+	count := 0
+	err = p.Walk(func(info *provider.FileInfo) error {
+		count += 1
+		return errors.New("Walk cancelled")
+	})
+	if err == nil {
+		return errors.New("Walk should return the error of walkFunc")
+	}
+	if count > 1 {
+		return errors.New("Walk should have stopped on error")
 	}
 	return nil
 }
