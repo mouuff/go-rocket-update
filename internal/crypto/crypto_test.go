@@ -97,7 +97,6 @@ func verifyChecksumFileSHA256(path string, expectedHexChecksum string) error {
 func TestChecksumFileSHA256(t *testing.T) {
 	fileA := filepath.Join("testdata", "small.txt")
 	fileB := filepath.Join("testdata", "bin.txt")
-	fileC := filepath.Join("testdata", ".conf_ignore")
 	err := verifyChecksumFileSHA256(fileA, "f2a65cb3c3170bfe938f30e4dd592bfdd6c1b69b3a92046ef43b375d1eff669e")
 	if err != nil {
 		t.Error(err)
@@ -106,10 +105,4 @@ func TestChecksumFileSHA256(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-
-	err = verifyChecksumFileSHA256(fileC, "58610ed9f4080941e141eed3ddeb32c0bd8c255ae0811b3deccba1016b935f53")
-	if err != nil {
-		t.Error(err)
-	}
-
 }

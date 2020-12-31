@@ -42,10 +42,13 @@ func (c *Zip) GetLatestVersion() (string, error) {
 // Walk walks all the files provided
 func (c *Zip) Walk(walkFn WalkFunc) error {
 	for _, f := range c.reader.File {
-		walkFn(&FileInfo{
+		err := walkFn(&FileInfo{
 			Path: f.Name,
 			Mode: f.Mode(),
 		})
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
