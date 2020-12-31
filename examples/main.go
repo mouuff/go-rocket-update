@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+
 	u := &updater.Updater{
 		Provider: &provider.Github{
 			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
