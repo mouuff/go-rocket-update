@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 
 	"github.com/kardianos/osext"
 )
@@ -94,18 +93,14 @@ func ReplaceExecutableWith(src string) error {
 	if err != nil {
 		return err
 	}
-	tmpDir, err := TempDir()
-	if err != nil {
-		return err
-	}
-
+	renamedExecutable := executable + ".old"
 	content, err := ioutil.ReadFile(src)
 	if err != nil {
 		return err
 	}
-	// Here we move the current executable to a tmp dir, we do that because
-	// on windows we must move the running executable to rewrite it
-	renamedExecutable := filepath.Join(tmpDir, filepath.Base(executable))
+	if FileExists(renamedExecutable) {
+		os.Remove(renamedExecutable)
+	}
 	err = os.Rename(executable, renamedExecutable)
 	if err != nil {
 		return err
