@@ -12,12 +12,12 @@ func TestProviderZip(t *testing.T) {
 		Path: filepath.Join("testdata", "Allum1.zip"),
 	}
 	if err := p.Open(); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	defer p.Close()
 
 	err := ProviderTestWalkAndRetrieve(p)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }

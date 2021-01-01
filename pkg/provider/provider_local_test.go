@@ -12,31 +12,31 @@ import (
 func TestProviderLocal(t *testing.T) {
 	p := &provider.Local{Path: filepath.Join("testdata", "Allum1")}
 	if err := p.Open(); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	defer p.Close()
 
 	err := ProviderTestWalkAndRetrieve(p)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	tmpDir, err := fileio.TempDir()
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	defer os.RemoveAll(tmpDir)
 
 	destPath := filepath.Join(tmpDir, "test.txt")
 	err = p.Retrieve(filepath.Join("subfolder", "testfile.txt"), destPath)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	equals, err := fileio.CompareFiles(destPath, filepath.Join("testdata", "Allum1", "subfolder", "testfile.txt"))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	if equals == false {
-		t.Error("Files should be equals")
+		t.Fatal("Files should be equals")
 	}
 }

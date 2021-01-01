@@ -35,15 +35,15 @@ func copyAndChecksumFile(src string) error {
 func TestCopyFile(t *testing.T) {
 	err := copyAndChecksumFile(filepath.Join("testdata", "smallexe"))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	err = copyAndChecksumFile(filepath.Join("testdata", "TempleOS.ISO"))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	err = copyAndChecksumFile(filepath.Join("testdata", "empty.txt"))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
@@ -62,19 +62,19 @@ func TestChecksum(t *testing.T) {
 	err := verifyChecksumFile(filepath.Join("testdata", "empty.txt"),
 		"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	err = verifyChecksumFile(filepath.Join("testdata", "TempleOS.ISO"),
 		"5d0fc944e5d89c155c0fc17c148646715bc1db6fa5750c0b913772cfec19ba26")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	// Test wrong checksum:
 	err = verifyChecksumFile(filepath.Join("testdata", "TempleOS.ISO"),
 		"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
 	if err == nil {
-		t.Error(fmt.Errorf("verifyChecksumFile returned not nil on a bad checksum"))
+		t.Fatal(fmt.Errorf("verifyChecksumFile returned not nil on a bad checksum"))
 	}
 }
 
@@ -83,17 +83,17 @@ func TestCompareFileChecksum(t *testing.T) {
 	fileB := filepath.Join("testdata", "smallexe")
 	equals, err := fileio.CompareFiles(fileA, fileA)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	if equals == false {
-		t.Error("Should be equal")
+		t.Fatal("Should be equal")
 	}
 
 	equals, err = fileio.CompareFiles(fileA, fileB)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	if equals == true {
-		t.Error("Should be unequal")
+		t.Fatal("Should be unequal")
 	}
 }
