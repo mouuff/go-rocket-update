@@ -13,6 +13,13 @@ import (
 )
 
 func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
+	version, err := p.GetLatestVersion()
+	if err != nil {
+		return err
+	}
+	if len(version) < 1 { // TODO idea check version format?
+		return errors.New("Bad version: " + version)
+	}
 	tmpDir, err := fileio.TempDir()
 	if err != nil {
 		return err
