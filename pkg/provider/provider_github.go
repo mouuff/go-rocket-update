@@ -23,19 +23,10 @@ type Github struct {
 	zipPath     string // path to the downloaded zip (should be in tmpDir)
 }
 
-type githubCommit struct {
-	Sha string `json:"sha"`
-	URL string `json:"url"`
-}
-
 // githubTag struct used to unmarshal response from github
 // https://api.github.com/repos/ownerName/projectName/tags
 type githubTag struct {
-	Name       string       `json:"name"`
-	ZipballURL string       `json:"zipball_url"`
-	TarballURL string       `json:"tarball_url"`
-	Commit     githubCommit `json:"commit"`
-	NodeID     string       `json:"node_id"`
+	Name string `json:"name"`
 }
 
 // repositoryInfo is used to get the name of the project and the owner name
