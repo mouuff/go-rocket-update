@@ -2,6 +2,7 @@ package provider
 
 import (
 	"archive/zip"
+	"errors"
 	"io"
 	"os"
 )
@@ -41,13 +42,18 @@ func (c *Zip) GetLatestVersion() (string, error) {
 
 // Walk walks all the files provided
 func (c *Zip) Walk(walkFn WalkFunc) error {
+	if c.reader == nil {
+		return errors.New("nil reader zip.ReadCloser")
+	}
 	for _, f := range c.reader.File {
-		err := walkFn(&FileInfo{
-			Path: f.Name,
-			Mode: f.Mode(),
-		})
-		if err != nil {
-			return err
+		if f != nil {
+			err := walkFn(&FileInfo{
+				Path: f.Name,
+				Mode: f.Mode(),
+			})
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil

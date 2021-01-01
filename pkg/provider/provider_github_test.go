@@ -12,12 +12,12 @@ func TestProviderGithub(t *testing.T) {
 		ZipName:       "binaries.zip",
 	}
 	if err := p.Open(); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	defer p.Close()
 
 	err := ProviderTestWalkAndRetrieve(p)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
