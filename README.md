@@ -2,6 +2,7 @@
 Easy to use and modular self-updater for golang applications
 
 [![Build Status](https://travis-ci.org/mouuff/go-rocket-update.svg?branch=master)](https://travis-ci.org/mouuff/go-rocket-update)
+[![codecov](https://codecov.io/gh/mouuff/go-rocket-update/branch/master/graph/badge.svg)](https://codecov.io/gh/mouuff/go-rocket-update)
 
 ![Go rocket image](docs/social.png)
 *The gopher in this image was created by [Takuya Ueda][tu], licensed under [Creative Commons 3.0 Attributions license][cc3-by].*
