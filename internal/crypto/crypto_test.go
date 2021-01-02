@@ -3,10 +3,12 @@ package crypto_test
 import (
 	"encoding/hex"
 	"fmt"
+	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/mouuff/go-rocket-update/internal/crypto"
+	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
 
 func TestSignAndVerifyFile(t *testing.T) {
@@ -104,5 +106,37 @@ func TestChecksumFileSHA256(t *testing.T) {
 	err = verifyChecksumFileSHA256(fileB, "0596cc0127626799289943332342b56787cc589b1811f3b5a1fa108938765fa0")
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestExportImport(t *testing.T) {
+	tmpDir, err := fileio.TempDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+	priv, err := crypto.GeneratePrivateKey()
+	if err != nil {
+		t.Fatal(err)
+	}
+	pub := &priv.PublicKey
+	privExported := crypto.ExportPrivateKeyAsPem(priv)
+	pubExported, err := crypto.ExportPublicKeyAsPem(pub)
+	if err != nil {
+		t.Fatal(err)
+	}
+	privImported, err := crypto.ParsePemPrivateKey(privExported)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pubImported, err := crypto.ParsePemPublicKey(pubExported)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !pub.Equal(pubImported) {
+		t.Error("pub != pubImported")
+	}
+	if !priv.Equal(privImported) {
+		t.Error("priv != privImported")
 	}
 }
