@@ -10,35 +10,44 @@ import (
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
 
-// Secure provider defines a provider which verifies the signature of files when
-// Retrieve() is called
+// Secure is a provider which uses another provider and verifies the
+// signatures when Retrieve() is called
+// If you pass a nil PublicKey, then it will try to load the PublicKeyPEM.
+// PublicKeyPEM must be a public key in the PEM format
 type Secure struct {
 	BackendProvider Provider
+	PublicKeyPEM    []byte
 	PublicKey       *rsa.PublicKey
 	signatures      *crypto.Signatures
 }
 
 // Open the provider
-func (c *Secure) Open() error {
-	err := c.BackendProvider.Open()
+func (c *Secure) Open() (err error) {
+	if c.PublicKey == nil {
+		c.PublicKey, err = crypto.ParsePemPublicKey(c.PublicKeyPEM)
+		if err != nil {
+			return
+		}
+	}
+	err = c.BackendProvider.Open()
 	if err != nil {
-		return err
+		return
 	}
 	tmpDir, err := fileio.TempDir()
 	if err != nil {
-		return err
+		return
 	}
 	defer os.RemoveAll(tmpDir)
 	tmpFile := filepath.Join(tmpDir, constant.SignatureRelPath)
 	err = c.BackendProvider.Retrieve(constant.SignatureRelPath, tmpFile)
 	if err != nil {
 		// TODO defines error
-		return err
+		return
 	}
 	c.signatures, err = crypto.LoadSignaturesFromJSON(tmpFile)
 	if err != nil {
 		// TODO defines error
-		return err
+		return
 	}
 	return nil
 }

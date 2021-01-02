@@ -24,20 +24,16 @@ J73aa5rBKLCE/TYT53R2ZhFCXYTPhzwl5LkwYKdKIQ55Z9TfYhjbArjCMTz19Akl
 ylMx5Dy8lG6/J7zKWkV6S7h3+K11dWZn7toQVyVU3M2GpEng3b74Pp3Ma7ymoM8J
 SZ5Uz050oR/PoLaSx3xdjFMCAwEAAQ==
 -----END RSA PUBLIC KEY-----`
-	pub, err := crypto.ParsePemPublicKey([]byte(pubStr))
-	if err != nil {
-		t.Fatal(err)
-	}
 	p := &provider.Secure{
 		BackendProvider: &provider.Zip{Path: filepath.Join("testdata", "Allum1Signed.zip")},
-		PublicKey:       pub,
+		PublicKeyPEM:    []byte(pubStr),
 	}
 	if err := p.Open(); err != nil {
 		t.Fatal(err)
 	}
 	defer p.Close()
 
-	err = ProviderTestWalkAndRetrieve(p)
+	err := ProviderTestWalkAndRetrieve(p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,11 +53,10 @@ J73aa5rBKLCE/TYT53R2ZhFCXYTPhzwl5LkwYKdKIQ55Z9TfYhjbArjCMTz19Akl
 ylMx5Dy8lG6/J7zKWkV6S7h3+K11dWZn7toQVyVU3M2GpEng3b74Pp3Ma7zmoM8J
 SZ5Uz050oR/PoLaSx3xdjFMCAwEAAQ==
 -----END RSA PUBLIC KEY-----`
-	pub, err = crypto.ParsePemPublicKey([]byte(pubStr))
+	p.PublicKey, err = crypto.ParsePemPublicKey([]byte(pubStr))
 	if err != nil {
 		t.Fatal(err)
 	}
-	p.PublicKey = pub
 	err = ProviderTestWalkAndRetrieve(p)
 	if err == nil {
 		t.Fatal("ProviderTestWalkAndRetrieve shouldn't work with a bad public key")
