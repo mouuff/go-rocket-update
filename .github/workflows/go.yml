@@ -35,11 +35,9 @@ jobs:
     - name: Test
       run: ./go.test.sh
     - uses: actions/checkout@master
-
-    - uses: actions/checkout@master
     - uses: codecov/codecov-action@v1
       with:
-        file: ./coverage.xml # optional
+        file: ./coverage.txt
         flags: unittests # optional
         name: codecov-umbrella
         fail_ci_if_error: true # optional (default = false)
