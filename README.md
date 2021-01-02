@@ -1,7 +1,7 @@
 # go-rocket-update
 Easy to use and modular self-updater for golang applications
 
-[![Build Status](https://travis-ci.org/mouuff/go-rocket-update.svg?branch=master)](https://travis-ci.org/mouuff/go-rocket-update)
+[![Build Status](https://github.com/mouuff/go-rocket-update/workflows/Go/badge.svg?branch=master)](https://github.com/mouuff/go-rocket-update/actions)
 [![codecov](https://codecov.io/gh/mouuff/go-rocket-update/branch/master/graph/badge.svg)](https://codecov.io/gh/mouuff/go-rocket-update)
 
 ![Go rocket image](docs/social.png)
