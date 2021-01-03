@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"runtime"
+	"sync"
 
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 	"github.com/mouuff/go-rocket-update/pkg/updater"
@@ -18,9 +20,19 @@ func main() {
 		BinaryName: "go-rocket-update-example",
 		Version:    "v0.1",
 	}
+
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		err := u.Update()
+		if err != nil {
+			log.Println(err)
+		}
+		wg.Done()
+	}()
+
 	log.Println(u.Version)
-	err := u.Update()
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Println("Hello world during update!")
+	wg.Wait()
 }
