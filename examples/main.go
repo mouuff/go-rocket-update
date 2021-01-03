@@ -19,7 +19,7 @@ func main() {
 		Version:    "v0.1",
 	}
 	log.Println(u.Version)
-	err := u.Run()
+	err := u.Update()
 	if err != nil {
 		log.Fatal(err)
 	}
