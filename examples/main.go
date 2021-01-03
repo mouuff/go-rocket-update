@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"runtime"
 	"sync"
@@ -18,21 +17,27 @@ func main() {
 			ZipName:       "binaries_" + runtime.GOOS + ".zip",
 		},
 		BinaryName: "go-rocket-update-example",
-		Version:    "v0.1",
+		Version:    "v0.3.0",
 	}
 
 	var wg sync.WaitGroup
 
-	wg.Add(1)
-	go func() {
-		err := u.Update()
-		if err != nil {
-			log.Println(err)
-		}
-		wg.Done()
-	}()
+	canUpdate, err := u.CanUpdate()
+	if err != nil {
+		log.Println(err)
+	} else if canUpdate {
+		log.Println("Update found! Updating in background...")
+		wg.Add(1)
+		go func() {
+			if err := u.Update(); err != nil {
+				log.Println(err)
+			}
 
+			wg.Done()
+		}()
+	} else {
+		log.Println("No update found")
+	}
 	log.Println(u.Version)
-	fmt.Println("Hello world during update!")
 	wg.Wait()
 }

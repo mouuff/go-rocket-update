@@ -1,7 +1,6 @@
 package updater
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -65,7 +64,6 @@ func (u *Updater) CanUpdate() (bool, error) {
 		return false, err
 	}
 	if u.Version != latestVersion {
-		log.Printf("Found update: %s", latestVersion)
 		return true, nil
 	}
 	return false, nil
@@ -78,13 +76,11 @@ func (u *Updater) Update() (err error) {
 	if err != nil || !canUpdate {
 		return
 	}
-	log.Printf("Updating...")
 	if err = u.Provider.Open(); err != nil {
 		return
 	}
 	defer u.Provider.Close()
 
 	err = u.updateExecutable()
-	log.Printf("Updated!")
 	return
 }
