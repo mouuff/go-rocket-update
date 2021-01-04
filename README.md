@@ -9,7 +9,7 @@ Enable your Golang applications easily and safely to self update.
 
 This package update provides functionality to implement secure, self-updating Go programs.
 
-It provides the flexibility to implement different updating user experiences like auto-updating, or manual user-initiated updates from different sources.
+It provides the flexibility to implement different updating user experiences like auto-updating, or manual user-initiated updates, and updates from different sources.
 
 ![Go rocket image](docs/social.png)
 *The gopher in this image was created by [Takuya Ueda][tu], licensed under [Creative Commons 3.0 Attributions license][cc3-by].*
