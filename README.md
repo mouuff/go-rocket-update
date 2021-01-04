@@ -5,14 +5,14 @@
 [![Build Status](https://github.com/mouuff/go-rocket-update/workflows/Go/badge.svg?branch=master)](https://github.com/mouuff/go-rocket-update/actions)
 [![codecov](https://codecov.io/gh/mouuff/go-rocket-update/branch/master/graph/badge.svg)](https://codecov.io/gh/mouuff/go-rocket-update)
 
-![Go rocket image](docs/social.png)
-*The gopher in this image was created by [Takuya Ueda][tu], licensed under [Creative Commons 3.0 Attributions license][cc3-by].*
-
 Enable your Golang applications easily and safely to self update.
 
 This package update provides functionality to implement secure, self-updating Go programs.
 
 It provides the flexibility to implement different updating user experiences like auto-updating, or manual user-initiated updates from different sources.
+
+![Go rocket image](docs/social.png)
+*The gopher in this image was created by [Takuya Ueda][tu], licensed under [Creative Commons 3.0 Attributions license][cc3-by].*
 
 ## Features
 * Flexible way to provide updates (ex: using Github!)
