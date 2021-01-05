@@ -50,8 +50,8 @@ Check this project for a complete example: https://github.com/mouuff/go-rocket-u
 The updater uses a `Provider` as an input source for updates. It provides files and version for the updater.
 
 Here is few examples of providers:
-* `provider.Github`: It will look for the lastest release on Github with a specific zip name
-* `provider.Local`: It will use a local folder (can be used for testing, or in a company with a shared folder for example)
+* `provider.Github`: It will check for the lastest release on Github with a specific zip name
+* `provider.Local`: It will use a local folder, version will be defined in the VERSION file (can be used for testing, or in a company with a shared folder for example)
 * `provider.Zip`: Same as provider.Local but with a `Zip` file
 
 *In the future there will be providers for FTP servers and Gitlab.*
