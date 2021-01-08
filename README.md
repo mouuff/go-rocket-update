@@ -4,6 +4,8 @@
 
 [![Build Status](https://github.com/mouuff/go-rocket-update/workflows/Go/badge.svg?branch=master)](https://github.com/mouuff/go-rocket-update/actions)
 [![codecov](https://codecov.io/gh/mouuff/go-rocket-update/branch/master/graph/badge.svg)](https://codecov.io/gh/mouuff/go-rocket-update)
+[![GoDoc](https://pkg.go.dev/github.com/mouuff/go-rocket-update?status.png)](https://pkg.go.dev/github.com/mouuff/go-rocket-update)
+
 
 Enable your Golang applications easily and safely to self update.
 
