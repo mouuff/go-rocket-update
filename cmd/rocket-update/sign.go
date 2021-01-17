@@ -60,6 +60,6 @@ func (cmd *Sign) Run() error {
 	if err != nil {
 		return err
 	}
-	log.Println("Signed succesfully! Don't forget to keep your private key in a safe place!")
+	log.Println("Signed successfully! Don't forget to keep your private key in a safe place!")
 	return nil
 }
