@@ -9,6 +9,8 @@ import (
 	"github.com/mouuff/go-rocket-update/pkg/updater"
 )
 
+// This example shows how you can can the update in background
+
 func main() {
 
 	u := &updater.Updater{
