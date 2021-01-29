@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
@@ -16,6 +15,7 @@ import (
 // Gitlab provider finds a zip file in the repository's releases to provide files
 type Gitlab struct {
 	RepositoryURL string // Repository URL, example gitlab.com/mouuff/go-rocket-update
+	ProjectID     int
 	ZipName       string // Zip name (the zip you upload for a release on gitlab), example: binaries.zip
 
 	tmpDir      string // temporary directory this is used internally
@@ -23,75 +23,48 @@ type Gitlab struct {
 	zipPath     string // path to the downloaded zip (should be in tmpDir)
 }
 
-// gitlabTag struct used to unmarshal response from gitlab
-// https://api.gitlab.com/repos/ownerName/projectName/tags
-type gitlabTag struct {
-	Name string `json:"name"`
+// gitlabRelease struct used to unmarshal response from gitlab
+// https://gitlab.com/api/v4/projects/24021648/releases
+type gitlabRelease struct {
+	Name string `json:"tag_name"`
 }
 
-// repositoryInfo is used to get the name of the project and the owner name
-// from this fields we are able to get other links (such as the release and tags link)
-type repositoryInfo struct {
-	RepositoryOwner string
-	RepositoryName  string
-}
-
-// getRepositoryInfo parses the gitlab repository URL
-func (c *Gitlab) repositoryInfo() (*repositoryInfo, error) {
-	re := regexp.MustCompile(`gitlab\.com/(.*?)/(.*?)$`)
-	submatches := re.FindAllStringSubmatch(c.RepositoryURL, 1)
-	if len(submatches) < 1 {
-		return nil, errors.New("Invalid gitlab URL:" + c.RepositoryURL)
-	}
-	return &repositoryInfo{
-		RepositoryOwner: submatches[0][1],
-		RepositoryName:  submatches[0][2],
-	}, nil
-}
-
-// getTagsURL get the tags URL for the gitlab repository
-func (c *Gitlab) getTagsURL() (string, error) {
-	info, err := c.repositoryInfo()
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("https://api.gitlab.com/repos/%s/%s/tags",
-		info.RepositoryOwner,
-		info.RepositoryName,
+// getReleasesURL get the releases URL for the gitlab repository
+func (c *Gitlab) getReleasesURL() (string, error) {
+	return fmt.Sprintf("https://gitlab.com/api/v4/projects/%d/releases",
+		c.ProjectID,
 	), nil
 }
 
 // getZipURL get the zip URL for the gitlab repository
 // If no tag is provided then the latest version is selected
 func (c *Gitlab) getZipURL(tag string) (string, error) {
-	if len(tag) == 0 {
-		// Get latest version if no tag is provided
-		var err error
-		tag, err = c.GetLatestVersion()
-		if err != nil {
-			return "", err
+	/*
+		if len(tag) == 0 {
+			// Get latest version if no tag is provided
+			var err error
+			tag, err = c.GetLatestVersion()
+			if err != nil {
+				return "", err
+			}
 		}
-	}
-
-	info, err := c.repositoryInfo()
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("https://gitlab.com/%s/%s/releases/download/%s/%s",
-		info.RepositoryOwner,
-		info.RepositoryName,
-		tag,
-		c.ZipName,
-	), nil
+		return fmt.Sprintf("https://gitlab.com/%s/%s/releases/download/%s/%s",
+			info.RepositoryOwner,
+			info.RepositoryName,
+			tag,
+			c.ZipName,
+		), nil
+	*/
+	return "", nil
 }
 
-// getTags gets tags of the repository
-func (c *Gitlab) getTags() (tags []gitlabTag, err error) {
-	tagsURL, err := c.getTagsURL()
+// getReleases gets tags of the repository
+func (c *Gitlab) getReleases() (tags []gitlabRelease, err error) {
+	releasesURL, err := c.getReleasesURL()
 	if err != nil {
 		return
 	}
-	resp, err := http.Get(tagsURL)
+	resp, err := http.Get(releasesURL)
 	if err != nil {
 		return
 	}
@@ -151,7 +124,7 @@ func (c *Gitlab) Close() error {
 
 // GetLatestVersion gets the latest version
 func (c *Gitlab) GetLatestVersion() (string, error) {
-	tags, err := c.getTags()
+	tags, err := c.getReleases()
 	if err != nil {
 		return "", err
 	}
