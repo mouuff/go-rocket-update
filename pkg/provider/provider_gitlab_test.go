@@ -10,9 +10,8 @@ import (
 
 func TestProviderGitlab(t *testing.T) {
 	p := &provider.Gitlab{
-		RepositoryURL: "https://gitlab.com/arnaudalies.py/go-rocket-update-example",
-		ProjectID:     24021648,
-		ZipName:       "binaries_" + runtime.GOOS + ".zip",
+		ProjectID: 24021648,
+		ZipName:   "binaries_" + runtime.GOOS + ".zip",
 	}
 
 	log.Println(p.GetLatestVersion())
@@ -22,10 +21,8 @@ func TestProviderGitlab(t *testing.T) {
 	}
 	defer p.Close()
 
-	/*
-		err := ProviderTestWalkAndRetrieve(p)
-		if err != nil {
-			t.Fatal(err)
-		}
-	*/
+	err := ProviderTestWalkAndRetrieve(p)
+	if err != nil {
+		t.Fatal(err)
+	}
 }

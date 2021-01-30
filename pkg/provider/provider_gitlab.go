@@ -5,18 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
 
 // Gitlab provider finds a zip file in the repository's releases to provide files
 type Gitlab struct {
-	RepositoryURL string // Repository URL, example gitlab.com/mouuff/go-rocket-update
-	ProjectID     int
-	ZipName       string // Zip name (the zip you upload for a release on gitlab), example: binaries.zip
+	ProjectID int
+	ZipName   string // Zip name (the zip you upload for a release on gitlab), example: binaries.zip
 
 	tmpDir      string // temporary directory this is used internally
 	zipProvider *Zip   // provider used to unzip the downloaded zip
@@ -26,7 +27,13 @@ type Gitlab struct {
 // gitlabRelease struct used to unmarshal response from gitlab
 // https://gitlab.com/api/v4/projects/24021648/releases
 type gitlabRelease struct {
-	Name string `json:"tag_name"`
+	TagName string              `json:"tag_name"`
+	Links   []gitlabReleaseLink `json:"links"`
+}
+
+type gitlabReleaseLink struct {
+	Name      string `json:"name"`
+	DirectURL string `json:"direct_asset_url"`
 }
 
 // getReleasesURL get the releases URL for the gitlab repository
@@ -37,29 +44,24 @@ func (c *Gitlab) getReleasesURL() (string, error) {
 }
 
 // getZipURL get the zip URL for the gitlab repository
-// If no tag is provided then the latest version is selected
-func (c *Gitlab) getZipURL(tag string) (string, error) {
-	/*
-		if len(tag) == 0 {
-			// Get latest version if no tag is provided
-			var err error
-			tag, err = c.GetLatestVersion()
-			if err != nil {
-				return "", err
-			}
+// the latest version is selected
+func (c *Gitlab) getZipURL() (string, error) {
+	release, err := c.getLatestRelease()
+	if err != nil {
+		return "", err
+	}
+	log.Println(release)
+	for _, link := range release.Links {
+		log.Println(link)
+		if strings.HasSuffix(link.Name, c.ZipName) {
+			return link.DirectURL, nil
 		}
-		return fmt.Sprintf("https://gitlab.com/%s/%s/releases/download/%s/%s",
-			info.RepositoryOwner,
-			info.RepositoryName,
-			tag,
-			c.ZipName,
-		), nil
-	*/
-	return "", nil
+	}
+	return "", errors.New("Link not found for name: " + c.ZipName)
 }
 
 // getReleases gets tags of the repository
-func (c *Gitlab) getReleases() (tags []gitlabRelease, err error) {
+func (c *Gitlab) getReleases() (releases []gitlabRelease, err error) {
 	releasesURL, err := c.getReleasesURL()
 	if err != nil {
 		return
@@ -69,16 +71,28 @@ func (c *Gitlab) getReleases() (tags []gitlabRelease, err error) {
 		return
 	}
 	defer resp.Body.Close()
-	err = json.NewDecoder(resp.Body).Decode(&tags)
+	err = json.NewDecoder(resp.Body).Decode(&releases)
 	if err != nil {
 		return
 	}
 	return
 }
 
+// getReleases gets tags of the repository
+func (c *Gitlab) getLatestRelease() (*gitlabRelease, error) {
+	releases, err := c.getReleases()
+	if err != nil {
+		return nil, err
+	}
+	if len(releases) < 1 {
+		return nil, errors.New("This gitlab project has no releases")
+	}
+	return &releases[0], nil
+}
+
 // Open opens the provider
 func (c *Gitlab) Open() (err error) {
-	zipURL, err := c.getZipURL("") // get zip url for latest version
+	zipURL, err := c.getZipURL() // get zip url for latest version
 	if err != nil {
 		return
 	}
@@ -124,14 +138,11 @@ func (c *Gitlab) Close() error {
 
 // GetLatestVersion gets the latest version
 func (c *Gitlab) GetLatestVersion() (string, error) {
-	tags, err := c.getReleases()
+	release, err := c.getLatestRelease()
 	if err != nil {
 		return "", err
 	}
-	if len(tags) < 1 {
-		return "", errors.New("This gitlab project has no tags")
-	}
-	return tags[0].Name, nil
+	return release.TagName, nil
 }
 
 // Walk walks all the files provided
