@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -27,8 +26,12 @@ type Gitlab struct {
 // gitlabRelease struct used to unmarshal response from gitlab
 // https://gitlab.com/api/v4/projects/24021648/releases
 type gitlabRelease struct {
-	TagName string              `json:"tag_name"`
-	Links   []gitlabReleaseLink `json:"links"`
+	TagName string               `json:"tag_name"`
+	Assets  *gitlabReleaseAssets `json:"assets"`
+}
+
+type gitlabReleaseAssets struct {
+	Links []gitlabReleaseLink `json:"links"`
 }
 
 type gitlabReleaseLink struct {
@@ -50,9 +53,7 @@ func (c *Gitlab) getZipURL() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	log.Println(release)
-	for _, link := range release.Links {
-		log.Println(link)
+	for _, link := range release.Assets.Links {
 		if strings.HasSuffix(link.Name, c.ZipName) {
 			return link.DirectURL, nil
 		}
