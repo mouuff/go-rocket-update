@@ -16,7 +16,7 @@ It provides the flexibility to implement different updating user experiences lik
 *The gopher in this image was created by [Takuya Ueda][tu], licensed under [Creative Commons 3.0 Attributions license][cc3-by].*
 
 ## Features
-* Flexible way to provide updates (ex: using Github!)
+* Flexible way to provide updates (ex: using Github or Gitlab!)
 * Cross platform support (Mac, Linux, Arm, and Windows)
 * RSA signature verification
 * Tooling to generate and verify signatures
@@ -54,10 +54,11 @@ The updater uses a `Provider` as an input source for updates. It provides files 
 
 Here is few examples of providers:
 * `provider.Github`: It will check for the latest release on Github with a specific zip name
+* `provider.Gitlab`: It will check for the latest release on Gitlab with a specific zip name
 * `provider.Local`: It will use a local folder, version will be defined in the VERSION file (can be used for testing, or in a company with a shared folder for example)
 * `provider.Zip`: Same as provider.Local but with a `Zip` file
 
-*In the future there will be providers for FTP servers and Gitlab.*
+*In the future there will be providers for FTP servers and Google cloud storage.*
 
 The updater will list the files and retrieve them the same way for all the providers:
 
@@ -74,7 +75,7 @@ We recommend using [goxc](https://github.com/laher/goxc) for compiling your Go a
 ### Planned features
 This project is currently under construction, here is some of the things to come:
 * More documentation and examples
-* Gitlab and FTP providers
+* Google cloud storage and FTP providers
 * Mutliple providers (enables the use of another provider if the first one is down)
 * Update channels for Github provider (alpha, beta, ...)
 * Rollback feature
