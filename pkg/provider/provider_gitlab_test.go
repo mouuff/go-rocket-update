@@ -1,7 +1,6 @@
 package provider_test
 
 import (
-	"log"
 	"runtime"
 	"testing"
 
@@ -13,8 +12,6 @@ func TestProviderGitlab(t *testing.T) {
 		ProjectID: 24021648,
 		ZipName:   "binaries_" + runtime.GOOS + ".zip",
 	}
-
-	log.Println(p.GetLatestVersion())
 
 	if err := p.Open(); err != nil {
 		t.Fatal(err)
