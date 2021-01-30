@@ -29,21 +29,21 @@ type githubTag struct {
 	Name string `json:"name"`
 }
 
-// repositoryInfo is used to get the name of the project and the owner name
+// githubRepositoryInfo is used to get the name of the project and the owner name
 // from this fields we are able to get other links (such as the release and tags link)
-type repositoryInfo struct {
+type githubRepositoryInfo struct {
 	RepositoryOwner string
 	RepositoryName  string
 }
 
 // getRepositoryInfo parses the github repository URL
-func (c *Github) repositoryInfo() (*repositoryInfo, error) {
+func (c *Github) repositoryInfo() (*githubRepositoryInfo, error) {
 	re := regexp.MustCompile(`github\.com/(.*?)/(.*?)$`)
 	submatches := re.FindAllStringSubmatch(c.RepositoryURL, 1)
 	if len(submatches) < 1 {
 		return nil, errors.New("Invalid github URL:" + c.RepositoryURL)
 	}
-	return &repositoryInfo{
+	return &githubRepositoryInfo{
 		RepositoryOwner: submatches[0][1],
 		RepositoryName:  submatches[0][2],
 	}, nil
