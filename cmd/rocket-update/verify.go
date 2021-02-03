@@ -22,10 +22,12 @@ type Verify struct {
 	pubkey string
 }
 
+// Name gets the name of the command
 func (cmd *Verify) Name() string {
 	return "verify"
 }
 
+// Init initializes the command
 func (cmd *Verify) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet(cmd.Name(), flag.ExitOnError)
 
@@ -35,6 +37,7 @@ func (cmd *Verify) Init(args []string) error {
 	return cmd.flagSet.Parse(args)
 }
 
+// Run runs the command
 func (cmd *Verify) Run() error {
 	log.Println("Reading public key...")
 	pubkeyBytes, err := ioutil.ReadFile(cmd.pubkey)

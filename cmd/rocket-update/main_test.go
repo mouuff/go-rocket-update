@@ -10,7 +10,7 @@ import (
 )
 
 func signFolder(folder string, privateKeyPath string) error {
-	err := main.RunSubCommands([]string{"sign", "-path", folder, "-key", privateKeyPath})
+	err := main.RunSubCommand([]string{"sign", "-path", folder, "-key", privateKeyPath})
 	if err != nil {
 		return err
 	}
@@ -18,7 +18,7 @@ func signFolder(folder string, privateKeyPath string) error {
 }
 
 func verifyFolder(folder string, publicKeyPath string) error {
-	err := main.RunSubCommands([]string{"verify", "-path", folder, "-pubkey", publicKeyPath})
+	err := main.RunSubCommand([]string{"verify", "-path", folder, "-pubkey", publicKeyPath})
 	if err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func verifyFolder(folder string, publicKeyPath string) error {
 }
 
 func keyGen(name string) error {
-	err := main.RunSubCommands([]string{"keygen", "-name", name})
+	err := main.RunSubCommand([]string{"keygen", "-name", name})
 	if err != nil {
 		return err
 	}
