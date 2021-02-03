@@ -63,6 +63,8 @@ func TestMain(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer os.RemoveAll(tmpDir)
+
 	folder := filepath.Join(tmpDir, "fakepackage")
 	if err := CreateFakePackage(folder); err != nil {
 		t.Fatal(err)
@@ -91,5 +93,28 @@ func TestMain(t *testing.T) {
 	if err = verifyFolder(folder, publicKeyPath); err == nil {
 		t.Fatal("Folder shouldn't be verified")
 	}
+	err = main.RunSubCommand([]string{})
+	if err == nil {
+		t.Fatal("Should return an error")
+	}
+	err = main.RunSubCommand([]string{"Test"})
+	if err == nil {
+		t.Fatal("Command shouldn't exist")
+	}
 
+	if err = keyGen(privateKeyPath); err == nil {
+		t.Fatal("Both keys already exists")
+	}
+	os.Remove(privateKeyPath)
+	if err = keyGen(privateKeyPath); err == nil {
+		t.Fatal("public key already exists")
+	}
+	os.Remove(publicKeyPath)
+	if err = keyGen(privateKeyPath); err != nil {
+		t.Fatal(err)
+	}
+	os.Remove(publicKeyPath)
+	if err = keyGen(privateKeyPath); err == nil {
+		t.Fatal("private key already exists")
+	}
 }
