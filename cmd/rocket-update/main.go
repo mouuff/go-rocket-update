@@ -14,7 +14,7 @@ type SubCommand interface {
 	Name() string
 }
 
-func runSubCommands(args []string) error {
+func RunSubCommands(args []string) error {
 
 	cmds := []SubCommand{
 		&Sign{},
@@ -50,7 +50,7 @@ func runSubCommands(args []string) error {
 }
 
 func main() {
-	if err := runSubCommands(os.Args[1:]); err != nil {
+	if err := RunSubCommands(os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
 }
