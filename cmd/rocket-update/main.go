@@ -14,7 +14,10 @@ type SubCommand interface {
 	Name() string
 }
 
-func runSubCommands(args []string) error {
+// RunSubCommand runs the right subcommand from the args
+// Example: args {"sign", "-name", "test"} will run the sign command
+// with {"-name", "test"} as parameters
+func RunSubCommand(args []string) error {
 
 	cmds := []SubCommand{
 		&Sign{},
@@ -50,7 +53,7 @@ func runSubCommands(args []string) error {
 }
 
 func main() {
-	if err := runSubCommands(os.Args[1:]); err != nil {
+	if err := RunSubCommand(os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -18,10 +18,12 @@ type Keygen struct {
 	keyName string
 }
 
+// Name gets the name of the command
 func (cmd *Keygen) Name() string {
 	return "keygen"
 }
 
+// Init initializes the command
 func (cmd *Keygen) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet(cmd.Name(), flag.ExitOnError)
 
@@ -30,6 +32,7 @@ func (cmd *Keygen) Init(args []string) error {
 	return cmd.flagSet.Parse(args)
 }
 
+// Run runs the command
 func (cmd *Keygen) Run() error {
 
 	privKeyPath := cmd.keyName

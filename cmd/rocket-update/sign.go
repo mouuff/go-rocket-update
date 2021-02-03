@@ -20,10 +20,12 @@ type Sign struct {
 	key  string
 }
 
+// Name gets the name of the command
 func (cmd *Sign) Name() string {
 	return "sign"
 }
 
+// Init initializes the command
 func (cmd *Sign) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet(cmd.Name(), flag.ExitOnError)
 
@@ -33,6 +35,7 @@ func (cmd *Sign) Init(args []string) error {
 	return cmd.flagSet.Parse(args)
 }
 
+// Run runs the command
 func (cmd *Sign) Run() error {
 
 	log.Println("Reading private key...")
