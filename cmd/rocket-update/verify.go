@@ -18,8 +18,8 @@ import (
 type Verify struct {
 	flagSet *flag.FlagSet
 
-	path   string
-	pubkey string
+	path      string
+	publicKey string
 }
 
 // Name gets the name of the command
@@ -32,7 +32,7 @@ func (cmd *Verify) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet(cmd.Name(), flag.ExitOnError)
 
 	cmd.flagSet.StringVar(&cmd.path, "path", "", "path to the package to verify (required)")
-	cmd.flagSet.StringVar(&cmd.pubkey, "pubkey", "", "path to the public key (required)")
+	cmd.flagSet.StringVar(&cmd.publicKey, "publicKey", "", "path to the public key (required)")
 
 	return cmd.flagSet.Parse(args)
 }
@@ -40,11 +40,11 @@ func (cmd *Verify) Init(args []string) error {
 // Run runs the command
 func (cmd *Verify) Run() error {
 	log.Println("Reading public key...")
-	pubkeyBytes, err := ioutil.ReadFile(cmd.pubkey)
+	pubkeyBytes, err := ioutil.ReadFile(cmd.publicKey)
 	if err != nil {
 		return err
 	}
-	pubkey, err := crypto.ParsePemPublicKey(pubkeyBytes)
+	publicKey, err := crypto.ParsePemPublicKey(pubkeyBytes)
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func (cmd *Verify) Run() error {
 	if err != nil {
 		return err
 	}
-	unverifiedFiles, err := signatures.VerifyFolder(pubkey, cmd.path)
+	unverifiedFiles, err := signatures.VerifyFolder(publicKey, cmd.path)
 	if err != nil {
 		return err
 	}

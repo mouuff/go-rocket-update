@@ -43,12 +43,12 @@ func (cmd *Sign) Run() error {
 	if err != nil {
 		return err
 	}
-	privkey, err := crypto.ParsePemPrivateKey(privkeyBytes)
+	privateKey, err := crypto.ParsePemPrivateKey(privkeyBytes)
 	if err != nil {
 		return err
 	}
 	log.Println("Computing signatures...")
-	signatures, err := crypto.GetFolderSignatures(privkey, cmd.path)
+	signatures, err := crypto.GetFolderSignatures(privateKey, cmd.path)
 	if err != nil {
 		return err
 	}

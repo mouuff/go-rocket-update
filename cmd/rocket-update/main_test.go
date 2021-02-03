@@ -18,7 +18,7 @@ func signFolder(folder string, privateKeyPath string) error {
 }
 
 func verifyFolder(folder string, publicKeyPath string) error {
-	err := main.RunSubCommand([]string{"verify", "-path", folder, "-pubkey", publicKeyPath})
+	err := main.RunSubCommand([]string{"verify", "-path", folder, "-publicKey", publicKeyPath})
 	if err != nil {
 		return err
 	}

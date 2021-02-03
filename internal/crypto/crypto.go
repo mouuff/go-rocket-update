@@ -61,8 +61,8 @@ func VerifyFileSignature(pub *rsa.PublicKey, signature []byte, path string) erro
 }
 
 // ExportPrivateKeyAsPem exports the private key to Pem
-func ExportPrivateKeyAsPem(privkey *rsa.PrivateKey) []byte {
-	privkeyBytes := x509.MarshalPKCS1PrivateKey(privkey)
+func ExportPrivateKeyAsPem(privateKey *rsa.PrivateKey) []byte {
+	privkeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
 	privkeyPem := pem.EncodeToMemory(
 		&pem.Block{
 			Type:  "RSA PRIVATE KEY",
@@ -88,8 +88,8 @@ func ParsePemPrivateKey(privPEM []byte) (*rsa.PrivateKey, error) {
 }
 
 // ExportPublicKeyAsPem exports the public key as Pem
-func ExportPublicKeyAsPem(pubkey *rsa.PublicKey) ([]byte, error) {
-	pubkeyBytes, err := x509.MarshalPKIXPublicKey(pubkey)
+func ExportPublicKeyAsPem(publicKey *rsa.PublicKey) ([]byte, error) {
+	pubkeyBytes, err := x509.MarshalPKIXPublicKey(publicKey)
 	if err != nil {
 		return nil, err
 	}
