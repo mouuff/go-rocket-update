@@ -27,9 +27,7 @@ func (p *Patcher) Apply() error {
 	if err != nil {
 		return err
 	}
-	if fileio.FileExists(p.BackupPath) {
-		os.Remove(p.BackupPath)
-	}
+	_ = p.CleanUp() // We dont check error on purpose
 	err = os.Rename(p.DestinationPath, p.BackupPath)
 	if err != nil {
 		return err
@@ -50,4 +48,12 @@ func (p *Patcher) Apply() error {
 // Rollback replaces the file located at BackupPath with the one located at DestinationPath.
 func (p *Patcher) Rollback() error {
 	return os.Rename(p.BackupPath, p.DestinationPath)
+}
+
+// CleanUp cleans up backup file
+func (p *Patcher) CleanUp() error {
+	if fileio.FileExists(p.BackupPath) {
+		return os.Remove(p.BackupPath)
+	}
+	return nil
 }
