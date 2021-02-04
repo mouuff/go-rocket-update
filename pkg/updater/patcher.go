@@ -7,22 +7,17 @@ import (
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
 
-// ReplaceWith replaces file located at 'dest' with the one located at 'src'
-// the 'dest' file is moved to 'backup' if 'backup' already exists it is replaced
-// 'src' is leaved untouched
-// Do not use this method for large files!
-
-// VerifyFunc is used to verify that the
+// VerifyFunc is used to verify that the file is valid
 type VerifyFunc func(path string) error
 
 // Patcher is used to replace file located at DestinationPath with the
 // one located at SourcePath. DestinationPath is backed up at BackupPath.
-//
 type Patcher struct {
 	DestinationPath string
 	SourcePath      string
 	BackupPath      string
 	Mode            os.FileMode // Mode used to create the new file at DestinationPath
+	Verify          VerifyFunc  // Verify (optionnal) is a function to verify that the installation is good
 }
 
 // Apply replaces the file located at DestinationPath with the one located at BackupPath and
@@ -43,6 +38,11 @@ func (p *Patcher) Apply() error {
 	if err != nil {
 		p.Rollback()
 		return err
+	}
+	if p.Verify != nil {
+		if err := p.Verify(p.DestinationPath); err != nil {
+			return p.Rollback()
+		}
 	}
 	return nil
 }
