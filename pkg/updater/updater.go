@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/kardianos/osext"
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 )
@@ -15,6 +16,22 @@ type Updater struct {
 	Provider   provider.Provider
 	BinaryName string
 	Version    string
+}
+
+// GetBinaryPatcher gets the binary patcher
+// binaryCandidate can be empty if you only plan to rollback
+func GetBinaryPatcher(binaryCandidate string) (*Patcher, error) {
+	executable, err := osext.Executable()
+	if err != nil {
+		return nil, err
+	}
+	return &Patcher{
+		DestinationPath: executable,
+		SourcePath:      binaryCandidate,
+		BackupPath:      executable + ".old",
+		Mode:            0755,
+		Verify:          nil, // TODO
+	}, nil
 }
 
 // getBinaryName gets the name used to find the right binary
@@ -53,8 +70,12 @@ func (u *Updater) updateExecutable() (err error) {
 	if err != nil {
 		return
 	}
-	err = fileio.ReplaceExecutableWith(binaryTmpPath)
-	return
+
+	patcher, err := GetBinaryPatcher(binaryTmpPath)
+	if err != nil {
+		return
+	}
+	return patcher.Apply()
 }
 
 // CanUpdate checks if the updater found a new version
