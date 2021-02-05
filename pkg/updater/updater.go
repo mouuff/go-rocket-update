@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/kardianos/osext"
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 )
@@ -21,7 +20,7 @@ type Updater struct {
 // GetBinaryPatcher gets the binary patcher
 // binaryCandidate can be empty if you only plan to rollback
 func GetBinaryPatcher(binaryCandidate string) (*Patcher, error) {
-	executable, err := osext.Executable()
+	executable, err := fileio.GetExecutable()
 	if err != nil {
 		return nil, err
 	}

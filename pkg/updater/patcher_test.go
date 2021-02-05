@@ -34,18 +34,21 @@ func TestPatcher(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	originalSourcePath := filepath.Join("testdata", "binary")
+	originalDestinationFile := filepath.Join("testdata", "file.jpeg")
+
 	sourcePath := filepath.Join(tmpDir, "file.jpeg")
 	destinationPath := filepath.Join(tmpDir, "binary")
 	backupPath := sourcePath + ".old"
 
 	err = fileio.CopyFile(
-		filepath.Join("testdata", "binary"),
+		originalDestinationFile,
 		destinationPath)
 	if err != nil {
 		t.Fatal(err)
 	}
 	err = fileio.CopyFile(
-		filepath.Join("testdata", "file.jpeg"),
+		originalSourcePath,
 		sourcePath)
 	if err != nil {
 		t.Fatal(err)
@@ -73,6 +76,7 @@ func TestPatcher(t *testing.T) {
 	}
 
 	AssertFilesNotEquals(t, sourcePath, destinationPath)
+	AssertFilesEquals(t, originalSourcePath, sourcePath)
 
 	err = patcher.CleanUp()
 	if err != nil {
