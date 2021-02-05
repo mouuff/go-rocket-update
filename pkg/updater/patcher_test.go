@@ -73,4 +73,12 @@ func TestPatcher(t *testing.T) {
 	}
 
 	AssertFilesNotEquals(t, sourcePath, destinationPath)
+
+	err = patcher.CleanUp()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if fileio.FileExists(backupPath) {
+		t.Fatal("Backup file should be cleaned")
+	}
 }
