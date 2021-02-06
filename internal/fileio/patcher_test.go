@@ -7,7 +7,7 @@ import (
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
 
-func AssertFilesEquals(t *testing.T, fileA, fileB string) {
+func assertFilesEquals(t *testing.T, fileA, fileB string) {
 	equals, err := fileio.CompareFiles(fileA, fileB)
 	if err != nil {
 		t.Fatal(err)
@@ -17,7 +17,7 @@ func AssertFilesEquals(t *testing.T, fileA, fileB string) {
 	}
 }
 
-func AssertFilesNotEquals(t *testing.T, fileA, fileB string) {
+func assertFilesNotEquals(t *testing.T, fileA, fileB string) {
 	equals, err := fileio.CompareFiles(fileA, fileB)
 	if err != nil {
 		t.Fatal(err)
@@ -59,22 +59,22 @@ func TestPatcher(t *testing.T) {
 		BackupPath:      backupPath,
 		Mode:            0755,
 	}
-	AssertFilesNotEquals(t, sourcePath, destinationPath)
+	assertFilesNotEquals(t, sourcePath, destinationPath)
 
 	err = patcher.Apply()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	AssertFilesEquals(t, sourcePath, destinationPath)
+	assertFilesEquals(t, sourcePath, destinationPath)
 
 	err = patcher.Rollback()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	AssertFilesNotEquals(t, sourcePath, destinationPath)
-	AssertFilesEquals(t, originalSourcePath, sourcePath)
+	assertFilesNotEquals(t, sourcePath, destinationPath)
+	assertFilesEquals(t, originalSourcePath, sourcePath)
 
 	err = patcher.CleanUp()
 	if err != nil {
