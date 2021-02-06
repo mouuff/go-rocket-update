@@ -10,15 +10,11 @@ import (
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 )
 
-// VerifyFunc is used to verify that the binary file is valid
-type VerifyFunc func(binaryPath string) error
-
 // Updater struct
 type Updater struct {
-	Provider         provider.Provider
-	BinaryName       string
-	Version          string
-	BinaryVerifyFunc VerifyFunc
+	Provider   provider.Provider
+	BinaryName string
+	Version    string
 }
 
 // getBinaryPatcher gets the binary patcher
