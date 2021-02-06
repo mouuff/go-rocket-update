@@ -1,11 +1,10 @@
-package updater_test
+package fileio_test
 
 import (
 	"path/filepath"
 	"testing"
 
 	"github.com/mouuff/go-rocket-update/internal/fileio"
-	"github.com/mouuff/go-rocket-update/pkg/updater"
 )
 
 func AssertFilesEquals(t *testing.T, fileA, fileB string) {
@@ -54,12 +53,11 @@ func TestPatcher(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	patcher := &updater.Patcher{
+	patcher := &fileio.Patcher{
 		DestinationPath: destinationPath,
 		SourcePath:      sourcePath,
 		BackupPath:      backupPath,
 		Mode:            0755,
-		Verify:          nil, // TODO
 	}
 	AssertFilesNotEquals(t, sourcePath, destinationPath)
 
