@@ -12,9 +12,10 @@ import (
 
 // Updater struct
 type Updater struct {
-	Provider   provider.Provider
-	BinaryName string
-	Version    string
+	Provider         provider.Provider
+	BinaryName       string
+	Version          string
+	BinaryVerifyFunc VerifyFunc
 }
 
 // getBinaryPatcher gets the binary patcher
@@ -29,7 +30,7 @@ func (u *Updater) getBinaryPatcher(binaryCandidatePath string) (*Patcher, error)
 		SourcePath:      binaryCandidatePath,
 		BackupPath:      executable + ".old",
 		Mode:            0755,
-		Verify:          nil, // TODO
+		Verify:          u.BinaryVerifyFunc,
 	}, nil
 }
 
