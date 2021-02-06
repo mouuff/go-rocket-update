@@ -17,16 +17,16 @@ type Updater struct {
 	Version    string
 }
 
-// GetBinaryPatcher gets the binary patcher
+// getBinaryPatcher gets the binary patcher
 // binaryCandidate can be empty if you only plan to rollback
-func GetBinaryPatcher(binaryCandidate string) (*Patcher, error) {
+func (u *Updater) getBinaryPatcher(binaryCandidatePath string) (*Patcher, error) {
 	executable, err := fileio.GetExecutable()
 	if err != nil {
 		return nil, err
 	}
 	return &Patcher{
 		DestinationPath: executable,
-		SourcePath:      binaryCandidate,
+		SourcePath:      binaryCandidatePath,
 		BackupPath:      executable + ".old",
 		Mode:            0755,
 		Verify:          nil, // TODO
@@ -38,19 +38,19 @@ func (u *Updater) getBinaryName() string {
 	return u.BinaryName + "_" + runtime.GOOS + "_" + runtime.GOARCH
 }
 
-// findBinaryPath finds the right binary using the provider
-func (u *Updater) findBinaryPath() (string, error) {
-	binaryPath := ""
+// findBinaryRemotePath finds the right binary using the provider
+func (u *Updater) findBinaryRemotePath() (string, error) {
+	binaryRemotePath := ""
 	err := u.Provider.Walk(func(info *provider.FileInfo) error {
 		if info.Mode.IsRegular() && strings.Contains(filepath.Base(info.Path), u.getBinaryName()) {
-			binaryPath = info.Path
+			binaryRemotePath = info.Path
 		}
 		return nil
 	})
 	if err != nil {
 		return "", err
 	}
-	return binaryPath, nil
+	return binaryRemotePath, nil
 }
 
 // updateExecutable updates the current executable with the new one
@@ -60,17 +60,17 @@ func (u *Updater) updateExecutable() (err error) {
 		return
 	}
 	defer os.RemoveAll(tmpDir)
-	binaryPath, err := u.findBinaryPath()
+	binaryRemotePath, err := u.findBinaryRemotePath()
 	if err != nil {
 		return
 	}
-	binaryTmpPath := filepath.Join(tmpDir, filepath.Base(binaryPath))
-	err = u.Provider.Retrieve(binaryPath, binaryTmpPath)
+	binaryCanditatePath := filepath.Join(tmpDir, filepath.Base(binaryRemotePath))
+	err = u.Provider.Retrieve(binaryRemotePath, binaryCanditatePath)
 	if err != nil {
 		return
 	}
 
-	patcher, err := GetBinaryPatcher(binaryTmpPath)
+	patcher, err := u.getBinaryPatcher(binaryCanditatePath)
 	if err != nil {
 		return
 	}
@@ -103,4 +103,14 @@ func (u *Updater) Update() (err error) {
 
 	err = u.updateExecutable()
 	return
+}
+
+// Rollback rollbacks to the previous version
+// Use this if you know what you are doing
+func (u *Updater) Rollback() (err error) {
+	binaryPatcher, err := u.getBinaryPatcher("")
+	if err != nil {
+		return err
+	}
+	return binaryPatcher.Rollback()
 }
