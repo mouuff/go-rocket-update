@@ -83,4 +83,20 @@ func TestPatcher(t *testing.T) {
 	if fileio.FileExists(backupPath) {
 		t.Fatal("Backup file should be cleaned")
 	}
+	err = patcher.CleanUp() // Cleaning up a second time shouldn't cause problem
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	patcher.DestinationPath = "wrongpath"
+
+	err = patcher.Apply()
+	if err == nil {
+		t.Error("Should return an error")
+	}
+	patcher.DestinationPath = destinationPath
+	patcher.SourcePath = "wrongpath"
+	if err == nil {
+		t.Error("Should return an error")
+	}
 }
