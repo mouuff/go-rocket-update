@@ -13,15 +13,14 @@ import (
 )
 
 func TestUpdater(t *testing.T) {
-
 	tmpDir, err := fileio.TempDir()
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer os.RemoveAll(tmpDir)
 
-	originalExecutable := filepath.Join(tmpDir, "executable")
-	err = fileio.CopyFile(filepath.Join("testdata", "testBinary"), originalExecutable)
+	executable := filepath.Join(tmpDir, "executable")
+	err = fileio.CopyFile(filepath.Join("testdata", "testBinary"), executable)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -30,7 +29,7 @@ func TestUpdater(t *testing.T) {
 		Provider:           &provider.Local{Path: solutionDir},
 		ExecutableName:     "test",
 		Version:            "v1.0",
-		OverrideExecutable: originalExecutable,
+		OverrideExecutable: executable,
 	}
 
 	canUpdate, err := u.CanUpdate()
@@ -49,29 +48,29 @@ func TestUpdater(t *testing.T) {
 	if !canUpdate {
 		t.Error("Should be able to update with different version")
 	}
-	originalExecutableChecksum, err := crypto.ChecksumFileSHA256(originalExecutable)
+	executableChecksum, err := crypto.ChecksumFileSHA256(executable)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err := u.Update(); err != nil {
 		t.Fatal(err)
 	}
-	updatedExecutableChecksum, err := crypto.ChecksumFileSHA256(originalExecutable)
+	updatedExecutableChecksum, err := crypto.ChecksumFileSHA256(executable)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if hex.EncodeToString(originalExecutableChecksum) == hex.EncodeToString(updatedExecutableChecksum) {
-		t.Error("originalExecutableChecksum == updatedExecutableChecksum")
+	if hex.EncodeToString(executableChecksum) == hex.EncodeToString(updatedExecutableChecksum) {
+		t.Error("executableChecksum == updatedExecutableChecksum")
 	}
 	err = u.Rollback()
 	if err != nil {
 		t.Fatal(err)
 	}
-	rollbackedExecutableChecksum, err := crypto.ChecksumFileSHA256(originalExecutable)
+	rollbackedExecutableChecksum, err := crypto.ChecksumFileSHA256(executable)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if hex.EncodeToString(originalExecutableChecksum) != hex.EncodeToString(rollbackedExecutableChecksum) {
-		t.Error("originalExecutableChecksum != rollbackedExecutableChecksum")
+	if hex.EncodeToString(executableChecksum) != hex.EncodeToString(rollbackedExecutableChecksum) {
+		t.Error("executableChecksum != rollbackedExecutableChecksum")
 	}
 }
