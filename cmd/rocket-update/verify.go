@@ -31,7 +31,7 @@ func (cmd *Verify) Name() string {
 func (cmd *Verify) Init(args []string) error {
 	cmd.flagSet = flag.NewFlagSet(cmd.Name(), flag.ExitOnError)
 
-	cmd.flagSet.StringVar(&cmd.path, "path", "", "path to the package to verify (required)")
+	cmd.flagSet.StringVar(&cmd.path, "path", "", "path to the package directory to verify (required)")
 	cmd.flagSet.StringVar(&cmd.publicKey, "publicKey", "", "path to the public key (required)")
 
 	return cmd.flagSet.Parse(args)
