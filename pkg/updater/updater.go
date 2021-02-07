@@ -12,21 +12,32 @@ import (
 
 // Updater struct
 type Updater struct {
-	Provider   provider.Provider
-	BinaryName string
-	Version    string
+	Provider           provider.Provider
+	BinaryName         string
+	Version            string
+	OverrideExecutable string // (optionnal) Overrides the path of the executable
+}
+
+// GetExecutable gets the executable path that will be used to for the update process
+// same as fileio.GetExecutable() but this one takes into account the variable OverrideExecutablePath
+func (u *Updater) GetExecutable() (string, error) {
+	if u.OverrideExecutable == "" {
+		return fileio.GetExecutable()
+	}
+	return u.OverrideExecutable, nil
 }
 
 // getBinaryPatcher gets the binary patcher
 // binaryCandidate can be empty if you only plan to rollback
 func (u *Updater) getBinaryPatcher(binaryCandidatePath string) (*fileio.Patcher, error) {
-	executable, err := fileio.GetExecutable()
+	executable, err := u.GetExecutable()
 	if err != nil {
 		return nil, err
 	}
 	return &fileio.Patcher{
-		DestinationPath: executable,
+
 		SourcePath:      binaryCandidatePath,
+		DestinationPath: executable,
 		BackupPath:      executable + ".old",
 		Mode:            0755,
 	}, nil

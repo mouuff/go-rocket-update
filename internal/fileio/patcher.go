@@ -8,8 +8,8 @@ import (
 // Patcher is used to replace file located at DestinationPath with the
 // one located at SourcePath. DestinationPath is backed up at BackupPath.
 type Patcher struct {
-	DestinationPath string
 	SourcePath      string
+	DestinationPath string
 	BackupPath      string
 	Mode            os.FileMode // Mode used to create the new file at DestinationPath
 }
