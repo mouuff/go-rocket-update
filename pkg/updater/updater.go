@@ -39,7 +39,7 @@ func (u *Updater) getBinaryName() string {
 	return u.BinaryName + "_" + runtime.GOOS + "_" + runtime.GOARCH
 }
 
-// findBinaryRemotePath finds the right binary using the provider
+// findBinaryRemotePath finds the remote binary path using the provider
 func (u *Updater) findBinaryRemotePath() (string, error) {
 	binaryRemotePath := ""
 	err := u.Provider.Walk(func(info *provider.FileInfo) error {
