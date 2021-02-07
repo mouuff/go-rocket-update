@@ -35,15 +35,15 @@ func (cmd *Keygen) Init(args []string) error {
 // Run runs the command
 func (cmd *Keygen) Run() error {
 
-	privKeyPath := cmd.keyName
-	pubKeyPath := cmd.keyName + ".pub"
+	privateKeyPath := cmd.keyName
+	publicKeyPath := cmd.keyName + ".pub"
 
-	if fileio.FileExists(privKeyPath) {
-		return errors.New("Key '" + privKeyPath + "' already exists")
+	if fileio.FileExists(privateKeyPath) {
+		return errors.New("Key '" + privateKeyPath + "' already exists")
 	}
 
-	if fileio.FileExists(pubKeyPath) {
-		return errors.New("Key '" + pubKeyPath + "' already exists")
+	if fileio.FileExists(publicKeyPath) {
+		return errors.New("Key '" + publicKeyPath + "' already exists")
 	}
 
 	log.Println("Generating keys...")
@@ -53,22 +53,22 @@ func (cmd *Keygen) Run() error {
 	}
 
 	privPem := crypto.ExportPrivateKeyAsPem(priv)
-	err = ioutil.WriteFile(privKeyPath, privPem, 0600)
+	err = ioutil.WriteFile(privateKeyPath, privPem, 0600)
 	if err != nil {
 		return err
 	}
-	log.Println("Created private key: " + privKeyPath)
+	log.Println("Created private key: " + privateKeyPath)
 
 	pubPem, err := crypto.ExportPublicKeyAsPem(&priv.PublicKey)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(pubKeyPath, pubPem, 0644)
+	err = ioutil.WriteFile(publicKeyPath, pubPem, 0644)
 	if err != nil {
 		return err
 	}
 
-	log.Println("Created public key: " + pubKeyPath)
+	log.Println("Created public key: " + publicKeyPath)
 
 	return nil
 }

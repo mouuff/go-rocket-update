@@ -30,11 +30,11 @@ func GetFolderSignatures(priv *rsa.PrivateKey, root string) (*Signatures, error)
 			if err != nil {
 				return err
 			}
-			relpath, err := filepath.Rel(root, filePath)
+			relPath, err := filepath.Rel(root, filePath)
 			if err != nil {
 				return err
 			}
-			s.Add(relpath, signature)
+			s.Add(relPath, signature)
 		}
 		return nil
 	})
@@ -64,11 +64,11 @@ func (s *Signatures) VerifyFolder(pub *rsa.PublicKey, root string) ([]string, er
 			return walkErr
 		}
 		if info.Mode().IsRegular() {
-			relpath, err := filepath.Rel(root, filePath)
+			relPath, err := filepath.Rel(root, filePath)
 			if err != nil {
 				return err
 			}
-			err = s.Verify(pub, relpath, filePath)
+			err = s.Verify(pub, relPath, filePath)
 			if err != nil {
 				unverifiedFiles = append(unverifiedFiles, filePath)
 				return nil
@@ -81,11 +81,11 @@ func (s *Signatures) VerifyFolder(pub *rsa.PublicKey, root string) ([]string, er
 
 // Verify verifies the signature of a file
 // full path must be the full path to the file
-// relpath must be relative to the root
-func (s *Signatures) Verify(pub *rsa.PublicKey, relpath string, fullpath string) error {
+// relPath must be relative to the root
+func (s *Signatures) Verify(pub *rsa.PublicKey, relPath string, fullpath string) error {
 	// Why pass 'fullpath' instead of root? Because later on are going to retrieve files using a "Provider"
 	// When we retrieve files using a "Provider", the file can be downloaded anywhere unrelated to the root
-	signature, err := s.Get(relpath)
+	signature, err := s.Get(relPath)
 	if err != nil {
 		return err
 	}
@@ -97,23 +97,23 @@ func (s *Signatures) Verify(pub *rsa.PublicKey, relpath string, fullpath string)
 }
 
 // Add adds a signature of a file
-// relpath must be a relative path from the root of the folder
-func (s *Signatures) Add(relpath string, signature []byte) {
-	s.SignaturesMap[filepath.ToSlash(relpath)] = signature
+// relPath must be a relative path from the root of the folder
+func (s *Signatures) Add(relPath string, signature []byte) {
+	s.SignaturesMap[filepath.ToSlash(relPath)] = signature
 }
 
 // Get gets a signature of a file given a relative path
-func (s *Signatures) Get(relpath string) ([]byte, error) {
-	if val, ok := s.SignaturesMap[filepath.ToSlash(relpath)]; ok {
+func (s *Signatures) Get(relPath string) ([]byte, error) {
+	if val, ok := s.SignaturesMap[filepath.ToSlash(relPath)]; ok {
 		return val, nil
 	}
 	return nil, errors.New("Signature for file not found")
 }
 
 // Remove removes a signature of a file given a relative path
-func (s *Signatures) Remove(relpath string) {
-	_, ok := s.SignaturesMap[filepath.ToSlash(relpath)]
+func (s *Signatures) Remove(relPath string) {
+	_, ok := s.SignaturesMap[filepath.ToSlash(relPath)]
 	if ok {
-		delete(s.SignaturesMap, filepath.ToSlash(relpath))
+		delete(s.SignaturesMap, filepath.ToSlash(relPath))
 	}
 }

@@ -21,6 +21,7 @@ It provides the flexibility to implement different updating user experiences lik
 * RSA signature verification
 * Tooling to generate and verify signatures
 * Background update
+* Rollback feature
 
 ## QuickStart
 
@@ -37,7 +38,7 @@ Here is an example using Github releases:
 			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
 			ZipName:       "binaries_" + runtime.GOOS + ".zip",
 		},
-		BinaryName: "go-rocket-update-example",
+		ExecutableName: "go-rocket-update-example",
 		Version:    "v0.1",
 	}
 	log.Println(u.Version)
@@ -62,13 +63,13 @@ Here is few examples of providers:
 
 The updater will list the files and retrieve them the same way for all the providers:
 
-The directory should contain files with the name: BinaryName-$GOOS-$ARCH.
+The directory should contain files with the name: ExecutableName-$GOOS-$ARCH.
 
-Example with BinaryName `progname`:
+Example with ExecutableName `test`:
 
-    progname-windows-386
-    progname-darwin-amd64
-    progname-linux-arm
+    test-windows-386
+    test-darwin-amd64
+    test-linux-arm
 
 We recommend using [goxc](https://github.com/laher/goxc) for compiling your Go application for multiple platforms.
 
@@ -78,7 +79,12 @@ This project is currently under construction, here is some of the things to come
 * Google cloud storage and FTP providers
 * Mutliple providers (enables the use of another provider if the first one is down)
 * Update channels for Github provider (alpha, beta, ...)
-* Rollback feature
+
+
+
+## API Breaking Changes
+- **Feb 7, 2021**: The `BinaryName` variable used in `Updater` have been renamed to `ExecutableName`.
+
 
 [tu]: https://twitter.com/tenntenn
 [cc3-by]: https://creativecommons.org/licenses/by/3.0/

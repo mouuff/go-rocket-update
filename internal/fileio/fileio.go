@@ -86,30 +86,3 @@ func GetExecutable() (string, error) {
 	}
 	return execPath, nil
 }
-
-// ReplaceExecutableWith replaces the current executable with the one located at src
-func ReplaceExecutableWith(src string) error {
-	executable, err := GetExecutable()
-	if err != nil {
-		return err
-	}
-	renamedExecutable := executable + ".old"
-	content, err := ioutil.ReadFile(src)
-	if err != nil {
-		return err
-	}
-	if FileExists(renamedExecutable) {
-		os.Remove(renamedExecutable)
-	}
-	err = os.Rename(executable, renamedExecutable)
-	if err != nil {
-		return err
-	}
-	err = ioutil.WriteFile(executable, content, 0755)
-	if err != nil {
-		// rollback modifications
-		os.Rename(renamedExecutable, executable)
-		return err
-	}
-	return nil
-}

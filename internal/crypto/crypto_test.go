@@ -53,7 +53,6 @@ func TestSignAndVerifyFile(t *testing.T) {
 
 func TestVerifyFile(t *testing.T) {
 	fileA := filepath.Join("testdata", "small.txt")
-	//fileB := filepath.Join("testdata", "bin.txt")
 
 	pub, err := crypto.ParsePemPublicKey([]byte(`-----BEGIN RSA PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA4L9SG+I23Rr3rCv8MUWb

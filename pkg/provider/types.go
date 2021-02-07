@@ -32,8 +32,8 @@ type Provider interface {
 }
 
 var (
-	// ErrProviderUnavaiable is a generic error when a provider is not avaiable
-	ErrProviderUnavaiable = errors.New("provider not avaiable")
+	// ErrProviderUnavaiable is a generic error when a provider is not available
+	ErrProviderUnavaiable = errors.New("provider not available")
 	// ErrFileNotFound is a generic error when a file is not found
 	ErrFileNotFound = errors.New("file not found")
 )
