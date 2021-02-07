@@ -13,45 +13,45 @@ import (
 // Updater struct
 type Updater struct {
 	Provider           provider.Provider
-	BinaryName         string
+	ExecutableName     string
 	Version            string
 	OverrideExecutable string // (optionnal) Overrides the path of the executable
 }
 
-// getBinaryPatcher gets the binary patcher
-// binaryCandidate can be empty if you only plan to rollback
-func (u *Updater) getBinaryPatcher(binaryCandidatePath string) (*fileio.Patcher, error) {
+// getExecutablePatcher gets the executable patcher
+// executableCandidate can be empty if you only plan to rollback
+func (u *Updater) getExecutablePatcher(executableCandidatePath string) (*fileio.Patcher, error) {
 	executable, err := u.GetExecutable()
 	if err != nil {
 		return nil, err
 	}
 	return &fileio.Patcher{
 
-		SourcePath:      binaryCandidatePath,
+		SourcePath:      executableCandidatePath,
 		DestinationPath: executable,
 		BackupPath:      executable + ".old",
 		Mode:            0755,
 	}, nil
 }
 
-// getBinaryName gets the name used to find the right binary
-func (u *Updater) getBinaryName() string {
-	return u.BinaryName + "_" + runtime.GOOS + "_" + runtime.GOARCH
+// getExecutableName gets the name used to find the right executable path
+func (u *Updater) getExecutableName() string {
+	return u.ExecutableName + "_" + runtime.GOOS + "_" + runtime.GOARCH
 }
 
-// findBinaryRemotePath finds the remote binary path using the provider
-func (u *Updater) findBinaryRemotePath() (string, error) {
-	binaryRemotePath := ""
+// findExecutableRemotePath finds the remote executable path using the provider
+func (u *Updater) findExecutableRemotePath() (string, error) {
+	executableRemotePath := ""
 	err := u.Provider.Walk(func(info *provider.FileInfo) error {
-		if info.Mode.IsRegular() && strings.Contains(filepath.Base(info.Path), u.getBinaryName()) {
-			binaryRemotePath = info.Path
+		if info.Mode.IsRegular() && strings.Contains(filepath.Base(info.Path), u.getExecutableName()) {
+			executableRemotePath = info.Path
 		}
 		return nil
 	})
 	if err != nil {
 		return "", err
 	}
-	return binaryRemotePath, nil
+	return executableRemotePath, nil
 }
 
 // updateExecutable updates the current executable with the new one
@@ -61,17 +61,17 @@ func (u *Updater) updateExecutable() (err error) {
 		return
 	}
 	defer os.RemoveAll(tmpDir)
-	binaryRemotePath, err := u.findBinaryRemotePath()
+	executableRemotePath, err := u.findExecutableRemotePath()
 	if err != nil {
 		return
 	}
-	binaryCanditatePath := filepath.Join(tmpDir, filepath.Base(binaryRemotePath))
-	err = u.Provider.Retrieve(binaryRemotePath, binaryCanditatePath)
+	executableCanditatePath := filepath.Join(tmpDir, filepath.Base(executableRemotePath))
+	err = u.Provider.Retrieve(executableRemotePath, executableCanditatePath)
 	if err != nil {
 		return
 	}
 
-	patcher, err := u.getBinaryPatcher(binaryCanditatePath)
+	patcher, err := u.getExecutablePatcher(executableCanditatePath)
 	if err != nil {
 		return
 	}
@@ -118,9 +118,9 @@ func (u *Updater) Update() (err error) {
 // Rollback rollbacks to the previous version
 // Use this if you know what you are doing
 func (u *Updater) Rollback() (err error) {
-	binaryPatcher, err := u.getBinaryPatcher("")
+	executablePatcher, err := u.getExecutablePatcher("")
 	if err != nil {
 		return err
 	}
-	return binaryPatcher.Rollback()
+	return executablePatcher.Rollback()
 }

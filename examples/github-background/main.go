@@ -18,8 +18,8 @@ func main() {
 			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
 			ZipName:       "binaries_" + runtime.GOOS + ".zip",
 		},
-		BinaryName: "go-rocket-update-example",
-		Version:    "v0.3.0",
+		ExecutableName: "go-rocket-update-example",
+		Version:        "v0.3.0",
 	}
 
 	var wg sync.WaitGroup

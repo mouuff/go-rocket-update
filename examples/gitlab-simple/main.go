@@ -15,8 +15,8 @@ func main() {
 			ProjectID: 24021648,
 			ZipName:   "binaries_" + runtime.GOOS + ".zip",
 		},
-		BinaryName: "go-rocket-update-example",
-		Version:    "v0.3.0",
+		ExecutableName: "go-rocket-update-example",
+		Version:        "v0.3.0",
 	}
 
 	log.Println(u.Version)

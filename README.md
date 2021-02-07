@@ -37,7 +37,7 @@ Here is an example using Github releases:
 			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
 			ZipName:       "binaries_" + runtime.GOOS + ".zip",
 		},
-		BinaryName: "go-rocket-update-example",
+		ExecutableName: "go-rocket-update-example",
 		Version:    "v0.1",
 	}
 	log.Println(u.Version)
@@ -62,9 +62,9 @@ Here is few examples of providers:
 
 The updater will list the files and retrieve them the same way for all the providers:
 
-The directory should contain files with the name: BinaryName-$GOOS-$ARCH.
+The directory should contain files with the name: ExecutableName-$GOOS-$ARCH.
 
-Example with BinaryName `progname`:
+Example with ExecutableName `progname`:
 
     progname-windows-386
     progname-darwin-amd64
