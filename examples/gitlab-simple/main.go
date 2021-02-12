@@ -20,7 +20,7 @@ func main() {
 	}
 
 	log.Println(u.Version)
-	if err := u.Update(); err != nil {
+	if _, err := u.Update(); err != nil {
 		log.Println(err)
 	}
 }

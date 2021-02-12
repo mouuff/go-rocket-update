@@ -10,6 +10,18 @@ import (
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 )
 
+// UpdateStatus represents the status after Updater{}.Update() was called
+type UpdateStatus int
+
+const (
+	// Unknown update status (something went wrong)
+	Unknown UpdateStatus = iota
+	// UpToDate means the software is already up to date
+	UpToDate
+	// Updated means the software have been updated
+	Updated
+)
+
 // Updater struct
 type Updater struct {
 	Provider           provider.Provider
@@ -101,9 +113,14 @@ func (u *Updater) CanUpdate() (bool, error) {
 
 // Update runs the updater
 // It will update the current application if an update is found
-func (u *Updater) Update() (err error) {
+func (u *Updater) Update() (status UpdateStatus, err error) {
+	status = Unknown
 	canUpdate, err := u.CanUpdate()
-	if err != nil || !canUpdate {
+	if err != nil {
+		return
+	}
+	if !canUpdate {
+		status = UpToDate
 		return
 	}
 	if err = u.Provider.Open(); err != nil {
@@ -112,6 +129,9 @@ func (u *Updater) Update() (err error) {
 	defer u.Provider.Close()
 
 	err = u.updateExecutable()
+	if err == nil {
+		status = Updated
+	}
 	return
 }
 

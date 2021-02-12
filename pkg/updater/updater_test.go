@@ -52,7 +52,7 @@ func TestUpdater(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := u.Update(); err != nil {
+	if _, err := u.Update(); err != nil {
 		t.Fatal(err)
 	}
 	updatedExecutableChecksum, err := crypto.ChecksumFileSHA256(executable)

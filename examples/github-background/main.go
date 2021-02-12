@@ -31,7 +31,7 @@ func main() {
 		log.Println("Update found! Updating in background...")
 		wg.Add(1)
 		go func() {
-			if err := u.Update(); err != nil {
+			if _, err := u.Update(); err != nil {
 				log.Println(err)
 			}
 
