@@ -16,7 +16,7 @@ import (
 
 // verifyInstallation verifies if the executable is installed correctly
 func verifyInstallation(u *updater.Updater) error {
-	latestVersion, err := u.Provider.GetLatestVersion()
+	latestVersion, err := u.GetLatestVersion()
 	if err != nil {
 		return err
 	}

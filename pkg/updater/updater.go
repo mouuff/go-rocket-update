@@ -28,6 +28,7 @@ type Updater struct {
 	ExecutableName     string
 	Version            string
 	OverrideExecutable string // (optionnal) Overrides the path of the executable
+	latestVersion      string // cache for the latest version
 }
 
 // getExecutablePatcher gets the executable patcher
@@ -99,9 +100,23 @@ func (u *Updater) GetExecutable() (string, error) {
 	return u.OverrideExecutable, nil
 }
 
+// GetLatestVersion gets the latest version (same as provider.GetLatestVersion but keeps the version in cache)
+func (u *Updater) GetLatestVersion() (string, error) {
+	if u.latestVersion != "" {
+		return u.latestVersion, nil
+	}
+	var err error
+	u.latestVersion, err = u.Provider.GetLatestVersion()
+	if err != nil {
+		u.latestVersion = ""
+		return u.latestVersion, err
+	}
+	return u.latestVersion, nil
+}
+
 // CanUpdate checks if the updater found a new version
 func (u *Updater) CanUpdate() (bool, error) {
-	latestVersion, err := u.Provider.GetLatestVersion()
+	latestVersion, err := u.GetLatestVersion()
 	if err != nil {
 		return false, err
 	}
