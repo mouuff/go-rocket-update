@@ -28,7 +28,7 @@ func (p *Patcher) Apply() error {
 	}
 	err = ioutil.WriteFile(p.DestinationPath, content, p.Mode)
 	if err != nil {
-		p.Rollback()
+		p.Rollback() // TODO test
 		return err
 	}
 	return nil
