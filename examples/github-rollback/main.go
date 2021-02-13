@@ -15,6 +15,8 @@ import (
 )
 
 // verifyInstallation verifies if the executable is installed correctly
+// we are going to run the newly installed program by running it with --version
+// if it outputs the good version then we assume the installation is good
 func verifyInstallation(u *updater.Updater) error {
 	latestVersion, err := u.GetLatestVersion()
 	if err != nil {
