@@ -88,7 +88,7 @@ func (u *Updater) updateExecutable() (err error) {
 	if err != nil {
 		return
 	}
-	return patcher.Apply()
+	return patcher.Apply() // on failure it will automaticly rollback already
 }
 
 // GetExecutable gets the executable path that will be used to for the update process
@@ -147,6 +147,7 @@ func (u *Updater) Update() (status UpdateStatus, err error) {
 	if err == nil {
 		status = Updated
 	}
+	// WARNING: any code after that should also call Rollback() on failure
 	return
 }
 
