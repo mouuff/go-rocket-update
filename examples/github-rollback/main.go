@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 	"github.com/mouuff/go-rocket-update/pkg/updater"
@@ -71,8 +72,15 @@ func main() {
 	if len(os.Args) > 1 && os.Args[1] == "--verify" {
 		os.Exit(0)
 	}
-	err := selfUpdate(u)
-	if err != nil {
-		log.Println(err)
-	}
+
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		if err := selfUpdate(u); err != nil {
+			log.Println(err)
+		}
+		wg.Done()
+	}()
+	wg.Wait()
 }
