@@ -2,9 +2,9 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -15,7 +15,7 @@ import (
 )
 
 // verifyInstallation verifies if the executable is installed correctly
-// we are going to run the newly installed program by running it with --version
+// we are going to run the newly installed program by running it with -version
 // if it outputs the good version then we assume the installation is good
 func verifyInstallation(u *updater.Updater) error {
 	latestVersion, err := u.GetLatestVersion()
@@ -28,10 +28,10 @@ func verifyInstallation(u *updater.Updater) error {
 	}
 	cmd := exec.Cmd{
 		Path: executable,
-		Args: []string{executable, "--verify"},
+		Args: []string{executable, "-version"},
 	}
 	// Should be replaced with Output() as soon as test project is updated
-	output, err := cmd.CombinedOutput()
+	output, err := cmd.Output()
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func selfUpdate(u *updater.Updater) error {
 			log.Println("Rolling back...")
 			return u.Rollback()
 		}
-		log.Println("Installation OK")
+		log.Println("Updated to latest version!")
 	}
 	return nil
 }
@@ -66,16 +66,23 @@ func main() {
 			ZipName:       "binaries_" + runtime.GOOS + ".zip",
 		},
 		ExecutableName: "go-rocket-update-example",
-		Version:        "v0.3.0",
+		Version:        "v0.0.0",
 	}
 
-	fmt.Println(u.Version)
-	if len(os.Args) > 1 && os.Args[1] == "--verify" {
-		os.Exit(0)
+	versionFlag := false
+	flag.BoolVar(&versionFlag, "version", false, "prints the version and exit")
+	flag.Parse()
+
+	if versionFlag {
+		// we use this flag to verify the installation for this example:
+		// https://github.com/mouuff/go-rocket-update/blob/master/examples/github-rollback/main.go
+		fmt.Println(u.Version)
+		return
 	}
 
+	log.Println("Current version: " + u.Version)
+	log.Println("Looking for updates...")
 	var wg sync.WaitGroup
-
 	wg.Add(1)
 	go func() {
 		if err := selfUpdate(u); err != nil {
@@ -83,5 +90,6 @@ func main() {
 		}
 		wg.Done()
 	}()
+	// you can add code here, it should run during the update process without conflicts
 	wg.Wait()
 }
