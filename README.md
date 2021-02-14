@@ -84,6 +84,7 @@ This project is currently under construction, here is some of the things to come
 
 ## API Breaking Changes
 - **Feb 7, 2021**: The `BinaryName` variable used in `Updater` have been renamed to `ExecutableName`.
+- **Feb 12, 2021**: The method `Updater.Update()` now returns `(UpdateStatus, error)` instead of just `(error)`.
 
 
 [tu]: https://twitter.com/tenntenn

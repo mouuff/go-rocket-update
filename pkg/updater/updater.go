@@ -10,12 +10,25 @@ import (
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 )
 
+// UpdateStatus represents the status after Updater{}.Update() was called
+type UpdateStatus int
+
+const (
+	// Unknown update status (something went wrong)
+	Unknown UpdateStatus = iota
+	// UpToDate means the software is already up to date
+	UpToDate
+	// Updated means the software have been updated
+	Updated
+)
+
 // Updater struct
 type Updater struct {
 	Provider           provider.Provider
 	ExecutableName     string
 	Version            string
 	OverrideExecutable string // (optionnal) Overrides the path of the executable
+	latestVersion      string // cache for the latest version
 }
 
 // getExecutablePatcher gets the executable patcher
@@ -75,7 +88,7 @@ func (u *Updater) updateExecutable() (err error) {
 	if err != nil {
 		return
 	}
-	return patcher.Apply()
+	return patcher.Apply() // on failure it will automaticly rollback already
 }
 
 // GetExecutable gets the executable path that will be used to for the update process
@@ -87,9 +100,23 @@ func (u *Updater) GetExecutable() (string, error) {
 	return u.OverrideExecutable, nil
 }
 
+// GetLatestVersion gets the latest version (same as provider.GetLatestVersion but keeps the version in cache)
+func (u *Updater) GetLatestVersion() (string, error) {
+	if u.latestVersion != "" {
+		return u.latestVersion, nil
+	}
+	var err error
+	u.latestVersion, err = u.Provider.GetLatestVersion()
+	if err != nil {
+		u.latestVersion = ""
+		return u.latestVersion, err
+	}
+	return u.latestVersion, nil
+}
+
 // CanUpdate checks if the updater found a new version
 func (u *Updater) CanUpdate() (bool, error) {
-	latestVersion, err := u.Provider.GetLatestVersion()
+	latestVersion, err := u.GetLatestVersion()
 	if err != nil {
 		return false, err
 	}
@@ -101,9 +128,14 @@ func (u *Updater) CanUpdate() (bool, error) {
 
 // Update runs the updater
 // It will update the current application if an update is found
-func (u *Updater) Update() (err error) {
+func (u *Updater) Update() (status UpdateStatus, err error) {
+	status = Unknown
 	canUpdate, err := u.CanUpdate()
-	if err != nil || !canUpdate {
+	if err != nil {
+		return
+	}
+	if !canUpdate {
+		status = UpToDate
 		return
 	}
 	if err = u.Provider.Open(); err != nil {
@@ -112,6 +144,10 @@ func (u *Updater) Update() (err error) {
 	defer u.Provider.Close()
 
 	err = u.updateExecutable()
+	if err == nil {
+		status = Updated
+	}
+	// WARNING: any code after that should also call Rollback() on failure
 	return
 }
 
