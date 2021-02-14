@@ -63,9 +63,9 @@ Here is few examples of providers:
 
 The updater will list the files and retrieve them the same way for all the providers:
 
-The directory should contain files with `ExecutableName`.
+The directory should have files containing `ExecutableName`.
 
-Example with `ExecutableName: fmt.Sprintf("test_%s_%s", runtime.GOOS, runtime.GOARCH)`:
+Example directory with `ExecutableName: fmt.Sprintf("test_%s_%s", runtime.GOOS, runtime.GOARCH)`:
 
     test_windows_amd64.exe
     test_darwin_amd64
