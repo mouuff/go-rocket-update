@@ -10,7 +10,7 @@ import (
 type Patcher struct {
 	SourcePath      string
 	DestinationPath string
-	BackupPath      string
+	BackupPath      string      // Stores the backup of DestinationPath before replacement (must be on the same filesytem as DestinationPath)
 	Mode            os.FileMode // Mode used to create the new file at DestinationPath
 }
 
