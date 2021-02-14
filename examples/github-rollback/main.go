@@ -44,7 +44,6 @@ func verifyInstallation(u *updater.Updater) error {
 }
 
 func selfUpdate(u *updater.Updater) error {
-	err := verifyInstallation(u)
 	updateStatus, err := u.Update()
 	if err != nil {
 		return err
