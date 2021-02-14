@@ -19,7 +19,7 @@ func main() {
 			ZipName:       "binaries_" + runtime.GOOS + ".zip",
 		},
 		ExecutableName: "go-rocket-update-example",
-		Version:        "v0.3.0",
+		Version:        "v0.0.0",
 	}
 
 	var wg sync.WaitGroup
