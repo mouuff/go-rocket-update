@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"runtime"
 
@@ -9,13 +10,14 @@ import (
 )
 
 func main() {
+
 	// Example project here: https://gitlab.com/arnaudalies.py/go-rocket-update-example
 	u := &updater.Updater{
 		Provider: &provider.Gitlab{
 			ProjectID: 24021648,
-			ZipName:   "binaries_" + runtime.GOOS + ".zip",
+			ZipName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
 		},
-		ExecutableName: "go-rocket-update-example",
+		ExecutableName: fmt.Sprintf("go-rocket-update-example_%s_%s", runtime.GOOS, runtime.GOARCH),
 		Version:        "v0.0.0",
 	}
 

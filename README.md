@@ -36,10 +36,10 @@ Here is an example using Github releases:
 	u := &updater.Updater{
 		Provider: &provider.Github{
 			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
-			ZipName:       "binaries_" + runtime.GOOS + ".zip",
+			ZipName:       fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
 		},
-		ExecutableName: "go-rocket-update-example",
-		Version:    "v0.1",
+		ExecutableName: fmt.Sprintf("go-rocket-update-example_%s_%s", runtime.GOOS, runtime.GOARCH),
+		Version:    "v0.0.1",
 	}
 	log.Println(u.Version)
 	err := u.Update()
@@ -63,22 +63,23 @@ Here is few examples of providers:
 
 The updater will list the files and retrieve them the same way for all the providers:
 
-The directory should contain files with the name: ExecutableName-$GOOS-$ARCH.
+The directory should contain files with `ExecutableName`.
 
-Example with ExecutableName `test`:
+Example with `ExecutableName: fmt.Sprintf("test_%s_%s", runtime.GOOS, runtime.GOARCH)`:
 
-    test-windows-386
-    test-darwin-amd64
-    test-linux-arm
+    test_windows_amd64.exe
+    test_darwin_amd64
+    test_linux_arm
 
 We recommend using [goxc](https://github.com/laher/goxc) for compiling your Go application for multiple platforms.
 
 ### Planned features
 This project is currently under construction, here is some of the things to come:
 * More documentation and examples
-* Google cloud storage and FTP providers
+* Google cloud storage, tar.gz, and FTP providers
 * Mutliple providers (enables the use of another provider if the first one is down)
 * Update channels for Github provider (alpha, beta, ...)
+* Validation of the executable being installed
 
 
 

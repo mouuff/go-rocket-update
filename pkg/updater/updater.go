@@ -3,7 +3,6 @@ package updater
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/mouuff/go-rocket-update/internal/fileio"
@@ -47,16 +46,11 @@ func (u *Updater) getExecutablePatcher(executableCandidatePath string) (*fileio.
 	}, nil
 }
 
-// getExecutableName gets the name used to find the right executable path
-func (u *Updater) getExecutableName() string {
-	return u.ExecutableName + "_" + runtime.GOOS + "_" + runtime.GOARCH
-}
-
 // findExecutableRemotePath finds the remote executable path using the provider
 func (u *Updater) findExecutableRemotePath() (string, error) {
 	executableRemotePath := ""
 	err := u.Provider.Walk(func(info *provider.FileInfo) error {
-		if info.Mode.IsRegular() && strings.Contains(filepath.Base(info.Path), u.getExecutableName()) {
+		if info.Mode.IsRegular() && strings.Contains(filepath.Base(info.Path), u.ExecutableName) {
 			executableRemotePath = info.Path
 		}
 		return nil
