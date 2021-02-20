@@ -86,7 +86,7 @@ This project is currently under construction, here is some of the things to come
 ## API Breaking Changes
 - **Feb 7, 2021**: Minor: The `BinaryName` variable used in `Updater` have been renamed to `ExecutableName`.
 - **Feb 12, 2021**: Minor: The method `Updater.Update()` now returns `(UpdateStatus, error)` instead of just `(error)`.
-- **Feb 14, 2021**: Major: The `ExecutableName` variable used in `Updater` is not automatically prefixed with `"_" + runtime.GOOS + "_" + runtime.GOARCH` anymore.
+- **Feb 14, 2021**: Major: The `ExecutableName` variable used in `Updater` is no longer prefixed with `"_" + runtime.GOOS + "_" + runtime.GOARCH`.
 
 
 [tu]: https://twitter.com/tenntenn
