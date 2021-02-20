@@ -1,6 +1,7 @@
 package provider_test
 
 import (
+	"fmt"
 	"runtime"
 	"testing"
 
@@ -10,7 +11,7 @@ import (
 func TestProviderGitlab(t *testing.T) {
 	p := &provider.Gitlab{
 		ProjectID: 24021648,
-		ZipName:   "binaries_" + runtime.GOOS + ".zip",
+		ZipName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
 	}
 
 	if err := p.Open(); err != nil {

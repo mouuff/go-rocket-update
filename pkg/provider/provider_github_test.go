@@ -1,6 +1,7 @@
 package provider_test
 
 import (
+	"fmt"
 	"runtime"
 	"testing"
 
@@ -10,7 +11,7 @@ import (
 func TestProviderGithub(t *testing.T) {
 	p := &provider.Github{
 		RepositoryURL: "github.com/mouuff/go-rocket-update-example",
-		ZipName:       "binaries_" + runtime.GOOS + ".zip",
+		ZipName:       fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
 	}
 	if err := p.Open(); err != nil {
 		t.Fatal(err)
