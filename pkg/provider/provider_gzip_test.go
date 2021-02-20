@@ -24,6 +24,15 @@ func TestProviderGzip(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	fmt.Println("SEEK")
+	err = p.Walk(func(info *provider.FileInfo) error {
+		fmt.Println(info.Path)
+		fmt.Println(info.Mode.IsDir())
+		return nil
+	})
+	if err != nil {
+		t.Error(err)
+	}
 	/*
 		err := ProviderTestWalkAndRetrieve(p)
 		if err != nil {

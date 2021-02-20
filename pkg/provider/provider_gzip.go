@@ -18,10 +18,11 @@ type Gzip struct {
 	tarReader  *tar.Reader
 }
 
-func ExtractGzip(gzipStream io.Reader) {
+/*
+func extractGzip(dest string, gzipPath string) error {
 	uncompressedStream, err := gzip.NewReader(gzipStream)
 	if err != nil {
-		log.Fatal("ExtractGzip: NewReader failed")
+		return err
 	}
 
 	tarReader := tar.NewReader(uncompressedStream)
@@ -40,20 +41,43 @@ func ExtractGzip(gzipStream io.Reader) {
 		switch header.Typeflag {
 		case tar.TypeDir:
 			if err := os.Mkdir(header.Name, 0755); err != nil {
-				log.Fatalf("ExtractGzip: Mkdir() failed: %s", err.Error())
+				return fmt.Errorf("ExtractGzip: Mkdir() failed: %s", err.Error())
 			}
 		case tar.TypeReg:
 			outFile, err := os.Create(header.Name)
 			if err != nil {
-				log.Fatalf("ExtractGzip: Create() failed: %s", err.Error())
+				return fmt.Errorf("ExtractGzip: Create() failed: %s", err.Error())
 			}
 			if _, err := io.Copy(outFile, tarReader); err != nil {
-				log.Fatalf("ExtractGzip: Copy() failed: %s", err.Error())
+				return fmt.Errorf("ExtractGzip: Copy() failed: %s", err.Error())
 			}
 			outFile.Close()
 		}
 
 	}
+}
+*/
+
+// extractTarFromGzip extracts tar file inside a gzip file
+func extractTarFromGzip(dest string, gzipPath string) error {
+	inputFile, err := os.Open(gzipPath)
+	if err != nil {
+		return err
+	}
+	gzipReader, err := gzip.NewReader(inputFile)
+	if err != nil {
+		return err
+	}
+	outputFile, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(outputFile, gzipReader)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Open opens the provider
@@ -95,6 +119,7 @@ func (c *Gzip) Walk(walkFn WalkFunc) error {
 	if c.file == nil {
 		return errors.New("nil file")
 	}
+	//c.gzipReader.Close()
 
 	for true {
 		header, err := c.tarReader.Next()
