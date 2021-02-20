@@ -36,9 +36,9 @@ Here is an example using Github releases:
 	u := &updater.Updater{
 		Provider: &provider.Github{
 			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
-			ZipName:       fmt.Sprintf("binaries_%s.zip", runtime.GOOS), // Example 'binaries_windows.zip'
+			ZipName:       fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
 		},
-		ExecutableName: fmt.Sprintf("go-rocket-update-example_%s_%s", runtime.GOOS, runtime.GOARCH), // Example 'go-rocket-update-example_windows_amd64'
+		ExecutableName: fmt.Sprintf("go-rocket-update-example_%s_%s", runtime.GOOS, runtime.GOARCH),
 		Version:    "v0.0.1",
 	}
 	err := u.Update()
