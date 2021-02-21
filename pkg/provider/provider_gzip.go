@@ -62,6 +62,10 @@ func extractGzip(tarball, dest string) error {
 
 // Open opens the provider
 func (c *Gzip) Open() (err error) {
+	if c.tmpDir != "" {
+		// If Open() has already been called we just ignore
+		return nil
+	}
 	c.tmpDir, err = fileio.TempDir()
 	if err != nil {
 		return
