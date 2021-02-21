@@ -4,109 +4,88 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"errors"
-	"fmt"
 	"io"
-	"log"
 	"os"
+	"path/filepath"
+
+	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
 
 // Gzip provider
 type Gzip struct {
-	Path       string   // Path of the Gzip file
-	file       *os.File // openned gzip file
-	gzipReader *gzip.Reader
-	tarReader  *tar.Reader
+	Path          string // Path of the Gzip file
+	tmpDir        string
+	localProvider *Local
 }
 
-/*
-func extractGzip(dest string, gzipPath string) error {
-	uncompressedStream, err := gzip.NewReader(gzipStream)
+// extractGzip extracts gzip file to a folder
+func extractGzip(tarball, dest string) error {
+	reader, err := os.Open(tarball)
 	if err != nil {
 		return err
 	}
-
-	tarReader := tar.NewReader(uncompressedStream)
-
-	for true {
+	defer reader.Close()
+	gzipReader, err := gzip.NewReader(reader)
+	if err != nil {
+		return err
+	}
+	defer gzipReader.Close()
+	tarReader := tar.NewReader(gzipReader)
+	for {
 		header, err := tarReader.Next()
-
 		if err == io.EOF {
 			break
+		} else if err != nil {
+			return err
 		}
 
-		if err != nil {
-			log.Fatalf("ExtractGzip: Next() failed: %s", err.Error())
-		}
-
-		switch header.Typeflag {
-		case tar.TypeDir:
-			if err := os.Mkdir(header.Name, 0755); err != nil {
-				return fmt.Errorf("ExtractGzip: Mkdir() failed: %s", err.Error())
+		path := filepath.Join(dest, header.Name)
+		info := header.FileInfo()
+		if header.Typeflag == tar.TypeDir {
+			if err = os.MkdirAll(path, info.Mode()); err != nil {
+				return err
 			}
-		case tar.TypeReg:
-			outFile, err := os.Create(header.Name)
+		} else if header.Typeflag == tar.TypeReg {
+			file, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode())
 			if err != nil {
-				return fmt.Errorf("ExtractGzip: Create() failed: %s", err.Error())
+				return err
 			}
-			if _, err := io.Copy(outFile, tarReader); err != nil {
-				return fmt.Errorf("ExtractGzip: Copy() failed: %s", err.Error())
+			_, err = io.Copy(file, tarReader)
+			file.Close()
+			if err != nil {
+				return err
 			}
-			outFile.Close()
 		}
-
 	}
-}
-*/
-
-// extractTarFromGzip extracts tar file inside a gzip file
-func extractTarFromGzip(dest string, gzipPath string) error {
-	inputFile, err := os.Open(gzipPath)
-	if err != nil {
-		return err
-	}
-	gzipReader, err := gzip.NewReader(inputFile)
-	if err != nil {
-		return err
-	}
-	outputFile, err := os.Create(dest)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(outputFile, gzipReader)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
 // Open opens the provider
 func (c *Gzip) Open() (err error) {
-	c.file, err = os.Open(c.Path)
+	c.tmpDir, err = fileio.TempDir()
 	if err != nil {
-		// TODO error management
-		return ErrProviderUnavaiable
-	}
-	c.gzipReader, err = gzip.NewReader(c.file)
-	fmt.Println(err)
-	if err != nil {
-		c.Close()
 		return
 	}
-	c.tarReader = tar.NewReader(c.gzipReader)
+	err = extractGzip(c.Path, c.tmpDir)
+	if err != nil {
+		return err
+	}
+	c.localProvider = &Local{
+		Path: c.tmpDir,
+	}
 	return nil
 }
 
 // Close closes the provider
-func (c *Gzip) Close() error {
-	if c.file == nil {
-		return nil
+func (c *Gzip) Close() (err error) {
+	c.localProvider.Close()
+	c.localProvider = nil
+	if c.tmpDir != "" {
+		err = os.RemoveAll(c.tmpDir)
+		c.tmpDir = ""
+		return
 	}
-	err := c.file.Close()
-	c.file = nil
-	c.gzipReader = nil
-	c.tarReader = nil
-	return err
+	return
 }
 
 // GetLatestVersion gets the latest version
@@ -116,29 +95,16 @@ func (c *Gzip) GetLatestVersion() (string, error) {
 
 // Walk walks all the files provided
 func (c *Gzip) Walk(walkFn WalkFunc) error {
-	if c.file == nil {
-		return errors.New("nil file")
+	if c.localProvider == nil {
+		return errors.New("nil c.localProvider")
 	}
-	//c.gzipReader.Close()
-
-	for true {
-		header, err := c.tarReader.Next()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatalf("Walk Gzip: Next() failed: %s", err.Error())
-		}
-		err = walkFn(&FileInfo{
-			Path: header.Name,
-			Mode: os.FileMode(header.Mode),
-		})
-
-	}
-	return nil
+	return c.localProvider.Walk(walkFn)
 }
 
 // Retrieve file relative to "provider" to destination
 func (c *Gzip) Retrieve(src string, dest string) error {
-	return nil
+	if c.localProvider == nil {
+		return errors.New("nil c.localProvider")
+	}
+	return c.localProvider.Retrieve(src, dest)
 }

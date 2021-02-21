@@ -1,7 +1,6 @@
 package provider_test
 
 import (
-	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -16,27 +15,8 @@ func TestProviderGzip(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer p.Close()
-	err := p.Walk(func(info *provider.FileInfo) error {
-		fmt.Println(info.Path)
-		fmt.Println(info.Mode.IsDir())
-		return nil
-	})
+	err := ProviderTestWalkAndRetrieve(p)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
-	fmt.Println("SEEK")
-	err = p.Walk(func(info *provider.FileInfo) error {
-		fmt.Println(info.Path)
-		fmt.Println(info.Mode.IsDir())
-		return nil
-	})
-	if err != nil {
-		t.Error(err)
-	}
-	/*
-		err := ProviderTestWalkAndRetrieve(p)
-		if err != nil {
-			t.Fatal(err)
-		}
-	*/
 }
