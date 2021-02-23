@@ -8,7 +8,7 @@ import (
 )
 
 func TestProviderDecompressZip(t *testing.T) {
-	p, err := provider.Decompress(filepath.Join("testdata", "Allum1.zip"))
+	p, err := provider.Decompress(filepath.Join("testdata", "Allum1-v1.0.0.zip"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,7 +24,7 @@ func TestProviderDecompressZip(t *testing.T) {
 }
 
 func TestProviderDecompressGzip(t *testing.T) {
-	p, err := provider.Decompress(filepath.Join("testdata", "Allum1.tar.gz"))
+	p, err := provider.Decompress(filepath.Join("testdata", "Allum1-v1.0.0.tar.gz"))
 	if err != nil {
 		t.Fatal(err)
 	}

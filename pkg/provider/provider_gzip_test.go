@@ -9,7 +9,7 @@ import (
 
 func TestProviderGzip(t *testing.T) {
 	p := &provider.Gzip{
-		Path: filepath.Join("testdata", "Allum1.tar.gz"),
+		Path: filepath.Join("testdata", "Allum1-v1.0.0.tar.gz"),
 	}
 	if err := p.Open(); err != nil {
 		t.Fatal(err)
