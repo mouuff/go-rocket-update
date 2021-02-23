@@ -19,7 +19,7 @@ type Github struct {
 	ArchiveName   string // Archive name (the zip/tar.gz you upload for a release on github), example: binaries.zip
 
 	tmpDir             string   // temporary directory this is used internally
-	DecompressProvider Provider // provider used to decompress the downloaded archive
+	decompressProvider Provider // provider used to decompress the downloaded archive
 	archivePath        string   // path to the downloaded archive (should be in tmpDir)
 }
 
@@ -130,18 +130,18 @@ func (c *Github) Open() (err error) {
 	if err != nil {
 		return
 	}
-	c.DecompressProvider, err = Decompress(c.archivePath)
+	c.decompressProvider, err = Decompress(c.archivePath)
 	if err != nil {
 		return nil
 	}
-	return c.DecompressProvider.Open()
+	return c.decompressProvider.Open()
 }
 
 // Close closes the provider
 func (c *Github) Close() error {
-	if c.DecompressProvider != nil {
-		c.DecompressProvider.Close()
-		c.DecompressProvider = nil
+	if c.decompressProvider != nil {
+		c.decompressProvider.Close()
+		c.decompressProvider = nil
 	}
 
 	if len(c.tmpDir) > 0 {
@@ -166,10 +166,10 @@ func (c *Github) GetLatestVersion() (string, error) {
 
 // Walk walks all the files provided
 func (c *Github) Walk(walkFn WalkFunc) error {
-	return c.DecompressProvider.Walk(walkFn)
+	return c.decompressProvider.Walk(walkFn)
 }
 
 // Retrieve file relative to "provider" to destination
 func (c *Github) Retrieve(src string, dest string) error {
-	return c.DecompressProvider.Retrieve(src, dest)
+	return c.decompressProvider.Retrieve(src, dest)
 }

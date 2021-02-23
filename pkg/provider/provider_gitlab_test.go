@@ -10,8 +10,8 @@ import (
 
 func TestProviderGitlab(t *testing.T) {
 	p := &provider.Gitlab{
-		ProjectID: 24021648,
-		ZipName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+		ProjectID:   24021648,
+		ArchiveName: fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
 	}
 
 	if err := p.Open(); err != nil {
