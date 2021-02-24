@@ -94,7 +94,7 @@ func (c *Gzip) Close() (err error) {
 
 // GetLatestVersion gets the latest version
 func (c *Gzip) GetLatestVersion() (string, error) {
-	return getLatestVersionFromPath(c.Path)
+	return GetLatestVersionFromPath(c.Path)
 }
 
 // Walk walks all the files provided

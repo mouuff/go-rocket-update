@@ -37,7 +37,7 @@ func (c *Zip) Close() error {
 
 // GetLatestVersion gets the latest version
 func (c *Zip) GetLatestVersion() (string, error) {
-	return getLatestVersionFromPath(c.Path)
+	return GetLatestVersionFromPath(c.Path)
 }
 
 // Walk walks all the files provided
