@@ -13,7 +13,7 @@ import (
 
 // Gzip provider
 type Gzip struct {
-	Path          string // Path of the Gzip file
+	Path          string // Path of the Gzip file (provider.GlobNewestFile might help)
 	tmpDir        string
 	localProvider *Local
 }

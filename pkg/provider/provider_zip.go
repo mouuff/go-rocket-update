@@ -9,7 +9,7 @@ import (
 
 // Zip provider
 type Zip struct {
-	Path   string          // Path of the zip file
+	Path   string          // Path of the zip file (provider.GlobNewestFile might help)
 	reader *zip.ReadCloser // reader for the current zip file
 }
 
