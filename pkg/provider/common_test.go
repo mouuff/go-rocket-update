@@ -1,8 +1,10 @@
 package provider_test
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	provider "github.com/mouuff/go-rocket-update/pkg/provider"
 )
@@ -23,12 +25,19 @@ func TestGetLatestVersionFromPath(t *testing.T) {
 }
 
 func TestGlobNewestFile(t *testing.T) {
+	filename := "Allum1-v1.1.0.tar.gz"
+	currentTime := time.Now().Local().Add(time.Second)
+	err := os.Chtimes(filepath.Join("testdata", filename), currentTime, currentTime)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	match, err := provider.GlobNewestFile(filepath.Join("testdata", "Allum1-v*.tar.gz"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if filepath.Base(match) != "Allum1-v1.1.0.tar.gz" {
-		t.Error("Expected Allum1-v1.1.0.tar.gz")
+	if filepath.Base(match) != filename {
+		t.Error("Expected " + filename)
 	}
 
 	match, err = provider.GlobNewestFile(filepath.Join("testdata", "doesntexists"))
