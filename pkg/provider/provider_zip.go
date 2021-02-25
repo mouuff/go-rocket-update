@@ -9,7 +9,7 @@ import (
 
 // Zip provider
 type Zip struct {
-	Path   string          // Path of the zip file
+	Path   string          // Path of the zip file (provider.GlobNewestFile might help)
 	reader *zip.ReadCloser // reader for the current zip file
 }
 
@@ -37,7 +37,7 @@ func (c *Zip) Close() error {
 
 // GetLatestVersion gets the latest version
 func (c *Zip) GetLatestVersion() (string, error) {
-	return "1.0", nil
+	return GetLatestVersionFromPath(c.Path)
 }
 
 // Walk walks all the files provided

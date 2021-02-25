@@ -36,7 +36,7 @@ Here is an example using Github releases:
 	u := &updater.Updater{
 		Provider: &provider.Github{
 			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
-			ZipName:       fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+			ArchiveName:       fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
 		},
 		ExecutableName: fmt.Sprintf("go-rocket-update-example_%s_%s", runtime.GOOS, runtime.GOARCH),
 		Version:    "v0.0.1",
@@ -53,10 +53,11 @@ Check this project for a complete example: https://github.com/mouuff/go-rocket-u
 The updater uses a `Provider` as an input source for updates. It provides files and version for the updater.
 
 Here is few examples of providers:
-* `provider.Github`: It will check for the latest release on Github with a specific zip name
-* `provider.Gitlab`: It will check for the latest release on Gitlab with a specific zip name
+* `provider.Github`: It will check for the latest release on Github with a specific archive name (zip or tar.gz)
+* `provider.Gitlab`: It will check for the latest release on Gitlab with a specific archive name (zip or tar.gz)
 * `provider.Local`: It will use a local folder, version will be defined in the VERSION file (can be used for testing, or in a company with a shared folder for example)
-* `provider.Zip`: Same as provider.Local but with a `Zip` file
+* `provider.Zip`: It will use a `zip` file. The version is defined by the file name (Example: `binaries-v1.0.0.tar.gz`)
+* `provider.Gzip`: Same as `provider.Zip` but with a `tar.gz` file.
 
 *In the future there will be providers for FTP servers and Google cloud storage.*
 
@@ -86,6 +87,7 @@ This project is currently under construction, here is some of the things to come
 - **Feb 7, 2021**: Minor: The `BinaryName` variable used in `Updater` have been renamed to `ExecutableName`.
 - **Feb 12, 2021**: Minor: The method `Updater.Update()` now returns `(UpdateStatus, error)` instead of just `(error)`.
 - **Feb 14, 2021**: Major: The `ExecutableName` variable used in `Updater` is no longer suffixed with `"_" + runtime.GOOS + "_" + runtime.GOARCH`.
+- **Feb 21, 2021**: Minor: The `ZipName` variable used in `provider.Github` and `provider.Gitlab` have been renamed to `ArchiveName ` with the arrival of `tar.gz` support.
 
 
 [tu]: https://twitter.com/tenntenn

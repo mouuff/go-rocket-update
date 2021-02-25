@@ -25,7 +25,7 @@ ylMx5Dy8lG6/J7zKWkV6S7h3+K11dWZn7toQVyVU3M2GpEng3b74Pp3Ma7ymoM8J
 SZ5Uz050oR/PoLaSx3xdjFMCAwEAAQ==
 -----END RSA PUBLIC KEY-----`
 	p := &provider.Secure{
-		BackendProvider: &provider.Zip{Path: filepath.Join("testdata", "Allum1Signed.zip")},
+		BackendProvider: &provider.Zip{Path: filepath.Join("testdata", "Allum1Signed-v1.0.0.zip")},
 		PublicKeyPEM:    []byte(pubStr),
 	}
 	if err := p.Open(); err != nil {

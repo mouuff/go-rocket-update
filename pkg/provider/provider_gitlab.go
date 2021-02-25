@@ -13,14 +13,14 @@ import (
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
 
-// Gitlab provider finds a zip file in the repository's releases to provide files
+// Gitlab provider finds a archive file in the repository's releases to provide files
 type Gitlab struct {
-	ProjectID int
-	ZipName   string // Zip name (the zip you upload for a release on gitlab), example: binaries.zip
+	ProjectID   int
+	ArchiveName string // ArchiveName (the archive you upload for a release on gitlab), example: binaries.zip
 
-	tmpDir      string // temporary directory this is used internally
-	zipProvider *Zip   // provider used to unzip the downloaded zip
-	zipPath     string // path to the downloaded zip (should be in tmpDir)
+	tmpDir             string   // temporary directory this is used internally
+	decompressProvider Provider // provider used to decompress the downloaded archive
+	decompressPath     string   // path to the downloaded archive (should be in tmpDir)
 }
 
 // gitlabRelease struct used to unmarshal response from gitlab
@@ -46,19 +46,19 @@ func (c *Gitlab) getReleasesURL() (string, error) {
 	), nil
 }
 
-// getZipURL get the zip URL for the gitlab repository
+// getArchiveURL get the archive URL for the gitlab repository
 // the latest version is selected
-func (c *Gitlab) getZipURL() (string, error) {
+func (c *Gitlab) getArchiveURL() (string, error) {
 	release, err := c.getLatestRelease()
 	if err != nil {
 		return "", err
 	}
 	for _, link := range release.Assets.Links {
-		if strings.HasSuffix(link.Name, c.ZipName) {
+		if strings.HasSuffix(link.Name, c.ArchiveName) {
 			return link.DirectURL, nil
 		}
 	}
-	return "", errors.New("Link not found for name: " + c.ZipName)
+	return "", errors.New("Link not found for name: " + c.ArchiveName)
 }
 
 // getReleases gets tags of the repository
@@ -93,11 +93,11 @@ func (c *Gitlab) getLatestRelease() (*gitlabRelease, error) {
 
 // Open opens the provider
 func (c *Gitlab) Open() (err error) {
-	zipURL, err := c.getZipURL() // get zip url for latest version
+	archiveURL, err := c.getArchiveURL() // get archive url for latest version
 	if err != nil {
 		return
 	}
-	resp, err := http.Get(zipURL)
+	resp, err := http.Get(archiveURL)
 	if err != nil {
 		return
 	}
@@ -108,31 +108,31 @@ func (c *Gitlab) Open() (err error) {
 		return
 	}
 
-	c.zipPath = filepath.Join(c.tmpDir, c.ZipName)
-	zipFile, err := os.Create(c.zipPath)
+	c.decompressPath = filepath.Join(c.tmpDir, c.ArchiveName)
+	archiveFile, err := os.Create(c.decompressPath)
 	if err != nil {
 		return
 	}
-	_, err = io.Copy(zipFile, resp.Body)
-	zipFile.Close()
+	_, err = io.Copy(archiveFile, resp.Body)
+	archiveFile.Close()
 	if err != nil {
 		return
 	}
-	c.zipProvider = &Zip{Path: c.zipPath}
-	return c.zipProvider.Open()
+	c.decompressProvider, err = Decompress(c.decompressPath)
+	return c.decompressProvider.Open()
 }
 
 // Close closes the provider
 func (c *Gitlab) Close() error {
-	if c.zipProvider != nil {
-		c.zipProvider.Close()
-		c.zipProvider = nil
+	if c.decompressProvider != nil {
+		c.decompressProvider.Close()
+		c.decompressProvider = nil
 	}
 
 	if len(c.tmpDir) > 0 {
 		os.RemoveAll(c.tmpDir)
 		c.tmpDir = ""
-		c.zipPath = ""
+		c.decompressPath = ""
 	}
 	return nil
 }
@@ -148,10 +148,10 @@ func (c *Gitlab) GetLatestVersion() (string, error) {
 
 // Walk walks all the files provided
 func (c *Gitlab) Walk(walkFn WalkFunc) error {
-	return c.zipProvider.Walk(walkFn)
+	return c.decompressProvider.Walk(walkFn)
 }
 
 // Retrieve file relative to "provider" to destination
 func (c *Gitlab) Retrieve(src string, dest string) error {
-	return c.zipProvider.Retrieve(src, dest)
+	return c.decompressProvider.Retrieve(src, dest)
 }
