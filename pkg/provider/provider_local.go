@@ -41,7 +41,7 @@ func (c *Local) Walk(walkFn WalkFunc) error {
 	return filepath.Walk(c.Path, func(filePath string, info os.FileInfo, walkErr error) error {
 		if walkErr != nil {
 			// TODO log walkErr ?
-			return nil // Ignore error and continue walking
+			return nil // Ignore this file and continue walking
 		}
 		relPath, err := filepath.Rel(c.Path, filePath)
 		if err != nil {
