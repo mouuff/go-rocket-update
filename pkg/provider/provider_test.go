@@ -26,6 +26,15 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	}
 	defer os.RemoveAll(tmpDir)
 
+	tmpDest := filepath.Join(tmpDir, "tmpDest")
+	err = p.Retrieve("thisfiledoesnotexists", tmpDest)
+	if err == nil {
+		return errors.New("provider.Retrieve() should return an error when source file does not exists")
+	}
+	if fileio.FileExists(tmpDest) {
+		return errors.New("provider.Retrieve() should not create destination file when source file does not exists")
+	}
+
 	filesCount := 0
 	err = p.Walk(func(info *provider.FileInfo) error {
 		destPath := filepath.Join(tmpDir, info.Path)
