@@ -22,4 +22,13 @@ func TestProviderGithub(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	badProvider := &provider.Github{
+		RepositoryURL: "github.com/XXXXXXXXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXX",
+		ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+	}
+	err = ProviderTestUnavaiable(badProvider)
+	if err != nil {
+		t.Fatal(err)
+	}
 }

@@ -92,6 +92,7 @@ func ProviderTestUnavaiable(p provider.Provider) error {
 	if err := p.Open(); err == nil {
 		return errors.New("Open() should return an error when provider is not avaiable")
 	}
+	defer p.Close()
 	_, err := p.GetLatestVersion()
 	if err == nil {
 		return errors.New("GetLatestVersion() should return an error when provider is not avaiable")
