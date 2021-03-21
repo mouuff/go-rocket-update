@@ -45,6 +45,16 @@ func TestCopyFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	err = fileio.CopyFile(filepath.Join("testdata", "smallexe"), filepath.Join("pathdoesnotexists", "pathdoesnotexists"))
+	if err == nil {
+		t.Fatal("CopyFile should not work if path does not exists")
+	}
+	err = fileio.CopyFile(filepath.Join("pathdoesnotexists", "pathdoesnotexists"), filepath.Join("testdata", "smallexe"))
+	if err == nil {
+		t.Fatal("CopyFile should not work if path does not exists")
+	}
+
 }
 
 func verifyChecksumFile(src, expectedChecksum string) error {
@@ -81,6 +91,8 @@ func TestChecksum(t *testing.T) {
 func TestCompareFileChecksum(t *testing.T) {
 	fileA := filepath.Join("testdata", "TempleOS.ISO")
 	fileB := filepath.Join("testdata", "smallexe")
+	fileC := filepath.Join("testdata", "doesNotExists")
+
 	equals, err := fileio.CompareFiles(fileA, fileA)
 	if err != nil {
 		t.Fatal(err)
@@ -95,5 +107,26 @@ func TestCompareFileChecksum(t *testing.T) {
 	}
 	if equals == true {
 		t.Fatal("Should be unequal")
+	}
+
+	_, err = fileio.CompareFiles(fileA, fileC)
+	if err == nil {
+		t.Fatal("fileio.CompareFiles(fileA, fileC) should return an error")
+	}
+	_, err = fileio.CompareFiles(fileC, fileB)
+	if err == nil {
+		t.Fatal("fileio.CompareFiles(fileC, fileB) should return an error")
+	}
+}
+
+func TestFileExists(t *testing.T) {
+	fileA := filepath.Join("testdata", "TempleOS.ISO")
+	fileB := filepath.Join("testdata", "doesNotExists")
+
+	if !fileio.FileExists(fileA) {
+		t.Error("fileio.FileExists(fileA) exists")
+	}
+	if fileio.FileExists(fileB) {
+		t.Error("fileio.FileExists(fileA) does not exists")
 	}
 }

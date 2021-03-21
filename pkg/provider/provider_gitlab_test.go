@@ -23,4 +23,13 @@ func TestProviderGitlab(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	badProvider := &provider.Gitlab{
+		ProjectID:   424242424242424242,
+		ArchiveName: fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+	}
+	err = ProviderTestUnavaiable(badProvider)
+	if err != nil {
+		t.Fatal(err)
+	}
 }

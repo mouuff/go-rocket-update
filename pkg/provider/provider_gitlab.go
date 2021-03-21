@@ -148,6 +148,10 @@ func (c *Gitlab) GetLatestVersion() (string, error) {
 
 // Walk walks all the files provided
 func (c *Gitlab) Walk(walkFn WalkFunc) error {
+	if c.decompressProvider == nil {
+		// TODO specify error
+		return ErrNotOpenned
+	}
 	return c.decompressProvider.Walk(walkFn)
 }
 

@@ -138,4 +138,14 @@ func TestExportImport(t *testing.T) {
 	if !priv.Equal(privImported) {
 		t.Error("priv != privImported")
 	}
+
+	_, err = crypto.ParsePemPublicKey(privExported)
+	if err == nil {
+		t.Error("ParsePemPublicKey should not work with public keys")
+	}
+
+	_, err = crypto.ParsePemPrivateKey(pubExported)
+	if err == nil {
+		t.Error("ParsePemPrivateKey should not work with private keys")
+	}
 }

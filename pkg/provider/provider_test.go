@@ -12,6 +12,7 @@ import (
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 )
 
+// ProviderTestWalkAndRetrieve tests the expected behavior of a provider
 func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	version, err := p.GetLatestVersion()
 	if err != nil {
@@ -25,6 +26,15 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 		return err
 	}
 	defer os.RemoveAll(tmpDir)
+
+	tmpDest := filepath.Join(tmpDir, "tmpDest")
+	err = p.Retrieve("thisfiledoesnotexists", tmpDest)
+	if err == nil {
+		return errors.New("provider.Retrieve() should return an error when source file does not exists")
+	}
+	if fileio.FileExists(tmpDest) {
+		return errors.New("provider.Retrieve() should not create destination file when source file does not exists")
+	}
 
 	filesCount := 0
 	err = p.Walk(func(info *provider.FileInfo) error {
@@ -73,6 +83,36 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	}
 	if count > 1 {
 		return errors.New("Walk should have stopped on error")
+	}
+	return nil
+}
+
+// ProviderTestUnavaiable tests the expected behavior of a provider when it is not avaiable
+func ProviderTestUnavaiable(p provider.Provider) error {
+	if err := p.Open(); err == nil {
+		return errors.New("Open() should return an error when provider is not avaiable")
+	}
+	walkCount := 0
+	err := p.Walk(func(info *provider.FileInfo) error {
+		walkCount += 1
+		return nil
+	})
+
+	if err == nil {
+		return errors.New("Walk() should return an error when provider is not avaiable")
+	}
+
+	if walkCount > 0 {
+		return errors.New("Walk() should not call WalkFunc when provider is not avaiable")
+	}
+
+	defer p.Close()
+	_, err = p.GetLatestVersion()
+	if err == nil {
+		return errors.New("GetLatestVersion() should return an error when provider is not avaiable")
+	}
+	if err = p.Close(); err != nil {
+		return errors.New("Close() should not return an error if provider is not Open()")
 	}
 	return nil
 }

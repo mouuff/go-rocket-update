@@ -38,3 +38,10 @@ func TestProviderDecompressGzip(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestProviderDecompressUnknown(t *testing.T) {
+	_, err := provider.Decompress(filepath.Join("testdata", "Allum1-v1.0.0.x.x"))
+	if err == nil {
+		t.Error("Should return an error if format to decompress is unknown")
+	}
+}

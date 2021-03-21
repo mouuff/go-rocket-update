@@ -20,4 +20,13 @@ func TestProviderZip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	badProvider := &provider.Zip{
+		Path: filepath.Join("testdata", "unknownpath.zip"),
+	}
+	err = ProviderTestUnavaiable(badProvider)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 }

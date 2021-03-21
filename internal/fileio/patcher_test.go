@@ -32,7 +32,7 @@ func TestPatcher(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	unknownPath := filepath.Join("pathdoesnotexists", "pathdoesnotexists")
 	originalSourcePath := filepath.Join("testdata", "binary")
 	originalDestinationFile := filepath.Join("testdata", "file.jpeg")
 
@@ -98,5 +98,23 @@ func TestPatcher(t *testing.T) {
 	patcher.SourcePath = "wrongpath"
 	if err == nil {
 		t.Error("Should return an error")
+	}
+
+	patcher.DestinationPath = unknownPath
+	err = patcher.Apply()
+	if err == nil {
+		t.Error("Apply() should not work with unknown DestinationPath")
+	}
+	patcher.DestinationPath = destinationPath
+	patcher.SourcePath = unknownPath
+	err = patcher.Apply()
+	if err == nil {
+		t.Error("Apply() should not work with unknown SourcePath")
+	}
+	patcher.SourcePath = sourcePath
+	patcher.BackupPath = unknownPath
+	err = patcher.Apply()
+	if err == nil {
+		t.Error("Apply() should not work with unknown BackupPath")
 	}
 }
