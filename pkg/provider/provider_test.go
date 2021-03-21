@@ -12,6 +12,7 @@ import (
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 )
 
+// ProviderTestWalkAndRetrieve tests the expected behavior of a provider
 func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	version, err := p.GetLatestVersion()
 	if err != nil {
@@ -82,6 +83,21 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	}
 	if count > 1 {
 		return errors.New("Walk should have stopped on error")
+	}
+	return nil
+}
+
+// ProviderTestUnavaiable tests the expected behavior of a provider when it is not avaiable
+func ProviderTestUnavaiable(p provider.Provider) error {
+	if err := p.Open(); err == nil {
+		return errors.New("Open() should return an error when provider is not avaiable")
+	}
+	_, err := p.GetLatestVersion()
+	if err == nil {
+		return errors.New("GetLatestVersion() should return an error when provider is not avaiable")
+	}
+	if err = p.Close(); err != nil {
+		return errors.New("Close() should not return an error if provider is not Open()")
 	}
 	return nil
 }
