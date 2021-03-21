@@ -39,4 +39,14 @@ func TestProviderLocal(t *testing.T) {
 	if equals == false {
 		t.Fatal("Files should be equals")
 	}
+
+	p = &provider.Local{Path: filepath.Join("testdata", "doesnotexists")}
+	if err := p.Open(); err == nil {
+		t.Error("Open() should return an error when path does not exists")
+	}
+	_, err = p.GetLatestVersion()
+	if err == nil {
+		t.Error("GetLatestVersion() should return an error when path does not exists")
+	}
+
 }
