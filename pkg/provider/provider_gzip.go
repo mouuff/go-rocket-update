@@ -77,13 +77,15 @@ func (c *Gzip) Open() (err error) {
 	c.localProvider = &Local{
 		Path: c.tmpDir,
 	}
-	return nil
+	return c.localProvider.Open()
 }
 
 // Close closes the provider
 func (c *Gzip) Close() (err error) {
-	c.localProvider.Close()
-	c.localProvider = nil
+	if c.localProvider != nil {
+		c.localProvider.Close()
+		c.localProvider = nil
+	}
 	if c.tmpDir != "" {
 		err = os.RemoveAll(c.tmpDir)
 		c.tmpDir = ""

@@ -92,8 +92,22 @@ func ProviderTestUnavaiable(p provider.Provider) error {
 	if err := p.Open(); err == nil {
 		return errors.New("Open() should return an error when provider is not avaiable")
 	}
+	walkCount := 0
+	err := p.Walk(func(info *provider.FileInfo) error {
+		walkCount += 1
+		return nil
+	})
+
+	if err == nil {
+		return errors.New("Walk() should return an error when provider is not avaiable")
+	}
+
+	if walkCount > 0 {
+		return errors.New("Walk() should not call WalkFunc when provider is not avaiable")
+	}
+
 	defer p.Close()
-	_, err := p.GetLatestVersion()
+	_, err = p.GetLatestVersion()
 	if err == nil {
 		return errors.New("GetLatestVersion() should return an error when provider is not avaiable")
 	}

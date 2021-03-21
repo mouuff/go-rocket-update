@@ -11,7 +11,8 @@ import (
 // A Local provider use a local directory to provide files
 // This provider is mainly here for mocking and testing but it could be used on a shared network folder
 type Local struct {
-	Path string // Path of the folder
+	Path    string // Path of the folder
+	openned bool
 }
 
 // Open opens the provider
@@ -19,11 +20,13 @@ func (c *Local) Open() error {
 	if _, err := os.Stat(c.Path); os.IsNotExist(err) {
 		return ErrProviderUnavaiable
 	}
+	c.openned = true
 	return nil
 }
 
 // Close closes the provider
 func (c *Local) Close() error {
+	c.openned = false
 	return nil
 }
 
@@ -38,6 +41,9 @@ func (c *Local) GetLatestVersion() (string, error) {
 
 // Walk walks all the files provided
 func (c *Local) Walk(walkFn WalkFunc) error {
+	if !c.openned {
+		return ErrNotOpenned
+	}
 	return filepath.Walk(c.Path, func(filePath string, info os.FileInfo, walkErr error) error {
 		if walkErr != nil {
 			// TODO log walkErr ?
@@ -56,6 +62,9 @@ func (c *Local) Walk(walkFn WalkFunc) error {
 
 // Retrieve file relative to "provider" to destination
 func (c *Local) Retrieve(src string, dest string) error {
+	if !c.openned {
+		return ErrNotOpenned
+	}
 	fullPath := filepath.Join(c.Path, src)
 	return fileio.CopyFile(fullPath, dest)
 }

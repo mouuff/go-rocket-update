@@ -36,4 +36,7 @@ var (
 	ErrProviderUnavaiable = errors.New("provider not available")
 	// ErrFileNotFound is a generic error when a file is not found
 	ErrFileNotFound = errors.New("file not found")
+
+	// ErrNotOpenned is a generic error when a provider have been called while it is not openned
+	ErrNotOpenned = errors.New("provider have not been openned")
 )
