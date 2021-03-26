@@ -41,7 +41,7 @@ func TestProviderLocal(t *testing.T) {
 	}
 
 	badProvider := &provider.Local{Path: filepath.Join("testdata", "doesnotexists")}
-	err = ProviderTestUnavaiable(badProvider)
+	err = ProviderTestUnavailable(badProvider)
 	if err != nil {
 		t.Fatal(err)
 	}

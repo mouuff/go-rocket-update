@@ -17,7 +17,7 @@ type Zip struct {
 func (c *Zip) Open() error {
 	_, err := os.Stat(c.Path)
 	if os.IsNotExist(err) {
-		return ErrProviderUnavaiable
+		return ErrProviderUnavailable
 	}
 	c.reader, err = zip.OpenReader(c.Path)
 	if err != nil {

@@ -15,7 +15,7 @@ func GetLatestVersionFromPath(path string) (string, error) {
 	versionRegex := regexp.MustCompile(`v[0-9]+\.[0-9]+\.[0-9]+`)
 	version := string(versionRegex.Find([]byte(filepath.Base(path))))
 	if version == "" {
-		return "", ErrProviderUnavaiable
+		return "", ErrProviderUnavailable
 	}
 	return version, nil
 }

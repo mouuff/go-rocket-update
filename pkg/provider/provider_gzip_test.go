@@ -22,7 +22,7 @@ func TestProviderGzip(t *testing.T) {
 	badProvider := &provider.Gzip{
 		Path: filepath.Join("testdata", "doesnotexist.tar.gz"),
 	}
-	err = ProviderTestUnavaiable(badProvider)
+	err = ProviderTestUnavailable(badProvider)
 	if err != nil {
 		t.Fatal(err)
 	}

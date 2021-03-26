@@ -66,7 +66,7 @@ SZ5Uz050oR/PoLaSx3xdjFMCAwEAAQ==
 		BackendProvider: &provider.Zip{Path: filepath.Join("testdata", "doesnotexist.zip")},
 		PublicKeyPEM:    []byte(pubStr),
 	}
-	err = ProviderTestUnavaiable(badProvider)
+	err = ProviderTestUnavailable(badProvider)
 	if err != nil {
 		t.Fatal(err)
 	}

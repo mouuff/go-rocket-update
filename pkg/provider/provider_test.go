@@ -87,10 +87,10 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	return nil
 }
 
-// ProviderTestUnavaiable tests the expected behavior of a provider when it is not avaiable
-func ProviderTestUnavaiable(p provider.Provider) error {
+// ProviderTestUnavailable tests the expected behavior of a provider when it is not available
+func ProviderTestUnavailable(p provider.Provider) error {
 	if err := p.Open(); err == nil {
-		return errors.New("Open() should return an error when provider is not avaiable")
+		return errors.New("Open() should return an error when provider is not available")
 	}
 	walkCount := 0
 	err := p.Walk(func(info *provider.FileInfo) error {
@@ -99,17 +99,17 @@ func ProviderTestUnavaiable(p provider.Provider) error {
 	})
 
 	if err == nil {
-		return errors.New("Walk() should return an error when provider is not avaiable")
+		return errors.New("Walk() should return an error when provider is not available")
 	}
 
 	if walkCount > 0 {
-		return errors.New("Walk() should not call WalkFunc when provider is not avaiable")
+		return errors.New("Walk() should not call WalkFunc when provider is not available")
 	}
 
 	defer p.Close()
 	_, err = p.GetLatestVersion()
 	if err == nil {
-		return errors.New("GetLatestVersion() should return an error when provider is not avaiable")
+		return errors.New("GetLatestVersion() should return an error when provider is not available")
 	}
 	if err = p.Close(); err != nil {
 		return errors.New("Close() should not return an error if provider is not Open()")

@@ -18,7 +18,7 @@ type Local struct {
 // Open opens the provider
 func (c *Local) Open() error {
 	if _, err := os.Stat(c.Path); os.IsNotExist(err) {
-		return ErrProviderUnavaiable
+		return ErrProviderUnavailable
 	}
 	c.openned = true
 	return nil
