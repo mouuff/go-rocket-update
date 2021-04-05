@@ -75,6 +75,14 @@ func TestMain(t *testing.T) {
 	if err = keyGen(privateKeyPath); err != nil {
 		t.Fatal(err)
 	}
+
+	if err = signFolder(folder, privateKeyPath+"doesnotexist"); err == nil {
+		t.Fatal("signFolder shouldn't work if private key does not exist")
+	}
+	if err = signFolder(folder, filepath.Join(folder, "test2.jpeg")); err == nil {
+		t.Fatal("signFolder shouldn't work if file is not a private key")
+	}
+
 	if err = signFolder(folder, privateKeyPath); err != nil {
 		t.Fatal(err)
 	}
