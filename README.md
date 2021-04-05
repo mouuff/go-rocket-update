@@ -65,7 +65,7 @@ The updater will list the files and retrieve them the same way for all the provi
 
 The directory should have files containing `ExecutableName`.
 
-Example directory with `ExecutableName: fmt.Sprintf("test_%s_%s", runtime.GOOS, runtime.GOARCH)`:
+Example directory content with `ExecutableName: fmt.Sprintf("test_%s_%s", runtime.GOOS, runtime.GOARCH)`:
 
     test_windows_amd64.exe
     test_darwin_amd64
@@ -76,7 +76,8 @@ We recommend using [goxc](https://github.com/laher/goxc) for compiling your Go a
 ### Planned features
 This project is currently under construction, here is some of the things to come:
 * More documentation and examples
-* Google cloud storage, tar.gz, and FTP providers
+* [Variable templating](https://github.com/mouuff/go-rocket-update/issues/14)
+* Google cloud storage, and FTP providers
 * Mutliple providers (enables the use of another provider if the first one is down)
 * Update channels for Github provider (alpha, beta, ...)
 * Validation of the executable being installed
