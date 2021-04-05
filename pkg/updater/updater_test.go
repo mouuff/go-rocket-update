@@ -39,6 +39,14 @@ func TestUpdater(t *testing.T) {
 	if canUpdate {
 		t.Error("Should not be able to update with same version")
 	}
+	updateStatus, err := u.Update()
+	if err != nil {
+		t.Error(err)
+	}
+	if updateStatus != updater.UpToDate {
+		t.Error("updateStatus should be updater.UpToDate if trying to update with the same version")
+	}
+
 	u.Version = "v0.1"
 
 	canUpdate, err = u.CanUpdate()
@@ -52,7 +60,7 @@ func TestUpdater(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	updateStatus, err := u.Update()
+	updateStatus, err = u.Update()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -77,4 +85,24 @@ func TestUpdater(t *testing.T) {
 	if hex.EncodeToString(executableChecksum) != hex.EncodeToString(rollbackedExecutableChecksum) {
 		t.Error("executableChecksum != rollbackedExecutableChecksum")
 	}
+
+	// Test with unreachable provider
+	u = &updater.Updater{
+		Provider:           &provider.Local{Path: solutionDir + "doesnotexit"},
+		ExecutableName:     "test",
+		Version:            "v1.0",
+		OverrideExecutable: executable,
+	}
+
+	updateStatus, err = u.Update()
+	if err == nil {
+		t.Error("u.Update() should return an error when provider is not reachable")
+	}
+	if updateStatus == updater.Updated {
+		t.Error("updateStatus == updater.Updated while provider is not reachable")
+	}
+	if updateStatus == updater.UpToDate {
+		t.Error("updateStatus == updater.Updated while provider is not reachable")
+	}
+
 }
