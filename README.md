@@ -59,8 +59,6 @@ Here is few examples of providers:
 * `provider.Zip`: It will use a `zip` file. The version is defined by the file name (Example: `binaries-v1.0.0.tar.gz`). Use [GlobNewestFile](https://github.com/mouuff/go-rocket-update/blob/0cad960c4449b42726537e2c559786b3d6174868/pkg/provider/common.go#L24) to find the right file.
 * `provider.Gzip`: Same as `provider.Zip` but with a `tar.gz` file.
 
-*In the future there will be providers for FTP servers and Google cloud storage.*
-
 The updater will list the files and retrieve them the same way for all the providers:
 
 The directory should have files containing `ExecutableName`.
@@ -81,7 +79,6 @@ This project is currently under construction, here is some of the things to come
 * Mutliple providers (enables the use of another provider if the first one is down)
 * Update channels for Github provider (alpha, beta, ...)
 * Validation of the executable being installed
-
 
 
 ## API Breaking Changes
