@@ -93,6 +93,15 @@ func TestMain(t *testing.T) {
 	if err = verifyFolder(folder, publicKeyPath); err == nil {
 		t.Fatal("Folder shouldn't be verified")
 	}
+
+	if err = verifyFolder(folder, publicKeyPath+"doesnotexist"); err == nil {
+		t.Fatal("Folder shouldn't be verified if public key doesn't exist")
+	}
+
+	if err = verifyFolder(folder, filepath.Join("testdata", "file.jpeg")); err == nil {
+		t.Fatal("Folder shouldn't be verified when file isn't a public key")
+	}
+
 	err = main.RunSubCommand([]string{})
 	if err == nil {
 		t.Fatal("Should return an error")
