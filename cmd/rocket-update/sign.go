@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"io/ioutil"
 	"log"
@@ -53,13 +52,9 @@ func (cmd *Sign) Run() error {
 		return err
 	}
 
-	signaturesJSON, err := json.Marshal(signatures)
-	if err != nil {
-		return err
-	}
 	signaturesPath := filepath.Join(cmd.path, constant.SignatureRelPath)
 	log.Println("Writing " + signaturesPath + " ...")
-	err = ioutil.WriteFile(signaturesPath, signaturesJSON, 0644)
+	err = crypto.WriteSignaturesToJSON(signaturesPath, signatures)
 	if err != nil {
 		return err
 	}

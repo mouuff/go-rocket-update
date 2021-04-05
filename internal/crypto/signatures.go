@@ -55,6 +55,19 @@ func LoadSignaturesFromJSON(path string) (signatures *Signatures, err error) {
 	return
 }
 
+// WriteSignaturesToJSON writes signatures to dest as a JSON file
+func WriteSignaturesToJSON(dest string, signatures *Signatures) error {
+	signaturesJSON, err := json.Marshal(signatures)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(dest, signaturesJSON, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // VerifyFolder verifies all the files signatures of a folder
 // returns list of unverified files
 func (s *Signatures) VerifyFolder(pub *rsa.PublicKey, root string) ([]string, error) {
