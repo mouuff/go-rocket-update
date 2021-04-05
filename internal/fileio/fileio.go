@@ -80,9 +80,5 @@ func TempDir() (string, error) {
 
 // GetExecutable get the path to the current executable
 func GetExecutable() (string, error) {
-	execPath, err := osext.Executable()
-	if err != nil {
-		return "", err
-	}
-	return execPath, nil
+	return osext.Executable()
 }
