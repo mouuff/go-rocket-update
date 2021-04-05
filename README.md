@@ -56,7 +56,7 @@ Here is few examples of providers:
 * `provider.Github`: It will check for the latest release on Github with a specific archive name (zip or tar.gz)
 * `provider.Gitlab`: It will check for the latest release on Gitlab with a specific archive name (zip or tar.gz)
 * `provider.Local`: It will use a local folder, version will be defined in the VERSION file (can be used for testing, or in a company with a shared folder for example)
-* `provider.Zip`: It will use a `zip` file. The version is defined by the file name (Example: `binaries-v1.0.0.tar.gz`)
+* `provider.Zip`: It will use a `zip` file. The version is defined by the file name (Example: `binaries-v1.0.0.tar.gz`). Use [GlobNewestFile](https://github.com/mouuff/go-rocket-update/blob/0cad960c4449b42726537e2c559786b3d6174868/pkg/provider/common.go#L24) to find the right file.
 * `provider.Gzip`: Same as `provider.Zip` but with a `tar.gz` file.
 
 *In the future there will be providers for FTP servers and Google cloud storage.*
