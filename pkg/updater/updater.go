@@ -21,13 +21,22 @@ const (
 	Updated
 )
 
+// UpdateHook is an interface you can implement
+// and pass to the Updater to be called depending on the situation
+type UpdateHook interface {
+	// PostUpdate is called after a successful update
+	// if error is not nil, then Updater.Rollback will be called
+	PostUpdate(u *Updater) error
+}
+
 // Updater struct
 type Updater struct {
 	Provider           provider.Provider
-	ExecutableName     string
-	Version            string
-	OverrideExecutable string // (optionnal) Overrides the path of the executable
-	latestVersion      string // cache for the latest version
+	ExecutableName     string     // Name of the executable
+	Version            string     // The current version of your program
+	OverrideExecutable string     // (optional) Overrides the path of the executable
+	Hook               UpdateHook // (optional) Set the update hooks (see interface documentation)
+	latestVersion      string     // cache for the latest version
 }
 
 // getExecutablePatcher gets the executable patcher
@@ -142,6 +151,13 @@ func (u *Updater) Update() (status UpdateStatus, err error) {
 		status = Updated
 	}
 	// WARNING: any code after that should also call Rollback() on failure
+	if status == Updated && u.Hook != nil {
+		err = u.Hook.PostUpdate(u)
+		if err != nil {
+			u.Rollback()
+			status = Unknown
+		}
+	}
 	return
 }
 
