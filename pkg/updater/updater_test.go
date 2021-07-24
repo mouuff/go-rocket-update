@@ -2,6 +2,7 @@ package updater_test
 
 import (
 	"encoding/hex"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -104,5 +105,62 @@ func TestUpdater(t *testing.T) {
 	if updateStatus == updater.UpToDate {
 		t.Error("updateStatus == updater.Updated while provider is not reachable")
 	}
+}
 
+type TestHook struct {
+	WillFail bool             // If set to true then PostUpdate will return an error
+	Updater  *updater.Updater // This will be set when PostUpdate is called
+}
+
+func (hook *TestHook) PostUpdate(u *updater.Updater) error {
+	hook.Updater = u
+	if hook.WillFail {
+		return fmt.Errorf("hook.WillFail")
+	} else {
+		return nil
+	}
+}
+
+func TestUpdaterHooks(t *testing.T) {
+	tmpDir, err := fileio.TempDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	executable := filepath.Join(tmpDir, "executable")
+	err = fileio.CopyFile(filepath.Join("testdata", "testBinary"), executable)
+	if err != nil {
+		t.Fatal(err)
+	}
+	solutionDir := filepath.Join("testdata", "testSolution")
+	hook := &TestHook{WillFail: true}
+	u := &updater.Updater{
+		Provider:           &provider.Local{Path: solutionDir},
+		ExecutableName:     "test",
+		Version:            "v0.0",
+		OverrideExecutable: executable,
+		Hook:               hook,
+	}
+
+	status, err := u.Update()
+	if err == nil {
+		t.Error("If hook fails, then the update should fail")
+	}
+	if status == updater.Updated {
+		t.Error("If hook fails, then the status should not be set to Updated")
+	}
+	if hook.Updater != u {
+		t.Error("hook.Updater != u")
+	}
+	hook.Updater = nil
+
+	hook.WillFail = false
+	_, err = u.Update()
+	if err != nil {
+		t.Error(err)
+	}
+	if hook.Updater != u {
+		t.Error("hook.Updater != u")
+	}
 }
