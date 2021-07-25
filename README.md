@@ -8,7 +8,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/mouuff/go-rocket-update.svg)](https://pkg.go.dev/github.com/mouuff/go-rocket-update)
 
 
-Enable your Golang applications easily and safely to self update.
+Enable your Golang applications to easily and safely to self update.
 
 It provides the flexibility to implement different updating user experiences like auto-updating, or manual user-initiated updates, and updates from different sources.
 
