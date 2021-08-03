@@ -148,7 +148,7 @@ func (u *Updater) Update() (status UpdateStatus, err error) {
 	}
 	// WARNING: any code after that should also call Rollback() on failure
 	if status == Updated && u.PostUpdateFunc != nil {
-		status, err = u.PostUpdateFunc(u)
+		status, err = u.PostUpdateFunc(u) // That's up to the PostUpdateFunc to rollback or not here
 	}
 	return
 }
