@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/mouuff/go-rocket-update/workflows/Go/badge.svg?branch=master)](https://github.com/mouuff/go-rocket-update/actions)
 [![codecov](https://codecov.io/gh/mouuff/go-rocket-update/branch/master/graph/badge.svg)](https://codecov.io/gh/mouuff/go-rocket-update)
-[![Go ReportCard](http://goreportcard.com/badge/mouuff/go-rocket-update)](http://goreportcard.com/report/mouuff/go-rocket-update)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mouuff/go-rocket-update)](https://goreportcard.com/report/github.com/mouuff/go-rocket-update)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mouuff/go-rocket-update.svg)](https://pkg.go.dev/github.com/mouuff/go-rocket-update)
 
 Enable your Golang applications to easily and safely to self update.
