@@ -107,7 +107,7 @@ func TestUpdater(t *testing.T) {
 	}
 }
 
-func TestUpdaterHooks(t *testing.T) {
+func TestPostUpdateFunc(t *testing.T) {
 
 	var postUpdateFuncWillFail = true
 	var postUpdateFuncUpdater *updater.Updater = nil
