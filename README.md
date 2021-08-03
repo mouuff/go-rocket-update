@@ -87,7 +87,7 @@ This project is currently under construction, here is some of the things to come
 - **Feb 12, 2021**: Minor: The method `Updater.Update()` now returns `(UpdateStatus, error)` instead of just `(error)`.
 - **Feb 14, 2021**: Major: The `ExecutableName` variable used in `Updater` is no longer suffixed with `"_" + runtime.GOOS + "_" + runtime.GOARCH`.
 - **Feb 21, 2021**: Minor: The `ZipName` variable used in `provider.Github` and `provider.Gitlab` have been renamed to `ArchiveName ` with the arrival of `tar.gz` support.
-- **Aug 1, 2021**: Major: The `UpdateHook` variable used in `Updater` have been replaced with `PostUpdateFunc` and the Updater will no longer call `Rollback()` if the PostUpdateFunc returns an error.
+- **Aug 1, 2021**: Major: The `UpdateHook` variable used in `Updater` have been replaced with `PostUpdateFunc` and the Updater will no longer call `Rollback()` automatically if the `PostUpdateFunc` returns an error.
 
 [tu]: https://twitter.com/tenntenn
 [cc3-by]: https://creativecommons.org/licenses/by/3.0/
