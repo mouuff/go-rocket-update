@@ -107,21 +107,21 @@ func TestUpdater(t *testing.T) {
 	}
 }
 
-type TestHook struct {
-	WillFail bool             // If set to true then PostUpdate will return an error
-	Updater  *updater.Updater // This will be set when PostUpdate is called
-}
+func TestPostUpdateFunc(t *testing.T) {
 
-func (hook *TestHook) PostUpdate(u *updater.Updater) error {
-	hook.Updater = u
-	if hook.WillFail {
-		return fmt.Errorf("hook.WillFail")
-	} else {
-		return nil
+	var postUpdateFuncWillFail = true
+	var postUpdateFuncUpdater *updater.Updater = nil
+
+	var postUpdateFunc = func(u *updater.Updater) (updater.UpdateStatus, error) {
+		postUpdateFuncUpdater = u
+		if postUpdateFuncWillFail {
+			u.Rollback()
+			return updater.Unknown, fmt.Errorf("postUpdateFuncWillFail")
+		} else {
+			return updater.Updated, nil
+		}
 	}
-}
 
-func TestUpdaterHooks(t *testing.T) {
 	tmpDir, err := fileio.TempDir()
 	if err != nil {
 		t.Fatal(err)
@@ -134,13 +134,13 @@ func TestUpdaterHooks(t *testing.T) {
 		t.Fatal(err)
 	}
 	solutionDir := filepath.Join("testdata", "testSolution")
-	hook := &TestHook{WillFail: true}
+
 	u := &updater.Updater{
 		Provider:           &provider.Local{Path: solutionDir},
 		ExecutableName:     "test",
 		Version:            "v0.0",
 		OverrideExecutable: executable,
-		Hook:               hook,
+		PostUpdateFunc:     postUpdateFunc,
 	}
 
 	status, err := u.Update()
@@ -150,17 +150,17 @@ func TestUpdaterHooks(t *testing.T) {
 	if status == updater.Updated {
 		t.Error("If hook fails, then the status should not be set to Updated")
 	}
-	if hook.Updater != u {
-		t.Error("hook.Updater != u")
+	if postUpdateFuncUpdater != u {
+		t.Error("postUpdateFuncUpdater != u")
 	}
-	hook.Updater = nil
+	postUpdateFuncUpdater = nil
 
-	hook.WillFail = false
+	postUpdateFuncWillFail = false
 	_, err = u.Update()
 	if err != nil {
 		t.Error(err)
 	}
-	if hook.Updater != u {
-		t.Error("hook.Updater != u")
+	if postUpdateFuncUpdater != u {
+		t.Error("postUpdateFuncUpdater != u")
 	}
 }

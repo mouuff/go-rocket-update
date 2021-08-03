@@ -1,5 +1,3 @@
-
-
 # go-rocket-update: Build self-updating Go programs
 
 [![Build Status](https://github.com/mouuff/go-rocket-update/workflows/Go/badge.svg?branch=master)](https://github.com/mouuff/go-rocket-update/actions)
@@ -7,21 +5,21 @@
 [![Go ReportCard](http://goreportcard.com/badge/mouuff/go-rocket-update)](http://goreportcard.com/report/mouuff/go-rocket-update)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mouuff/go-rocket-update.svg)](https://pkg.go.dev/github.com/mouuff/go-rocket-update)
 
-
 Enable your Golang applications to easily and safely to self update.
 
 It provides the flexibility to implement different updating user experiences like auto-updating, or manual user-initiated updates, and updates from different sources.
 
 ![Go rocket image](docs/social.png)
-*The gopher in this image was created by [Takuya Ueda][tu], licensed under [Creative Commons 3.0 Attributions license][cc3-by].*
+_The gopher in this image was created by [Takuya Ueda][tu], licensed under [Creative Commons 3.0 Attributions license][cc3-by]._
 
 ## Features
-* Flexible way to provide updates (ex: using Github or Gitlab!)
-* Cross platform support (Mac, Linux, Arm, and Windows)
-* RSA signature verification
-* Tooling to generate and verify signatures
-* Background update
-* Rollback feature
+
+- Flexible way to provide updates (ex: using Github or Gitlab!)
+- Cross platform support (Mac, Linux, Arm, and Windows)
+- RSA signature verification
+- Tooling to generate and verify signatures
+- Background update
+- Rollback feature
 
 ## QuickStart
 
@@ -33,18 +31,18 @@ It provides the flexibility to implement different updating user experiences lik
 
 Here is an example using Github releases:
 
-	u := &updater.Updater{
-		Provider: &provider.Github{
-			RepositoryURL: "github.com/mouuff/go-rocket-update-example",
-			ArchiveName:       fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
-		},
-		ExecutableName: fmt.Sprintf("go-rocket-update-example_%s_%s", runtime.GOOS, runtime.GOARCH),
-		Version:    "v0.0.1",
-	}
-	err := u.Update()
-	if err != nil {
-		log.Error(err)
-	}
+    u := &updater.Updater{
+    	Provider: &provider.Github{
+    		RepositoryURL: "github.com/mouuff/go-rocket-update-example",
+    		ArchiveName:       fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+    	},
+    	ExecutableName: fmt.Sprintf("go-rocket-update-example_%s_%s", runtime.GOOS, runtime.GOARCH),
+    	Version:    "v0.0.1",
+    }
+    err := u.Update()
+    if err != nil {
+    	log.Error(err)
+    }
 
 Check this project for a complete example: https://github.com/mouuff/go-rocket-update-example
 
@@ -53,11 +51,12 @@ Check this project for a complete example: https://github.com/mouuff/go-rocket-u
 The updater uses a `Provider` as an input source for updates. It provides files and version for the updater.
 
 Here is few examples of providers:
-* `provider.Github`: It will check for the latest release on Github with a specific archive name (zip or tar.gz)
-* `provider.Gitlab`: It will check for the latest release on Gitlab with a specific archive name (zip or tar.gz)
-* `provider.Local`: It will use a local folder, version will be defined in the VERSION file (can be used for testing, or in a company with a shared folder for example)
-* `provider.Zip`: It will use a `zip` file. The version is defined by the file name (Example: `binaries-v1.0.0.tar.gz`). Use [GlobNewestFile](https://github.com/mouuff/go-rocket-update/blob/0cad960c4449b42726537e2c559786b3d6174868/pkg/provider/common.go#L24) to find the right file.
-* `provider.Gzip`: Same as `provider.Zip` but with a `tar.gz` file.
+
+- `provider.Github`: It will check for the latest release on Github with a specific archive name (zip or tar.gz)
+- `provider.Gitlab`: It will check for the latest release on Gitlab with a specific archive name (zip or tar.gz)
+- `provider.Local`: It will use a local folder, version will be defined in the VERSION file (can be used for testing, or in a company with a shared folder for example)
+- `provider.Zip`: It will use a `zip` file. The version is defined by the file name (Example: `binaries-v1.0.0.tar.gz`). Use [GlobNewestFile](https://github.com/mouuff/go-rocket-update/blob/0cad960c4449b42726537e2c559786b3d6174868/pkg/provider/common.go#L24) to find the right file.
+- `provider.Gzip`: Same as `provider.Zip` but with a `tar.gz` file.
 
 The updater will list the files and retrieve them the same way for all the providers:
 
@@ -72,21 +71,23 @@ Example directory content with `ExecutableName: fmt.Sprintf("test_%s_%s", runtim
 We recommend using [goxc](https://github.com/laher/goxc) for compiling your Go application for multiple platforms.
 
 ### Planned features
-This project is currently under construction, here is some of the things to come:
-* More documentation and examples
-* [Variable templating](https://github.com/mouuff/go-rocket-update/issues/14)
-* Google cloud storage, and FTP providers
-* Mutliple providers (enables the use of another provider if the first one is down)
-* Update channels for Github provider (alpha, beta, ...)
-* Validation of the executable being installed
 
+This project is currently under construction, here is some of the things to come:
+
+- More documentation and examples
+- [Variable templating](https://github.com/mouuff/go-rocket-update/issues/14)
+- Google cloud storage, and FTP providers
+- Mutliple providers (enables the use of another provider if the first one is down)
+- Update channels for Github provider (alpha, beta, ...)
+- Validation of the executable being installed
 
 ## API Breaking Changes
+
 - **Feb 7, 2021**: Minor: The `BinaryName` variable used in `Updater` have been renamed to `ExecutableName`.
 - **Feb 12, 2021**: Minor: The method `Updater.Update()` now returns `(UpdateStatus, error)` instead of just `(error)`.
 - **Feb 14, 2021**: Major: The `ExecutableName` variable used in `Updater` is no longer suffixed with `"_" + runtime.GOOS + "_" + runtime.GOARCH`.
 - **Feb 21, 2021**: Minor: The `ZipName` variable used in `provider.Github` and `provider.Gitlab` have been renamed to `ArchiveName ` with the arrival of `tar.gz` support.
-
+- **Aug 1, 2021**: Major: The `UpdateHook` variable used in `Updater` have been replaced with `PostUpdateFunc` and the Updater will no longer call `Rollback()` automatically if the `PostUpdateFunc` returns an error.
 
 [tu]: https://twitter.com/tenntenn
 [cc3-by]: https://creativecommons.org/licenses/by/3.0/
