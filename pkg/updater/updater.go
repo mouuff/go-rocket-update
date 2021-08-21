@@ -126,7 +126,10 @@ func (u *Updater) CanUpdate() (bool, error) {
 }
 
 // Update runs the updater
-// It will update the current application if an update is found
+// It will update the current application if an update is found.
+// If the application is up-to-date then no error will be returned.
+// YOU DON'T NEED TO call Rollback() yourself!
+// UNLESS you want to rollback after a successful update
 func (u *Updater) Update() (status UpdateStatus, err error) {
 	status = Unknown
 	canUpdate, err := u.CanUpdate()
