@@ -7,6 +7,8 @@
 
 Enable your Golang applications to easily and safely to self update.
 
+Here is the list of [projects using this package](https://github.com/mouuff/go-rocket-update/network/dependents?package_id=UGFja2FnZS0yMjc3OTEzNjc1).
+
 It provides the flexibility to implement different updating user experiences like auto-updating, or manual user-initiated updates, and updates from different sources.
 
 ![Go rocket image](docs/social.png)
