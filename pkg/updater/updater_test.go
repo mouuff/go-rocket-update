@@ -128,8 +128,6 @@ func TestUpdaterNoRemoteExecutable(t *testing.T) {
 		OverrideExecutable: executable,
 	}
 
-	u.Version = "v0.1"
-
 	canUpdate, err := u.CanUpdate()
 	if err != nil {
 		t.Fatal(err)
@@ -153,6 +151,34 @@ func TestUpdaterNoRemoteExecutable(t *testing.T) {
 	}
 	if updateStatus == updater.Updated {
 		t.Error("updateStatus == updater.Updated")
+	}
+}
+
+func TestUpdaterOpenError(t *testing.T) {
+	tmpDir, err := fileio.TempDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	executable := filepath.Join(tmpDir, "executable")
+	err = fileio.CopyFile(filepath.Join("testdata", "testBinary"), executable)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	u := &updater.Updater{
+		Provider: &provider.Gzip{
+			Path: filepath.Join("testdata", "DoesNotExists-v1.0.0.tar.gz"),
+		},
+		ExecutableName:     "test",
+		Version:            "v0.1",
+		OverrideExecutable: executable,
+	}
+
+	_, err = u.Update()
+	if err == nil {
+		t.Fatal("Should not update if the solution can't be openned")
 	}
 }
 
