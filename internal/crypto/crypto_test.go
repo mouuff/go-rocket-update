@@ -53,7 +53,7 @@ func TestSignAndVerifyFile(t *testing.T) {
 
 	// Error paths
 	_, err = crypto.GetFileSignature(privA, filepath.Join("testdata", "doesnotexist.txt"))
-	if err != nil {
+	if err == nil {
 		t.Fatal("Should return error when file does not exist")
 	}
 }
