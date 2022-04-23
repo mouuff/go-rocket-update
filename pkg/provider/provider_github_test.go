@@ -31,4 +31,12 @@ func TestProviderGithub(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	badProvider = &provider.Github{
+		RepositoryURL: "githubxxx.com/mouuff/go-rocket-update-example",
+		ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+	}
+	err = ProviderTestUnavailable(badProvider)
+	if err != nil {
+		t.Fatal(err)
+	}
 }
