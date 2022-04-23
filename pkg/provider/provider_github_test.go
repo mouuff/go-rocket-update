@@ -3,6 +3,7 @@ package provider_test
 import (
 	"fmt"
 	"runtime"
+	"strings"
 	"testing"
 
 	provider "github.com/mouuff/go-rocket-update/pkg/provider"
@@ -38,5 +39,14 @@ func TestProviderGithub(t *testing.T) {
 	err = ProviderTestUnavailable(badProvider)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	badProvider = &provider.Github{
+		RepositoryURL: "https://github.com/mouuff/MouBot",
+		ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+	}
+	_, err = badProvider.GetLatestVersion()
+	if err == nil || !strings.Contains(err.Error(), "tags") {
+		t.Fatal("Should not get version without tags")
 	}
 }
