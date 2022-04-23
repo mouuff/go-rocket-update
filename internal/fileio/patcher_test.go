@@ -66,6 +66,10 @@ func TestPatcher(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if !fileio.FileExists(backupPath) {
+		t.Fatal("Backup file should be created")
+	}
+
 	assertFilesEquals(t, sourcePath, destinationPath)
 
 	err = patcher.Rollback()
@@ -86,6 +90,19 @@ func TestPatcher(t *testing.T) {
 	err = patcher.CleanUp() // Cleaning up a second time shouldn't cause problem
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	// Test apply then clean up without rollback
+	err = patcher.Apply()
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = patcher.CleanUp()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if fileio.FileExists(backupPath) {
+		t.Fatal("Backup file should be cleaned")
 	}
 
 	patcher.DestinationPath = "wrongpath"

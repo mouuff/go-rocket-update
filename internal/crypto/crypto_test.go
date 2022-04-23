@@ -93,6 +93,13 @@ SZ5Uz050oR/PoLaSx3xdjFMCAwEAAQ==
 	if err == nil {
 		t.Fatal("Should return error when file does not exist.")
 	}
+
+	_, err = crypto.ParsePemPublicKey([]byte(`-----BEGIN PUBLIC KEY-----
+	MCowBQYDK2VwAyEABhjHE6AOa33q2JGlVk9OjICRp2S6d9nUJh0Xr6PUego=
+	-----END PUBLIC KEY-----`))
+	if err == nil {
+		t.Fatal("Should return error when type of the public key is not RSA.")
+	}
 }
 
 func verifyChecksumFileSHA256(path string, expectedHexChecksum string) error {
