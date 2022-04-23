@@ -14,6 +14,12 @@ func TestProviderGzip(t *testing.T) {
 	if err := p.Open(); err != nil {
 		t.Fatal(err)
 	}
+
+	// Call to open twice should not create an error
+	if err := p.Open(); err != nil {
+		t.Fatal(err)
+	}
+
 	defer p.Close()
 	err := ProviderTestWalkAndRetrieve(p)
 	if err != nil {
