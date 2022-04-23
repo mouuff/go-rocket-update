@@ -18,7 +18,7 @@ func TestGetLatestVersionFromPath(t *testing.T) {
 		t.Error("version != 'v1.2.3'")
 	}
 
-	version, err = provider.GetLatestVersionFromPath("binaries-v.zip")
+	_, err = provider.GetLatestVersionFromPath("binaries-v.zip")
 	if err == nil {
 		t.Error("Should return an error")
 	}
@@ -40,7 +40,7 @@ func TestGlobNewestFile(t *testing.T) {
 		t.Error("Expected " + filename)
 	}
 
-	match, err = provider.GlobNewestFile(filepath.Join("testdata", "doesntexists"))
+	_, err = provider.GlobNewestFile(filepath.Join("testdata", "doesntexists"))
 	if err == nil {
 		t.Error("Should return an error if file doesn't exists")
 	}
