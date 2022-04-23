@@ -79,15 +79,20 @@ func TestMain(t *testing.T) {
 	if err = signFolder(folder, privateKeyPath+"doesnotexist"); err == nil {
 		t.Fatal("signFolder shouldn't work if private key does not exist")
 	}
-	if err = signFolder(folder, filepath.Join(folder, "test2.jpeg")); err == nil {
+	if err = signFolder(folder, filepath.Join("testdata", "file.jpeg")); err == nil {
 		t.Fatal("signFolder shouldn't work if file is not a private key")
 	}
-
+	if err = signFolder(folder+"x", privateKeyPath); err == nil {
+		t.Fatal("signFolder shouldn't work if folder does not exists")
+	}
 	if err = signFolder(folder, privateKeyPath); err != nil {
 		t.Fatal(err)
 	}
 	if err = verifyFolder(folder, publicKeyPath); err != nil {
 		t.Fatal(err)
+	}
+	if err = verifyFolder(folder+"x", publicKeyPath); err == nil {
+		t.Fatal("verifyFolder shouldn't not work if the path is wrong")
 	}
 
 	// Adding a file (which is not going to be verified)

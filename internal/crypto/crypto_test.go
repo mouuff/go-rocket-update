@@ -1,6 +1,7 @@
 package crypto_test
 
 import (
+	"crypto/rsa"
 	"encoding/hex"
 	"fmt"
 	"os"
@@ -49,6 +50,12 @@ func TestSignAndVerifyFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	// Error paths
+	_, err = crypto.GetFileSignature(privA, filepath.Join("testdata", "doesnotexist.txt"))
+	if err == nil {
+		t.Fatal("Should return error when file does not exist")
+	}
 }
 
 func TestVerifyFile(t *testing.T) {
@@ -81,6 +88,18 @@ SZ5Uz050oR/PoLaSx3xdjFMCAwEAAQ==
 		t.Fatal(err)
 	}
 
+	// Error paths
+	err = crypto.VerifyFileSignature(pub, signature, filepath.Join("testdata", "doesnotexist.txt"))
+	if err == nil {
+		t.Fatal("Should return error when file does not exist.")
+	}
+
+	_, err = crypto.ParsePemPublicKey([]byte(`-----BEGIN PUBLIC KEY-----
+	MCowBQYDK2VwAyEABhjHE6AOa33q2JGlVk9OjICRp2S6d9nUJh0Xr6PUego=
+	-----END PUBLIC KEY-----`))
+	if err == nil {
+		t.Fatal("Should return error when type of the public key is not RSA.")
+	}
 }
 
 func verifyChecksumFileSHA256(path string, expectedHexChecksum string) error {
@@ -147,5 +166,20 @@ func TestExportImport(t *testing.T) {
 	_, err = crypto.ParsePemPrivateKey(pubExported)
 	if err == nil {
 		t.Error("ParsePemPrivateKey should not work with private keys")
+	}
+
+	_, err = crypto.ParsePemPublicKey([]byte("Should not parse this"))
+	if err == nil {
+		t.Error("ParsePemPublicKey should not parse the input")
+	}
+
+	_, err = crypto.ParsePemPrivateKey([]byte("Should not parse this"))
+	if err == nil {
+		t.Error("ParsePemPrivateKey should not parse the input")
+	}
+
+	_, err = crypto.ExportPublicKeyAsPem(&rsa.PublicKey{})
+	if err == nil {
+		t.Error("ExportPublicKeyAsPem should not parse the input")
 	}
 }
