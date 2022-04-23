@@ -91,6 +91,9 @@ func TestMain(t *testing.T) {
 	if err = verifyFolder(folder, publicKeyPath); err != nil {
 		t.Fatal(err)
 	}
+	if err = verifyFolder(folder+"x", publicKeyPath); err == nil {
+		t.Fatal("verifyFolder shouldn't not work if the path is wrong")
+	}
 
 	// Adding a file (which is not going to be verified)
 	err = fileio.CopyFile(
