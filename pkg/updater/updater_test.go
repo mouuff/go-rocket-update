@@ -107,6 +107,55 @@ func TestUpdater(t *testing.T) {
 	}
 }
 
+// Tests when updater can't find the remote executable
+func TestUpdaterNoRemoteExecutable(t *testing.T) {
+	tmpDir, err := fileio.TempDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	executable := filepath.Join(tmpDir, "executable")
+	err = fileio.CopyFile(filepath.Join("testdata", "testBinary"), executable)
+	if err != nil {
+		t.Fatal(err)
+	}
+	solutionDir := filepath.Join("testdata", "testSolution")
+	u := &updater.Updater{
+		Provider:           &provider.Local{Path: solutionDir},
+		ExecutableName:     "test",
+		Version:            "v0.1",
+		OverrideExecutable: executable,
+	}
+
+	u.Version = "v0.1"
+
+	canUpdate, err := u.CanUpdate()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !canUpdate {
+		t.Error("Should be able to update with different version")
+	}
+	updateStatus, err := u.Update()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateStatus != updater.Updated {
+		t.Error("updateStatus != Updated")
+	}
+	u.Rollback()
+
+	u.ExecutableName = "this_does_not_exists"
+	updateStatus, err = u.Update()
+	if err == nil {
+		t.Fatal("Should not update with a wrong executable name")
+	}
+	if updateStatus == updater.Updated {
+		t.Error("updateStatus == updater.Updated")
+	}
+}
+
 func TestPostUpdateFunc(t *testing.T) {
 
 	var postUpdateFuncWillFail = true
