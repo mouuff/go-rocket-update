@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/mouuff/go-rocket-update/branch/master/graph/badge.svg)](https://codecov.io/gh/mouuff/go-rocket-update)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mouuff/go-rocket-update)](https://goreportcard.com/report/github.com/mouuff/go-rocket-update)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mouuff/go-rocket-update.svg)](https://pkg.go.dev/github.com/mouuff/go-rocket-update)
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 
 Enable your Golang applications to easily and safely to self update.
 
@@ -46,7 +47,7 @@ Here is an example using Github releases:
     	log.Println(err)
     }
 
-Check this project for a complete example: https://github.com/mouuff/go-rocket-update-example
+For more examples, please take a look at some [code samples](./examples) and this [example project](https://github.com/mouuff/go-rocket-update-example).
 
 ### Push an update
 
