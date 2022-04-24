@@ -47,7 +47,7 @@ Here is an example using Github releases:
     	log.Println(err)
     }
 
-Check this project for a complete example: https://github.com/mouuff/go-rocket-update-example
+For more examples, please take a look at some [code samples](./examples) and this [example project](https://github.com/mouuff/go-rocket-update-example).
 
 ### Push an update
 
