@@ -34,18 +34,20 @@ _The gopher in this image was created by [Takuya Ueda][tu], licensed under [Crea
 
 Here is an example using Github releases:
 
-    u := &updater.Updater{
-    	Provider: &provider.Github{
-    		RepositoryURL: "github.com/mouuff/go-rocket-update-example",
-    		ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
-    	},
-    	ExecutableName: fmt.Sprintf("go-rocket-update-example_%s_%s", runtime.GOOS, runtime.GOARCH),
-    	Version:        "v0.0.1",
-    }
+``` go
+u := &updater.Updater{
+	Provider: &provider.Github{
+		RepositoryURL: "github.com/mouuff/go-rocket-update-example",
+		ArchiveName:   fmt.Sprintf("binaries_%s.zip", runtime.GOOS),
+	},
+	ExecutableName: fmt.Sprintf("go-rocket-update-example_%s_%s", runtime.GOOS, runtime.GOARCH),
+	Version:        "v0.0.1",
+}
 
-    if _, err := u.Update(); err != nil {
-    	log.Println(err)
-    }
+if _, err := u.Update(); err != nil {
+	log.Println(err)
+}
+```
 
 For more examples, please take a look at some [code samples](./examples) and this [example project](https://github.com/mouuff/go-rocket-update-example).
 
