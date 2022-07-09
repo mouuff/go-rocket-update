@@ -85,9 +85,5 @@ This project is currently under construction, here is some of the things to come
 - Update channels for Github provider (alpha, beta, ...)
 - Validation of the executable being installed
 
-## API Breaking Changes
-
-- **Aug 1, 2021**: Major: The `UpdateHook` variable used in `Updater` have been replaced with `PostUpdateFunc` and the Updater will no longer call `Rollback()` automatically if the `PostUpdateFunc` returns an error.
-
 [tu]: https://twitter.com/tenntenn
 [cc3-by]: https://creativecommons.org/licenses/by/3.0/
