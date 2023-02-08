@@ -17,6 +17,7 @@ import (
 type Gitlab struct {
 	ProjectID   int
 	ArchiveName string // ArchiveName (the archive you upload for a release on gitlab), example: binaries.zip
+	ApiURI      string // ApiURI (in case you're using a private gitlab server), example: gitlab.mydomain.tld/api/v4/projects/%d/releases to use gitlab.com let it blank
 
 	tmpDir             string   // temporary directory this is used internally
 	decompressProvider Provider // provider used to decompress the downloaded archive
@@ -41,6 +42,12 @@ type gitlabReleaseLink struct {
 
 // getReleasesURL get the releases URL for the gitlab repository
 func (c *Gitlab) getReleasesURL() (string, error) {
+	if c.ApiURI != "" {
+		return fmt.Sprintf(c.ApiURI,
+			c.ProjectID,
+		), nil
+	}
+
 	return fmt.Sprintf("https://gitlab.com/api/v4/projects/%d/releases",
 		c.ProjectID,
 	), nil
