@@ -6,8 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-
-	"github.com/kardianos/osext"
 )
 
 // CopyFile copies file contents from file source to file destination
@@ -80,5 +78,5 @@ func TempDir() (string, error) {
 
 // GetExecutable get the path to the current executable
 func GetExecutable() (string, error) {
-	return osext.Executable()
+	return os.Executable()
 }
