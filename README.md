@@ -90,4 +90,3 @@ This project is currently under construction, here is some of the things to come
 
 [tu]: https://twitter.com/tenntenn
 [cc3-by]: https://creativecommons.org/licenses/by/3.0/
-
