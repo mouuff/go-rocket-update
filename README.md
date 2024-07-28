@@ -23,6 +23,7 @@ _The gopher in this image was created by [Takuya Ueda][tu], licensed under [Crea
 - Tooling to generate and verify signatures
 - Background update
 - Rollback feature
+- No external dependencies
 
 ## QuickStart
 
