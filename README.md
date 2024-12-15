@@ -89,5 +89,6 @@ This project is currently under construction, here is some of the things to come
 - Update channels for Github provider (alpha, beta, ...)
 - Validation of the executable being installed
 
+
 [tu]: https://twitter.com/tenntenn
 [cc3-by]: https://creativecommons.org/licenses/by/3.0/
