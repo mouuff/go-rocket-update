@@ -77,7 +77,7 @@ Example directory content with `ExecutableName: fmt.Sprintf("test_%s_%s", runtim
 We recommend using [goxc](https://github.com/laher/goxc) for compiling your Go application for multiple platforms.
 
 ### Important notes
-- To update the binary, you need to have the right permissions for the folder where it is installed. For example, if the binary is in a folder like "Program Files", the process will need to acquire admin permissions.
+- To update the binary, you must have the appropriate permissions for the folder where it is installed. For instance, if the binary is located in a folder such as "Program Files," the process will require admin permissions.
 
 ### Planned features
 
