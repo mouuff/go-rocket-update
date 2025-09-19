@@ -4,10 +4,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"path/filepath"
 	"strings"
+
+	"os"
 
 	"github.com/mouuff/go-rocket-update/internal/constant"
 	"github.com/mouuff/go-rocket-update/internal/crypto"
@@ -40,7 +41,7 @@ func (cmd *Verify) Init(args []string) error {
 // Run runs the command
 func (cmd *Verify) Run() error {
 	log.Println("Reading public key...")
-	pubkeyBytes, err := ioutil.ReadFile(cmd.publicKey)
+	pubkeyBytes, err := os.ReadFile(cmd.publicKey)
 	if err != nil {
 		return err
 	}

@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -32,7 +31,7 @@ func (c *Local) Close() error {
 
 // GetLatestVersion gets the latest version
 func (c *Local) GetLatestVersion() (string, error) {
-	content, err := ioutil.ReadFile(filepath.Join(c.Path, "VERSION"))
+	content, err := os.ReadFile(filepath.Join(c.Path, "VERSION"))
 	if err != nil {
 		return "", err
 	}

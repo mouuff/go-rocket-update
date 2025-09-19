@@ -2,9 +2,10 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
 	"log"
 	"path/filepath"
+
+	"os"
 
 	"github.com/mouuff/go-rocket-update/internal/constant"
 	"github.com/mouuff/go-rocket-update/internal/crypto"
@@ -38,7 +39,7 @@ func (cmd *Sign) Init(args []string) error {
 func (cmd *Sign) Run() error {
 
 	log.Println("Reading private key...")
-	privkeyBytes, err := ioutil.ReadFile(cmd.key)
+	privkeyBytes, err := os.ReadFile(cmd.key)
 	if err != nil {
 		return err
 	}

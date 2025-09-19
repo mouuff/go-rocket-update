@@ -3,8 +3,9 @@ package main
 import (
 	"errors"
 	"flag"
-	"io/ioutil"
 	"log"
+
+	"os"
 
 	"github.com/mouuff/go-rocket-update/internal/crypto"
 	"github.com/mouuff/go-rocket-update/internal/fileio"
@@ -53,7 +54,7 @@ func (cmd *Keygen) Run() error {
 	}
 
 	privPem := crypto.ExportPrivateKeyAsPem(priv)
-	err = ioutil.WriteFile(privateKeyPath, privPem, 0600)
+	err = os.WriteFile(privateKeyPath, privPem, 0600)
 	if err != nil {
 		return err
 	}
@@ -63,7 +64,7 @@ func (cmd *Keygen) Run() error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(publicKeyPath, pubPem, 0644)
+	err = os.WriteFile(publicKeyPath, pubPem, 0644)
 	if err != nil {
 		return err
 	}

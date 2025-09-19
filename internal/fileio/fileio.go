@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"io"
-	"io/ioutil"
 	"os"
 )
 
@@ -73,7 +72,7 @@ func CompareFiles(fileA, fileB string) (bool, error) {
 
 // TempDir creates a new temporary directory
 func TempDir() (string, error) {
-	return ioutil.TempDir("", "rocket-updater")
+	return os.MkdirTemp("", "rocket-updater")
 }
 
 // GetExecutable get the path to the current executable

@@ -1,7 +1,6 @@
 package fileio
 
 import (
-	"io/ioutil"
 	"os"
 )
 
@@ -17,7 +16,7 @@ type Patcher struct {
 // Apply replaces the file located at DestinationPath with the one located at BackupPath and
 // then new file is created at DestinationPath with the content of SourcePath
 func (p *Patcher) Apply() error {
-	content, err := ioutil.ReadFile(p.SourcePath)
+	content, err := os.ReadFile(p.SourcePath)
 	if err != nil {
 		return err
 	}
@@ -26,7 +25,7 @@ func (p *Patcher) Apply() error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(p.DestinationPath, content, p.Mode)
+	err = os.WriteFile(p.DestinationPath, content, p.Mode)
 	if err != nil {
 		p.Rollback()
 		return err
