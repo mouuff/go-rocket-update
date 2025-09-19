@@ -166,8 +166,8 @@ func (u *Updater) Rollback() (err error) {
 	return executablePatcher.Rollback()
 }
 
-// CleanUp removes the old executable after updating. (.old files)
-// Warning: This also prevents any rollback
+// CleanUp removes the old executable after updating. (*.old files)
+// Warning: This also prevents any rollback in the future.
 func (u *Updater) CleanUp() (err error) {
 	executablePatcher, err := u.getExecutablePatcher("")
 	if err != nil {

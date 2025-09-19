@@ -107,6 +107,53 @@ func TestUpdater(t *testing.T) {
 	}
 }
 
+func TestUpdaterCleanUp(t *testing.T) {
+	tmpDir, err := fileio.TempDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	executable := filepath.Join(tmpDir, "executable")
+	err = fileio.CopyFile(filepath.Join("testdata", "testBinary"), executable)
+	if err != nil {
+		t.Fatal(err)
+	}
+	solutionDir := filepath.Join("testdata", "testSolution")
+	u := &updater.Updater{
+		Provider:           &provider.Local{Path: solutionDir},
+		ExecutableName:     "test",
+		Version:            "v1.1",
+		OverrideExecutable: executable,
+	}
+
+	updateStatus, err := u.Update()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateStatus != updater.Updated {
+		t.Error("updateStatus != updater.Updated")
+	}
+
+	if !fileio.FileExists(executable + ".old") {
+		t.Error("Should be able to see the old executable file")
+	}
+
+	err = u.CleanUp()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if fileio.FileExists(executable + ".old") {
+		t.Error("Old file should be removed up after CleanUp()")
+	}
+
+	err = u.CleanUp()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 // Tests when updater can't find the remote executable
 func TestUpdaterNoRemoteExecutable(t *testing.T) {
 	tmpDir, err := fileio.TempDir()
