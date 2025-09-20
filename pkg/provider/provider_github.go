@@ -2,7 +2,6 @@ package provider
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -159,7 +158,7 @@ func (c *Github) GetLatestVersion() (string, error) {
 		return "", err
 	}
 	if len(tags) < 1 {
-		return "", errors.New("This github project has no tags")
+		return "", fmt.Errorf("this github project has no tags")
 	}
 	return tags[0].Name, nil
 }

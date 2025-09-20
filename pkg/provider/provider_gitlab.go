@@ -2,7 +2,6 @@ package provider
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -65,7 +64,7 @@ func (c *Gitlab) getArchiveURL() (string, error) {
 			return link.DirectURL, nil
 		}
 	}
-	return "", errors.New("Link not found for name: " + c.ArchiveName)
+	return "", fmt.Errorf("link not found for name: %s", c.ArchiveName)
 }
 
 // getReleases gets tags of the repository
@@ -93,7 +92,7 @@ func (c *Gitlab) getLatestRelease() (*gitlabRelease, error) {
 		return nil, err
 	}
 	if len(releases) < 1 {
-		return nil, errors.New("this gitlab project has no releases")
+		return nil, fmt.Errorf("this gitlab project has no releases")
 	}
 	return &releases[0], nil
 }
