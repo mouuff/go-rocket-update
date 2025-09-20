@@ -41,7 +41,7 @@ func (c *Github) repositoryInfo() (*githubRepositoryInfo, error) {
 	re := regexp.MustCompile(`github\.com/(.*?)/(.*?)$`)
 	submatches := re.FindAllStringSubmatch(c.RepositoryURL, 1)
 	if len(submatches) < 1 {
-		return nil, errors.New("Invalid github URL:" + c.RepositoryURL)
+		return nil, fmt.Errorf("invalid github URL: %s", c.RepositoryURL)
 	}
 	return &githubRepositoryInfo{
 		RepositoryOwner: submatches[0][1],
