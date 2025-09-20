@@ -40,7 +40,9 @@ import (
 	"github.com/mouuff/go-rocket-update/pkg/provider"
 	"github.com/mouuff/go-rocket-update/pkg/updater"
 )
+```
 
+``` go
 u := &updater.Updater{
 	Provider: &provider.Github{
 		RepositoryURL: "github.com/mouuff/go-rocket-update-example",
