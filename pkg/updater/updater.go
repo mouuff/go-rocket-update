@@ -1,6 +1,7 @@
 package updater
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -61,7 +62,7 @@ func (u *Updater) findExecutableRemotePath() (string, error) {
 		return nil
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not find excutable remote path: %w", err)
 	}
 	return executableRemotePath, nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 
 	"os"
@@ -50,23 +51,23 @@ func (cmd *Keygen) Run() error {
 	log.Println("Generating keys...")
 	priv, err := crypto.GeneratePrivateKey()
 	if err != nil {
-		return err
+		return fmt.Errorf("could not generate private key: %w", err)
 	}
 
 	privPem := crypto.ExportPrivateKeyAsPem(priv)
 	err = os.WriteFile(privateKeyPath, privPem, 0600)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not write private key: %w", err)
 	}
 	log.Println("Created private key: " + privateKeyPath)
 
 	pubPem, err := crypto.ExportPublicKeyAsPem(&priv.PublicKey)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not export public key: %w", err)
 	}
 	err = os.WriteFile(publicKeyPath, pubPem, 0644)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not write public key: %w", err)
 	}
 
 	log.Println("Created public key: " + publicKeyPath)
