@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -41,11 +40,11 @@ func (cmd *Keygen) Run() error {
 	publicKeyPath := cmd.keyName + ".pub"
 
 	if fileio.FileExists(privateKeyPath) {
-		return errors.New("Key '" + privateKeyPath + "' already exists")
+		return fmt.Errorf("key '%s' already exists", privateKeyPath)
 	}
 
 	if fileio.FileExists(publicKeyPath) {
-		return errors.New("Key '" + publicKeyPath + "' already exists")
+		return fmt.Errorf("key '%s' already exists", publicKeyPath)
 	}
 
 	log.Println("Generating keys...")
