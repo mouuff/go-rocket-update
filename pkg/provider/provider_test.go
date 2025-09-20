@@ -1,7 +1,6 @@
 package provider_test
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -19,7 +18,7 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 		return err
 	}
 	if len(version) < 1 { // TODO idea check version format?
-		return errors.New("Bad version: " + version)
+		return fmt.Errorf("bad version: %s", version)
 	}
 	tmpDir, err := fileio.TempDir()
 	if err != nil {
@@ -30,10 +29,10 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	tmpDest := filepath.Join(tmpDir, "tmpDest")
 	err = p.Retrieve("thisfiledoesnotexists", tmpDest)
 	if err == nil {
-		return errors.New("provider.Retrieve() should return an error when source file does not exists")
+		return fmt.Errorf("provider.Retrieve() should return an error when source file does not exists")
 	}
 	if fileio.FileExists(tmpDest) {
-		return errors.New("provider.Retrieve() should not create destination file when source file does not exists")
+		return fmt.Errorf("provider.Retrieve() should not create destination file when source file does not exists")
 	}
 
 	filesCount := 0
@@ -64,7 +63,7 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	err = p.Walk(func(info *provider.FileInfo) error {
 		destPath := filepath.Join(tmpDir, info.Path)
 		if !fileio.FileExists(destPath) && !strings.Contains(info.Path, constant.SignatureRelPath) {
-			return fmt.Errorf("File %s should exists", destPath)
+			return fmt.Errorf("file %s should exists", destPath)
 		}
 		return nil
 	})
@@ -76,13 +75,13 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 	count := 0
 	err = p.Walk(func(info *provider.FileInfo) error {
 		count += 1
-		return errors.New("Walk cancelled")
+		return fmt.Errorf("Walk() cancelled")
 	})
 	if err == nil {
-		return errors.New("Walk should return the error of walkFunc")
+		return fmt.Errorf("Walk() should return the error of walkFunc")
 	}
 	if count > 1 {
-		return errors.New("Walk should have stopped on error")
+		return fmt.Errorf("Walk() should have stopped on error")
 	}
 	return nil
 }
@@ -90,7 +89,7 @@ func ProviderTestWalkAndRetrieve(p provider.AccessProvider) error {
 // ProviderTestUnavailable tests the expected behavior of a provider when it is not available
 func ProviderTestUnavailable(p provider.Provider) error {
 	if err := p.Open(); err == nil {
-		return errors.New("Open() should return an error when provider is not available")
+		return fmt.Errorf("Open() should return an error when provider is not available")
 	}
 	walkCount := 0
 	err := p.Walk(func(info *provider.FileInfo) error {
@@ -99,20 +98,20 @@ func ProviderTestUnavailable(p provider.Provider) error {
 	})
 
 	if err == nil {
-		return errors.New("Walk() should return an error when provider is not available")
+		return fmt.Errorf("Walk() should return an error when provider is not available")
 	}
 
 	if walkCount > 0 {
-		return errors.New("Walk() should not call WalkFunc when provider is not available")
+		return fmt.Errorf("Walk() should not call WalkFunc when provider is not available")
 	}
 
 	defer p.Close()
 	_, err = p.GetLatestVersion()
 	if err == nil {
-		return errors.New("GetLatestVersion() should return an error when provider is not available")
+		return fmt.Errorf("GetLatestVersion() should return an error when provider is not available")
 	}
 	if err = p.Close(); err != nil {
-		return errors.New("Close() should not return an error if provider is not Open()")
+		return fmt.Errorf("Close() should not return an error if provider is not Open()")
 	}
 	return nil
 }
