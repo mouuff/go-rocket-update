@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"path/filepath"
 
@@ -41,7 +42,7 @@ func (cmd *Sign) Run() error {
 	log.Println("Reading private key...")
 	privkeyBytes, err := os.ReadFile(cmd.key)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not read private key: %w", err)
 	}
 	privateKey, err := crypto.ParsePemPrivateKey(privkeyBytes)
 	if err != nil {
@@ -50,14 +51,14 @@ func (cmd *Sign) Run() error {
 	log.Println("Computing signatures...")
 	signatures, err := crypto.GetFolderSignatures(privateKey, cmd.path)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not get signatures: %w", err)
 	}
 
 	signaturesPath := filepath.Join(cmd.path, constant.SignatureRelPath)
 	log.Println("Writing " + signaturesPath + " ...")
 	err = crypto.WriteSignaturesToJSON(signaturesPath, signatures)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not write signatures to JSON: %w", err)
 	}
 	log.Println("Signed successfully! Don't forget to keep your private key in a safe place!")
 	return nil
