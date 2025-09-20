@@ -43,22 +43,22 @@ func (cmd *Verify) Run() error {
 	log.Println("Reading public key...")
 	pubkeyBytes, err := os.ReadFile(cmd.publicKey)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not read public key: %w", err)
 	}
 	publicKey, err := crypto.ParsePemPublicKey(pubkeyBytes)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not parse public key: %w", err)
 	}
 	signaturesPath := filepath.Join(cmd.path, constant.SignatureRelPath)
 	log.Println("Reading " + signaturesPath + " ...")
 
 	signatures, err := crypto.LoadSignaturesFromJSON(signaturesPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not load signatures: %w", err)
 	}
 	unverifiedFiles, err := signatures.VerifyFolder(publicKey, cmd.path)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not verify folder: %w", err)
 	}
 	if len(unverifiedFiles) <= 1 {
 		// <= 1 because it is normal to have one unverified file because signatures file isnt verified
