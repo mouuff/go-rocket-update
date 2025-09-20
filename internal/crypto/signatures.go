@@ -3,7 +3,7 @@ package crypto
 import (
 	"crypto/rsa"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -119,7 +119,7 @@ func (s *Signatures) Get(relPath string) ([]byte, error) {
 	if val, ok := s.SignaturesMap[filepath.ToSlash(relPath)]; ok {
 		return val, nil
 	}
-	return nil, errors.New("Signature for file not found")
+	return nil, fmt.Errorf("signature for file '%s' not found", relPath)
 }
 
 // Remove removes a signature of a file given a relative path

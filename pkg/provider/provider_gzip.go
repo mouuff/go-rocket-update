@@ -3,7 +3,7 @@ package provider
 import (
 	"archive/tar"
 	"compress/gzip"
-	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -102,7 +102,7 @@ func (c *Gzip) GetLatestVersion() (string, error) {
 // Walk walks all the files provided
 func (c *Gzip) Walk(walkFn WalkFunc) error {
 	if c.localProvider == nil {
-		return errors.New("nil c.localProvider")
+		return fmt.Errorf("nil c.localProvider")
 	}
 	return c.localProvider.Walk(walkFn)
 }
@@ -110,7 +110,7 @@ func (c *Gzip) Walk(walkFn WalkFunc) error {
 // Retrieve file relative to "provider" to destination
 func (c *Gzip) Retrieve(src string, dest string) error {
 	if c.localProvider == nil {
-		return errors.New("nil c.localProvider")
+		return fmt.Errorf("nil c.localProvider")
 	}
 	return c.localProvider.Retrieve(src, dest)
 }
