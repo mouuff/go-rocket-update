@@ -36,6 +36,11 @@ _The gopher in this image was created by [Takuya Ueda][tu], licensed under [Crea
 Here is an example using Github releases:
 
 ``` go
+import (
+	"github.com/mouuff/go-rocket-update/pkg/provider"
+	"github.com/mouuff/go-rocket-update/pkg/updater"
+)
+
 u := &updater.Updater{
 	Provider: &provider.Github{
 		RepositoryURL: "github.com/mouuff/go-rocket-update-example",
