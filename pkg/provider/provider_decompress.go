@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -16,5 +16,5 @@ func Decompress(path string) (Provider, error) {
 			Path: path,
 		}, nil
 	}
-	return nil, errors.New("provider.Decompress unknown file type for file: " + path)
+	return nil, fmt.Errorf("provider.Decompress unknown file type for file: %s", path)
 }

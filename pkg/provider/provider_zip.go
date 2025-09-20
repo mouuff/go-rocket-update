@@ -43,7 +43,7 @@ func (c *Zip) GetLatestVersion() (string, error) {
 // Walk walks all the files provided
 func (c *Zip) Walk(walkFn WalkFunc) error {
 	if c.reader == nil {
-		return errors.New("nil reader zip.ReadCloser")
+		return errors.New("nil zip.reader")
 	}
 	for _, f := range c.reader.File {
 		if f != nil {

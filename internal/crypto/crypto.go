@@ -7,7 +7,6 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -77,7 +76,7 @@ func ExportPrivateKeyAsPem(privateKey *rsa.PrivateKey) []byte {
 func ParsePemPrivateKey(privPEM []byte) (*rsa.PrivateKey, error) {
 	block, _ := pem.Decode(privPEM)
 	if block == nil {
-		return nil, errors.New("failed to parse PEM block containing the key")
+		return nil, fmt.Errorf("failed to parse PEM block containing the key")
 	}
 
 	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
@@ -107,7 +106,7 @@ func ExportPublicKeyAsPem(publicKey *rsa.PublicKey) ([]byte, error) {
 func ParsePemPublicKey(pubPEM []byte) (*rsa.PublicKey, error) {
 	block, _ := pem.Decode(pubPEM)
 	if block == nil {
-		return nil, errors.New("failed to parse PEM block containing the key")
+		return nil, fmt.Errorf("failed to parse PEM block containing the key")
 	}
 
 	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
@@ -121,5 +120,5 @@ func ParsePemPublicKey(pubPEM []byte) (*rsa.PublicKey, error) {
 	default:
 		break
 	}
-	return nil, errors.New("key type is not rsa.PublicKey")
+	return nil, fmt.Errorf("key type is not rsa.PublicKey")
 }

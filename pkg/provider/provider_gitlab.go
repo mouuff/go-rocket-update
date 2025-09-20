@@ -93,7 +93,7 @@ func (c *Gitlab) getLatestRelease() (*gitlabRelease, error) {
 		return nil, err
 	}
 	if len(releases) < 1 {
-		return nil, errors.New("This gitlab project has no releases")
+		return nil, errors.New("this gitlab project has no releases")
 	}
 	return &releases[0], nil
 }
