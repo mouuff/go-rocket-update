@@ -90,7 +90,6 @@ We recommend using [goxc](https://github.com/laher/goxc) for compiling your Go a
 
 This project is currently under construction, here is some of the things to come:
 
-- More documentation and examples
 - [Variable templating](https://github.com/mouuff/go-rocket-update/issues/14)
 - Mutliple providers (enables the use of another provider if the first one is down)
 - Update channels for Github provider (alpha, beta, ...)
