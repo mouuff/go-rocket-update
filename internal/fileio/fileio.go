@@ -88,10 +88,13 @@ func GetExecutable() (string, error) {
 // (Zip Slip, CWE-22), so entry names taken from an untrusted archive cannot be
 // used to write outside dest.
 func SafeJoin(dest, name string) (string, error) {
-	cleanDest := filepath.Clean(dest)
-	path := filepath.Join(cleanDest, name)
-	if path != cleanDest && !strings.HasPrefix(path, cleanDest+string(os.PathSeparator)) {
-		return "", fmt.Errorf("fileio: illegal archive path (path traversal): %q", name)
+	dest = filepath.Clean(dest)
+	path := filepath.Join(dest, name)
+
+	rel, err := filepath.Rel(dest, path)
+	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+		return "", fmt.Errorf("fileio: illegal archive path: %q", name)
 	}
+
 	return path, nil
 }

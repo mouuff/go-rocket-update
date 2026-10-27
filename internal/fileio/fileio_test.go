@@ -132,7 +132,7 @@ func TestFileExists(t *testing.T) {
 	}
 }
 
-func TestSafeJoin(t *testing.T) {
+func TestSafeJoinEscape(t *testing.T) {
 	dest := filepath.Clean(os.TempDir())
 
 	for _, name := range []string{"file.txt", "sub/dir/file.txt", "sub/../file.txt"} {
@@ -150,5 +150,157 @@ func TestSafeJoin(t *testing.T) {
 		if _, err := fileio.SafeJoin(dest, name); err == nil {
 			t.Errorf("SafeJoin(%q) returned nil error, want path-traversal rejection", name)
 		}
+	}
+}
+
+func TestSafeJoin(t *testing.T) {
+	dest := filepath.Join("root", "uploads")
+
+	tests := []struct {
+		name    string
+		input   string
+		want    string
+		wantErr bool
+	}{
+		{
+			name:  "simple filename",
+			input: "file.txt",
+			want:  filepath.Join(dest, "file.txt"),
+		},
+		{
+			name:  "nested filename",
+			input: filepath.Join("images", "photo.png"),
+			want:  filepath.Join(dest, "images", "photo.png"),
+		},
+		{
+			name:  "multiple nested directories",
+			input: filepath.Join("a", "b", "c", "file.txt"),
+			want:  filepath.Join(dest, "a", "b", "c", "file.txt"),
+		},
+		{
+			name:  "current directory component",
+			input: filepath.Join(".", "file.txt"),
+			want:  filepath.Join(dest, "file.txt"),
+		},
+		{
+			name:  "internal parent component",
+			input: filepath.Join("sub", "..", "file.txt"),
+			want:  filepath.Join(dest, "file.txt"),
+		},
+		{
+			name:  "empty filename",
+			input: "",
+			want:  dest,
+		},
+		{
+			name:  "destination itself",
+			input: ".",
+			want:  dest,
+		},
+		{
+			name:    "parent traversal",
+			input:   "..",
+			wantErr: true,
+		},
+		{
+			name:    "parent traversal with filename",
+			input:   filepath.Join("..", "secret.txt"),
+			wantErr: true,
+		},
+		{
+			name:    "multiple parent traversal",
+			input:   filepath.Join("..", "..", "secret.txt"),
+			wantErr: true,
+		},
+		{
+			name:    "traversal after nested directory",
+			input:   filepath.Join("sub", "..", "..", "secret.txt"),
+			wantErr: true,
+		},
+		{
+			name:    "directory prefix lookalike",
+			input:   filepath.Join("..", "uploads-evil", "file.txt"),
+			wantErr: true,
+		},
+		{
+			name:  "nested directory with redundant components",
+			input: filepath.Join("sub", ".", "nested", "file.txt"),
+			want:  filepath.Join(dest, "sub", "nested", "file.txt"),
+		},
+		{
+			name:  "nested directory with internal traversal",
+			input: filepath.Join("a", "b", "..", "file.txt"),
+			want:  filepath.Join(dest, "a", "file.txt"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := fileio.SafeJoin(dest, tt.input)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("SafeJoin(%q, %q) expected error, got %q",
+						dest, tt.input, got)
+				}
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("SafeJoin(%q, %q) unexpected error: %v",
+					dest, tt.input, err)
+			}
+
+			if got != tt.want {
+				t.Errorf("SafeJoin(%q, %q) = %q, want %q",
+					dest, tt.input, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSafeJoinCleansDestination(t *testing.T) {
+	dest := filepath.Join("root", "uploads", "..", "uploads")
+	name := "file.txt"
+
+	got, err := fileio.SafeJoin(dest, name)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	want := filepath.Join("root", "uploads", "file.txt")
+	if got != want {
+		t.Errorf("got %q, want %q", got, want)
+	}
+}
+
+func TestSafeJoinRejectsTraversalAtDifferentDepths(t *testing.T) {
+	dest := filepath.Join("root", "uploads")
+
+	tests := []struct {
+		depth int
+	}{
+		{depth: 1},
+		{depth: 2},
+		{depth: 3},
+		{depth: 5},
+		{depth: 10},
+	}
+
+	for _, tt := range tests {
+		t.Run(strings.Repeat("parent_", tt.depth), func(t *testing.T) {
+			parts := make([]string, tt.depth)
+			for i := range parts {
+				parts[i] = ".."
+			}
+			parts = append(parts, "secret.txt")
+
+			name := filepath.Join(parts...)
+			got, err := fileio.SafeJoin(dest, name)
+
+			if err == nil {
+				t.Errorf("expected traversal to be rejected, got %q", got)
+			}
+		})
 	}
 }
