@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/mouuff/go-rocket-update/internal/fileio"
@@ -128,5 +129,26 @@ func TestFileExists(t *testing.T) {
 	}
 	if fileio.FileExists(fileB) {
 		t.Error("fileio.FileExists(fileA) does not exists")
+	}
+}
+
+func TestSafeJoin(t *testing.T) {
+	dest := filepath.Clean(os.TempDir())
+
+	for _, name := range []string{"file.txt", "sub/dir/file.txt", "sub/../file.txt"} {
+		got, err := fileio.SafeJoin(dest, name)
+		if err != nil {
+			t.Errorf("SafeJoin(%q) returned error: %v", name, err)
+			continue
+		}
+		if got != dest && !strings.HasPrefix(got, dest+string(os.PathSeparator)) {
+			t.Errorf("SafeJoin(%q) = %q, which is outside dest %q", name, got, dest)
+		}
+	}
+
+	for _, name := range []string{"../escape.txt", "../../escape.txt", "sub/../../escape.txt"} {
+		if _, err := fileio.SafeJoin(dest, name); err == nil {
+			t.Errorf("SafeJoin(%q) returned nil error, want path-traversal rejection", name)
+		}
 	}
 }

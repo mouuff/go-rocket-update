@@ -3,8 +3,11 @@ package fileio
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 // CopyFile copies file contents from file source to file destination
@@ -78,4 +81,17 @@ func TempDir() (string, error) {
 // GetExecutable get the path to the current executable
 func GetExecutable() (string, error) {
 	return os.Executable()
+}
+
+// SafeJoin joins name onto dest and guarantees the result stays within dest.
+// It rejects archive entries that use ".." to escape the extraction directory
+// (Zip Slip, CWE-22), so entry names taken from an untrusted archive cannot be
+// used to write outside dest.
+func SafeJoin(dest, name string) (string, error) {
+	cleanDest := filepath.Clean(dest)
+	path := filepath.Join(cleanDest, name)
+	if path != cleanDest && !strings.HasPrefix(path, cleanDest+string(os.PathSeparator)) {
+		return "", fmt.Errorf("fileio: illegal archive path (path traversal): %q", name)
+	}
+	return path, nil
 }

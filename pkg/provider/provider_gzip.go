@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 
 	"github.com/mouuff/go-rocket-update/internal/fileio"
 )
@@ -39,7 +38,12 @@ func extractGzip(tarball, dest string) error {
 			return err
 		}
 
-		path := filepath.Join(dest, header.Name)
+		// Resolve the entry path inside dest, rejecting any ".." traversal
+		// (Zip Slip, CWE-22) before creating a directory or writing a file.
+		path, err := fileio.SafeJoin(dest, header.Name)
+		if err != nil {
+			return err
+		}
 		info := header.FileInfo()
 		if header.Typeflag == tar.TypeDir {
 			if err = os.MkdirAll(path, info.Mode()); err != nil {
